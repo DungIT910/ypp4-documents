@@ -31,22 +31,10 @@ USE MsList
     ORDER BY 
         l.CreateAt ASC;
 
---  SCREEN: CREATE NEW LIST 
+--  SCREEN: LIST CREATION
 
     -- Get all list types 
     SELECT lt.Id, lt.Icon, lt.Title, lt.HeaderImage, lt.[Description] FROM ListType lt
-
-    -- Get all workspaces of a specific user
-    SELECT 
-        w.Id AS WorkspaceId, w.WorkspaceName, wm.AccountId AS UserId
-    FROM 
-        WorkspaceMember wm
-    INNER JOIN 
-        Workspace w ON wm.WorkspaceId = w.Id
-    WHERE 
-        wm.AccountId = 3
-    ORDER BY 
-        wm.Id DESC;
 
     -- Get all providers
     SELECT tp.Id, tp.ProviderName FROM TemplateProvider tp
@@ -61,7 +49,29 @@ USE MsList
     WHERE 
         tp.Id = 1; 
 
---  SCREEN: CREATE NEW LIST BASE ON TEMPLATE
+-- SCREEN: LIST CREATION FROM LIST TYPE
+
+    -- Get HeaderImage of a specific list type
+    SELECT 
+        lt.Id, lt.HeaderImage
+    FROM 
+        ListType lt 
+    WHERE
+        lt.Id = 1
+
+    -- Get all workspaces of a specific user
+    SELECT 
+        w.Id AS WorkspaceId, w.WorkspaceName, wm.AccountId AS UserId
+    FROM 
+        WorkspaceMember wm
+    INNER JOIN 
+        Workspace w ON wm.WorkspaceId = w.Id
+    WHERE 
+        wm.AccountId = 3
+    ORDER BY 
+        wm.Id DESC;
+
+-- SCREEN: TEMPLATE-BASED LIST CREATION
     
     -- Get basic information of a specific template
     SELECT
@@ -92,6 +102,61 @@ USE MsList
     WHERE 
         tcol.ListTemplateId = 1
 
+    -- Get all views of a template
+    SELECT
+        tv.Id, 
+        tv.ViewName, 
+        tv.ViewTypeId,
+        vt.Icon, 
+        vs.SettingKey,
+        tvs.GroupByColumnId, 
+        tvs.RawValue
+    FROM 
+        TemplateView tv
+    INNER JOIN
+        ViewType vt ON tv.ViewTypeId = vt.Id
+    LEFT JOIN 
+        TemplateViewSetting tvs ON tv.Id = tvs.TemplateViewId
+    LEFT JOIN 
+        ViewTypeSetting vts ON tvs.ViewTypeSettingId = vts.Id
+    LEFT JOIN
+        ViewSetting vs ON vts.ViewSettingId = vs.Id
+    WHERE
+        tv.ListTemplateId = 1
+    ORDER BY
+        tv.DisplayOrder
+
+    -- Get all columns of a template and their setting value
+    SELECT
+        tc.Id, tc.ColumnName, sdt.Icon, ks.KeyName, tcsv.KeyValue
+    FROM 
+        TemplateColumn tc
+    INNER JOIN
+        SystemDataType sdt ON tc.SystemDataTypeId = sdt.Id
+    LEFT JOIN
+        TemplateColumnSettingValue tcsv ON tc.Id = tcsv.TemplateColumnId
+    LEFT JOIN 
+        DataTypeSettingKey dtsk ON tcsv.DataTypeSettingKeyId = dtsk.Id
+    LEFT JOIN 
+        KeySetting ks ON dtsk.KeySettingId =  ks.Id
+    WHERE 
+        tc.ListTemplateId = 1
+    ORDER BY
+        tc.DisplayOrder
+    
+    -- Get all column setting object of needed columns (choice)
+    SELECT 
+        lcso.Id,
+        lcso.DisplayName,
+        lcso.DisplayColor,
+        lcso.DisplayOrder
+    FROM 
+        ListColumnSettingObject lcso
+    INNER JOIN 
+        TemplateColumn tc ON lcso.ColumnId = tc.Id 
+    WHERE 
+        lcso.Context = 'TEMPLATE'
+        AND tc.ListTemplateId = 1;
 
 -- SCREEN: LIST MANAGEMENT
     
@@ -114,33 +179,21 @@ USE MsList
         lc.ListId = 1
     ORDER BY lc.DisplayOrder ASC, lr.DisplayOrder ASC
 
-    -- Get all views of a specific list
+    -- Get all column setting object of needed columns (choice)
     SELECT 
-        lv.Id, lv.ViewName, vt.Icon
+        lcso.Id,
+        lcso.ColumnId AS ListDynamicColumnId,
+        lcso.DisplayName,
+        lcso.DisplayColor,
+        lcso.DisplayOrder,
+        lcso.Context
     FROM 
-        ListView lv
-    INNER JOIN
-        ViewType vt ON lv.ViewTypeId = vt.Id
-    WHERE 
-        lv.ListId = 1
-    ORDER BY
-        lv.DisplayOrder ASC
-
-    -- Get all system data types
-    SELECT
-        sdt.Id, sdt.Icon, sdt.[Description], sdt.DisplayName 
-    FROM 
-        SystemDataType sdt
-
-    -- Get all key setting of a specific system data type
-    SELECT
-        ks.Id, ks.KeyName, ks.DefaultValue, ks.ValueType
-    FROM 
-       KeySetting ks 
+        ListColumnSettingObject lcso
     INNER JOIN 
-        DataTypeSettingKey dtsk ON ks.Id = dtsk.KeySettingId
+        ListDynamicColumn ldc ON lcso.ColumnId = ldc.Id 
     WHERE 
-        dtsk.DataTypeId = 1
+        lcso.Context = 'LIST'
+        AND LDC.ListId = 1;
 
     -- Get all datatype settings of a specific column
     SELECT 
@@ -160,26 +213,19 @@ USE MsList
     WHERE 
         dtsk.DataTypeId = 1;
 
-    -- Get all view types
-    SELECT
-        vt.Id, vt.Title, vt.[Description], vt.Icon
-    FROM 
-        ViewType vt
-
-    -- Get all settings of a specific view type
+    -- Get all views of a specific list
     SELECT 
-        vs.Id, 
-        vs.SettingKey,
-        vs.ValueType
+        lv.Id, lv.ViewName, vt.Icon
     FROM 
-        ViewSetting vs
-    INNER JOIN 
-        ViewTypeSetting vts ON vs.Id = vts.ViewSettingId
+        ListView lv
+    INNER JOIN
+        ViewType vt ON lv.ViewTypeId = vt.Id
     WHERE 
-        vts.ViewTypeId = 4;
+        lv.ListId = 1
+    ORDER BY
+        lv.DisplayOrder ASC
 
     -- Get all view settings of a specific list view
-
     SELECT 
         vs.Id, 
         vs.SettingKey,
@@ -198,6 +244,61 @@ USE MsList
     WHERE
         vts.ViewTypeId = 4
 
+    -- Get all comment of a row
+    SELECT 
+        lrc.Id AS RowId, a.Avatar, a.FirstName, a.LastName, lrc.Content, lrc.UpdateAt
+    FROM 
+        Account a
+    INNER JOIN 
+        ListRowComment lrc ON a.Id = lrc.CreatedBy
+    WHERE 
+        lrc.ListRowId = 1
+    ORDER BY
+        lrc.UpdateAt DESC
+
+    -- Get all attachment files of a row
+    SELECT 
+        fa.Id, fa.[FileName], fa.FileUrl
+    FROM 
+        FileAttachment fa
+    WHERE 
+        fa.ListItemId = 1
+    ORDER BY
+        fa.CreateAt DESC
+
+    -- Get all system data types
+    SELECT
+        sdt.Id, sdt.Icon, sdt.[Description], sdt.DisplayName
+    FROM 
+        SystemDataType sdt
+
+    -- Get all key setting of a specific system data type
+    SELECT
+        ks.Id, ks.KeyName, ks.DefaultValue, ks.ValueType
+    FROM 
+       KeySetting ks 
+    INNER JOIN 
+        DataTypeSettingKey dtsk ON ks.Id = dtsk.KeySettingId
+    WHERE 
+        dtsk.DataTypeId = 1
+
+    -- Get all view types
+    SELECT
+        vt.Id, vt.Title, vt.[Description], vt.Icon
+    FROM 
+        ViewType vt
+
+    -- Get all settings of a specific view type
+    SELECT 
+        vs.Id, 
+        vs.SettingKey,
+        vs.ValueType
+    FROM 
+        ViewSetting vs
+    INNER JOIN 
+        ViewTypeSetting vts ON vs.Id = vts.ViewSettingId
+    WHERE 
+        vts.ViewTypeId = 4;
 
     -- Get all permisions
     SELECT 
@@ -211,7 +312,7 @@ USE MsList
     FROM 
         Scope s
 
-    -- Get all share link settings
+    -- Get all sharelink settings
     SELECT 
         ks.Id, ks.Icon, ks.KeyName, ks.ValueType, ks.DefaultValue
     FROM 
@@ -230,8 +331,7 @@ USE MsList
     LEFT JOIN 
         Account a ON a.Id = lmp.AccountId
     WHERE 
-        lmp.ListId = 1;
-
+        lmp.ListId = 1;  
     
     -- Get all sharelinks of a specific list
     SELECT 
@@ -257,4 +357,18 @@ USE MsList
     LEFT JOIN 
         ShareLinkSettingValue slsv 
             ON ks.Id = slsv.KeySettingId 
-            AND slsv.ShareLinkId = 1;
+            AND slsv.ShareLinkId = 1
+    WHERE 
+        ks.isShareLinkSetting = 1
+
+-- SCREEN: TRASH 
+    -- Get all trash items of a specific user
+    SELECT 
+        ti.Id, ti.ObjectId, ti.ObjectName, ti.ObjectTypeId, ot.Icon, ti.DeleteBy, ti.DeletedAt, ti.ObjectStatus, ti.[Path]
+    FROM 
+        TrashItem ti
+    INNER JOIN
+        ObjectType ot ON ti.ObjectId = ot.Id
+    WHERE
+        ti.CreatedBy = 1
+
