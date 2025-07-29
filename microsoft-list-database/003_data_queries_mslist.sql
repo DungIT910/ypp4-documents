@@ -1,6 +1,6 @@
 USE MsList
 
--- SCREEN: DASHBOAD
+-- Dashboard Screen
 
     -- Get information of user 1
     SELECT acc.id, acc.Avatar, acc.FirstName, acc.LastName, acc.Company, acc.AccountStatus
@@ -31,10 +31,10 @@ USE MsList
     ORDER BY 
         l.CreateAt ASC;
 
---  SCREEN: LIST CREATION
+--  Create List
 
     -- Get all list types 
-    SELECT lt.Id, lt.Icon, lt.Title, lt.HeaderImage, lt.[Description] FROM ListType lt
+    SELECT lt.Id, lt.Icon, lt.Title, lt.[Description] FROM ListType lt
 
     -- Get all providers
     SELECT tp.Id, tp.ProviderName FROM TemplateProvider tp
@@ -49,7 +49,7 @@ USE MsList
     WHERE 
         tp.Id = 1; 
 
--- SCREEN: LIST CREATION FROM LIST TYPE
+-- Create List From List Type
 
     -- Get HeaderImage of a specific list type
     SELECT 
@@ -71,7 +71,7 @@ USE MsList
     ORDER BY 
         wm.Id DESC;
 
--- SCREEN: TEMPLATE-BASED LIST CREATION
+-- Create List From Template
     
     -- Get basic information of a specific template
     SELECT
@@ -158,7 +158,7 @@ USE MsList
         lcso.Context = 'TEMPLATE'
         AND tc.ListTemplateId = 1;
 
--- SCREEN: LIST MANAGEMENT
+-- List Management
     
     -- Get all data of a specific list
     SELECT 
@@ -194,24 +194,6 @@ USE MsList
     WHERE 
         lcso.Context = 'LIST'
         AND LDC.ListId = 1;
-
-    -- Get all datatype settings of a specific column
-    SELECT 
-        ks.Id, 
-        ks.KeyName, 
-        ks.DefaultValue,
-        ks.ValueType,
-        lcsv.KeyValue
-    FROM 
-        KeySetting ks
-    INNER JOIN 
-        DataTypeSettingKey dtsk ON ks.Id = dtsk.KeySettingId
-    LEFT JOIN 
-        ListColumnSettingValue lcsv 
-            ON dtsk.Id = lcsv.DataTypeSettingKeyId 
-            AND lcsv.ColumnId = 1
-    WHERE 
-        dtsk.DataTypeId = 1;
 
     -- Get all views of a specific list
     SELECT 
@@ -282,6 +264,24 @@ USE MsList
     WHERE 
         dtsk.DataTypeId = 1
 
+    -- Get all datatype settings of a specific column
+    SELECT 
+        ks.Id, 
+        ks.KeyName, 
+        ks.DefaultValue,
+        ks.ValueType,
+        lcsv.KeyValue
+    FROM 
+        KeySetting ks
+    INNER JOIN 
+        DataTypeSettingKey dtsk ON ks.Id = dtsk.KeySettingId
+    LEFT JOIN 
+        ListColumnSettingValue lcsv 
+            ON dtsk.Id = lcsv.DataTypeSettingKeyId 
+            AND lcsv.ColumnId = 1
+    WHERE 
+        dtsk.DataTypeId = 1;
+
     -- Get all view types
     SELECT
         vt.Id, vt.Title, vt.[Description], vt.Icon
@@ -322,8 +322,8 @@ USE MsList
 
     -- Get all current list members
     SELECT 
-    a.Avatar,
-        COALESCE(a.Email, lmp.Email) AS Email,
+        a.Avatar,
+        lmp.Email AS Email,
         a.FirstName,
         a.LastName
     FROM 
@@ -371,4 +371,3 @@ USE MsList
         ObjectType ot ON ti.ObjectId = ot.Id
     WHERE
         ti.CreatedBy = 1
-
