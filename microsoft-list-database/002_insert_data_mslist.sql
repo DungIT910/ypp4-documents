@@ -1,525 +1,275 @@
 ﻿USE MsList;
 GO
 
--- Insert into Account (1000 unique accounts)
-INSERT INTO Account (FirstName, LastName, Email, AccountPassword, Avatar, Company, AccountStatus, CreateAt, UpdateAt)
+-- ACCOUNT
+INSERT INTO Account (FirstName, LastName, Email, AccountPassword, Avatar, Company, AccountStatus, DateBirth, CreatedAt, UpdatedAt)
 SELECT TOP 1000
     'FirstName' + CAST(n AS NVARCHAR),
     'LastName' + CAST(n AS NVARCHAR),
-    'user' + CAST(n AS NVARCHAR) + '@example.com',
+    'user' + CAST(n AS NVARCHAR) + '@example.com', -- Unique email
     'password' + CAST(n AS NVARCHAR),
-    'https://avatar.example.com/avatar' + CAST(n % 100 AS NVARCHAR) + '.png',
-    'Company' + CAST(n % 10 AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN 'Active' ELSE 'Inactive' END,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
+    'https://avatar.example.com/avatar' + CAST(n % 100 + 1 AS NVARCHAR) + '.png',
+    'Company' + CAST(n % 10 + 1 AS NVARCHAR),
+    CASE WHEN n <= 900 THEN 'Active' ELSE 'Inactive' END, -- 90% Active, 10% Inactive
+    DATEADD(YEAR, -18 - (n % 43), '2025-07-29'), -- Birthdates from 18 to 60 years old
+    DATEADD(DAY, n % 208, '2025-01-01'), -- CreatedAt from 2025-01-01 to ~2025-07-26
+    GETDATE() AS UpdatedAt
+FROM (
+    SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
+    FROM sys.objects a CROSS JOIN sys.objects b
+) AS numbers
 WHERE n BETWEEN 1 AND 1000;
 
--- Insert into Workspace
-INSERT INTO Workspace (WorkspaceName, CreateAt, UpdateAt)
+
+-- WORKSPACE
+INSERT INTO Workspace (WorkspaceName, CreatedAt, UpdatedAt)
 SELECT TOP 1000
     'Workspace' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
+    DATEADD(DAY, n % 208, '2025-01-01'), -- CreatedAt from 2025-01-01 to ~2025-07-26
+    GETDATE() AS UpdatedAt
+FROM (
+    SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
+    FROM sys.objects a CROSS JOIN sys.objects b
+) AS numbers
 WHERE n BETWEEN 1 AND 1000;
 
--- Insert into TemplateProvider
-INSERT INTO TemplateProvider (ProviderName, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'Provider' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
 
--- Insert into ListTemplate
-INSERT INTO ListTemplate (Title, HeaderImage, Description, Icon, Color, Summary, Feature, ProviderId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'Template' + CAST(n AS NVARCHAR),
-    'https://image.example.com/img' + CAST(n % 100 AS NVARCHAR) + '.png',
-    'Description for template ' + CAST(n AS NVARCHAR),
-    'icon' + CAST(n % 5 AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN '#FF0000' ELSE '#00FF00' END,
-    'Summary for template ' + CAST(n AS NVARCHAR),
-    'Feature set ' + CAST(n AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ViewType
-INSERT INTO ViewType (Title, HeaderImage, Icon, Description, CreateAt, UpdateAt)
-SELECT TOP 1000
-    CASE WHEN n % 3 = 0 THEN 'Calendar'
-         WHEN n % 3 = 1 THEN 'Grid'
-         ELSE 'Board' END + CAST(n AS NVARCHAR),
-    'https://image.example.com/view' + CAST(n % 100 AS NVARCHAR) + '.png',
-    'view-icon' + CAST(n % 5 AS NVARCHAR),
-    'Description for view type ' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ViewSetting
-INSERT INTO ViewSetting (SettingKey, ValueType, CreateAt, UpdateAt)
-SELECT TOP 1000
-    CASE WHEN n % 3 = 0 THEN 'ShowEvents'
-         WHEN n % 3 = 1 THEN 'ColumnWidth'
-         ELSE 'GroupBy' END + CAST(n AS NVARCHAR),
-    CASE WHEN n % 2 = 0 THEN 'Boolean' ELSE 'String' END,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into SystemDataType
-INSERT INTO SystemDataType (Icon, Description, CoverImg, DisplayName, DataTypeValue, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'icon' + CAST(n % 5 AS NVARCHAR),
-    'Data type description ' + CAST(n AS NVARCHAR),
-    'https://cover.example.com/cover' + CAST(n % 100 AS NVARCHAR) + '.png',
-    'DataType' + CAST(n AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN 'Text'
-         WHEN n % 3 = 1 THEN 'Number'
-         ELSE 'Date' END,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into KeySetting
-INSERT INTO KeySetting (Icon, KeyName, ValueType, DefaultValue, IsShareLinkSetting, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'key-icon' + CAST(n % 5 AS NVARCHAR),
-    'Key' + CAST(n AS NVARCHAR),
-    CASE WHEN n % 2 = 0 THEN 'Boolean' ELSE 'String' END,
-    'Default' + CAST(n AS NVARCHAR),
-    CASE WHEN n % 4 = 0 THEN 1 ELSE 0 END,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into Permission
-INSERT INTO Permission (Name, Code, Icon, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'Permission' + CAST(n AS NVARCHAR),
-    'PERM' + CAST(n AS NVARCHAR),
-    'perm-icon' + CAST(n % 5 AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into Scope
-INSERT INTO Scope (Code, Name, Description, Icon, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'SCOPE' + CAST(n AS NVARCHAR),
-    'Scope' + CAST(n AS NVARCHAR),
-    'Scope description ' + CAST(n AS NVARCHAR),
-    'scope-icon' + CAST(n % 5 AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListType
-INSERT INTO ListType (Title, Icon, Description, HeaderImage, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'ListType' + CAST(n AS NVARCHAR),
-    'list-icon' + CAST(n % 5 AS NVARCHAR),
-    'List type description ' + CAST(n AS NVARCHAR),
-    'https://header.example.com/header' + CAST(n % 100 AS NVARCHAR) + '.png',
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ObjectType
-INSERT INTO ObjectType (Name, Code, Icon)
-SELECT TOP 1000
-    'ObjectType' + CAST(n AS NVARCHAR),
-    'OBJTYPE' + CAST(n AS NVARCHAR),
-    'obj-icon' + CAST(n % 5 AS NVARCHAR)
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into WorkspaceMember
-INSERT INTO WorkspaceMember (AccountId, WorkspaceId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into TemplateView
-INSERT INTO TemplateView (ListTemplateId, ViewName, ViewTypeId, DisplayOrder, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    'View' + CAST(n AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    n % 10,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into TemplateColumn
-INSERT INTO TemplateColumn (ListTemplateId, ColumnName, ColumnDescription, DisplayOrder, IsVisible, SystemDataTypeId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    'Column' + CAST(n AS NVARCHAR),
-    'Description for column ' + CAST(n AS NVARCHAR),
-    n % 10,
-    CASE WHEN n % 2 = 0 THEN 1 ELSE 0 END,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into TemplateSampleRow
-INSERT INTO TemplateSampleRow (ListTemplateId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into TemplateSampleCell
-INSERT INTO TemplateSampleCell (TemplateColumnId, TemplateSampleRowId, CellValue, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'Value' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ViewTypeSetting
-INSERT INTO ViewTypeSetting (ViewTypeId, ViewSettingId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into TemplateViewSetting
-INSERT INTO TemplateViewSetting (TemplateViewId, ViewTypeSettingId, GroupByColumnId, RawValue, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'RawValue' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into DataTypeSettingKey
-INSERT INTO DataTypeSettingKey (DataTypeId, KeySettingId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into TemplateColumnSettingValue
-WITH NumberedTemplateColumns AS (
-    SELECT Id AS TemplateColumnId, ROW_NUMBER() OVER (ORDER BY Id) AS tc_rn
-    FROM TemplateColumn
-),
-NumberedDataTypeSettingKeys AS (
-    SELECT Id AS DataTypeSettingKeyId, ROW_NUMBER() OVER (ORDER BY Id) AS dtsk_rn
-    FROM DataTypeSettingKey
-)
-INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue, CreateAt, UpdateAt)
-SELECT TOP 1000
-    tc.TemplateColumnId,
-    dtsk.DataTypeSettingKeyId,
-    'KeyValue' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-LEFT JOIN NumberedTemplateColumns tc ON tc.tc_rn = (n - 1) % (SELECT COUNT(*) FROM TemplateColumn) + 1
-LEFT JOIN NumberedDataTypeSettingKeys dtsk ON dtsk.dtsk_rn = (n - 1) % (SELECT COUNT(*) FROM DataTypeSettingKey) + 1
-WHERE n BETWEEN 1 AND 1000
-  AND tc.TemplateColumnId IS NOT NULL
-  AND dtsk.DataTypeSettingKeyId IS NOT NULL;
-
--- Insert into List
-INSERT INTO List (ListName, Icon, Color, WorkspaceId, ListTypeId, TemplateId, CreateBy, ListStatus, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'List' + CAST(n AS NVARCHAR),
-    'list-icon' + CAST(n % 5 AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN '#FF0000' ELSE '#00FF00' END,
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    CASE WHEN n % 2 = 0 THEN 'Active' ELSE 'Draft' END,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListView
-INSERT INTO ListView (ListId, ViewName, ViewTypeId, DisplayOrder, CreatedBy, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    'View' + CAST(n AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    n % 10,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListDynamicColumn
-INSERT INTO ListDynamicColumn (ListId, SystemDataTypeId, ColumnName, Description, DisplayOrder, IsSystemColumn, IsVisible, CreatedBy, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'Column' + CAST(n AS NVARCHAR),
-    'Column description ' + CAST(n AS NVARCHAR),
-    n % 10,
-    CASE WHEN n % 2 = 0 THEN 1 ELSE 0 END,
-    CASE WHEN n % 2 = 0 THEN 1 ELSE 0 END,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListRow
-INSERT INTO ListRow (ListId, DisplayOrder, Status, CreatedBy, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    n % 10,
-    CASE WHEN n % 2 = 0 THEN 'Active' ELSE 'Pending' END,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListCellValue
-INSERT INTO ListCellValue (ListRowId, ListColumnId, Value, CreatedBy, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'Value' + CAST(n AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListRowComment
-INSERT INTO ListRowComment (Content, ListRowId, CreatedBy, CreateAt, UpdateAt)
-SELECT TOP 1000
-    'Comment ' + CAST(n AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListColumnSettingObject (Updated with new structure)
--- Insert for TEMPLATE context (500 records)
-INSERT INTO ListColumnSettingObject (ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreateAt, UpdateAt)
-SELECT TOP 500
-    (n - 1) % 1000 + 1, -- ColumnId references TemplateColumn.Id for TEMPLATE context
-    'TemplateSetting' + CAST(n AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN '#FF0000' ELSE '#00FF00' END,
-    n % 10,
-    'TEMPLATE',
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 500;
-
--- Insert for LIST context (500 records)
-INSERT INTO ListColumnSettingObject (ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreateAt, UpdateAt)
-SELECT TOP 500
-    (n - 1) % 1000 + 1, -- ColumnId references ListDynamicColumn.Id for LIST context
-    'ListSetting' + CAST(n AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN '#0000FF' ELSE '#FF00FF' END,
-    n % 10,
-    'LIST',
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 501 AND 1000;
-
--- Insert into DynamicColumnSettingValue
-INSERT INTO DynamicColumnSettingValue (ColumnId, DataTypeSettingKeyId, KeyValue, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'KeyValue' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-
--- Insert into ListViewSetting
-WITH NumberedRows AS (
+-- WORKSPACEMEMBER
+INSERT INTO WorkspaceMember (WorkspaceId, AccountId, JoinedAt, MemberStatus, UpdatedAt)
+SELECT 
+    WorkspaceId,
+    AccountId,
+    DATEADD(DAY, (WorkspaceId + AccountId) % 208, '2025-01-01') AS JoinedAt, -- Dates from 2025-01-01 to ~2025-07-26
+    CASE 
+        WHEN (WorkspaceId + AccountId) % 20 < 18 THEN 'Active' -- 90% Active
+        ELSE 'Inactive' -- 10% Inactive
+    END AS MemberStatus,
+    GETDATE() AS UpdatedAt
+FROM (
     SELECT 
-        lv.Id AS ListViewId,
-        vts.Id AS ViewTypeSettingId,
-        (n - 1) % 1000 + 1 AS GroupByColumnId,
-        'RawValue' + CAST(n AS NVARCHAR) AS RawValue,
-        DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27') AS CreateAt,
-        DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27') AS UpdateAt,
-        ROW_NUMBER() OVER (ORDER BY lv.Id, vts.Id) AS rn
-    FROM ListView lv
-    CROSS JOIN ViewTypeSetting vts
-    CROSS JOIN (SELECT ROW_NUMBER() OVER (ORDER BY object_id) AS n
-                FROM sys.objects) AS numbers
-    WHERE vts.ViewTypeId = lv.ViewTypeId
-)
-INSERT INTO ListViewSetting (ListViewId, ViewTypeSettingId, GroupByColumnId, RawValue, CreateAt, UpdateAt)
-SELECT TOP 1000 ListViewId, ViewTypeSettingId, GroupByColumnId, RawValue, CreateAt, UpdateAt
-FROM NumberedRows
-WHERE rn BETWEEN 1 AND 1000;
+        w.Id AS WorkspaceId,
+        a.Id AS AccountId
+    FROM 
+        (SELECT Id FROM Workspace WHERE Id BETWEEN 1 AND 200) w
+        CROSS JOIN (SELECT Id FROM Account WHERE Id BETWEEN 1 AND 600) a
+    WHERE 
+        -- Distribute 5 Accounts per Workspace, ~1.67 Workspaces per Account
+        ((a.Id - 1) / 120 + 1) = ((w.Id - 1) / 40 + 1) -- Divide into 5 groups
+        AND (a.Id - 1) % 40 = (w.Id - 1) % 40 -- Round-robin assignment
+) AS pairs
+ORDER BY WorkspaceId, AccountId;
 
--- Insert into FavoriteList
-INSERT INTO FavoriteList (AccountId, ListId, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
 
--- Insert into ShareLink
-INSERT INTO ShareLink (ListId, URL, ScopeId, ExpirationDate, IsLoginRequired, Password, PermissionId, Note, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    'https://share.example.com/link' + CAST(n % 100 AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, n % 365, '2025-07-27'),
-    CASE WHEN n % 2 = 0 THEN 1 ELSE 0 END,
-    'pass' + CAST(n AS NVARCHAR),
-    (n - 1) % 1000 + 1,
-    'Note for share link ' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
+-- Insert 3 Permission records
+INSERT INTO Permission (PermissionName, PermissionCode, PermissionDescription, Icon)
+VALUES 
+    ('Administrator', 'Admin', 'Full access to manage and edit all resources', 'admin-icon.png'),
+    ('Contributor', 'Contributor', 'Can edit and contribute to resources', 'contributor-icon.png'),
+    ('Reader', 'Reader', 'Read-only access to view resources', 'reader-icon.png');
 
--- Insert into ShareLinkSettingValue
-INSERT INTO ShareLinkSettingValue (ShareLinkId, KeySettingId, KeyValue, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'KeyValue' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
 
--- Insert into ShareLinkUserAccess
-INSERT INTO ShareLinkUserAccess (ShareLinkId, AccountId, Email, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'share' + CAST(n AS NVARCHAR) + '@example.com',
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
+INSERT INTO ViewType (Title, HeaderImage, Icon, ViewTypeDescription)
+VALUES 
+    ('List', 'https://example.com/images/list.png', 'list-icon.png', 'Displays data in a tabular list format'),
+    ('Gallery', 'https://example.com/images/gallery.png', 'gallery-icon.png', 'Shows data as a visual gallery'),
+    ('Calendar', 'https://example.com/images/calendar.png', 'calendar-icon.png', 'Organizes data in a calendar view'),
+    ('Board', 'https://example.com/images/board.png', 'board-icon.png', 'Presents data in a kanban board style');
 
--- Insert into ListMemberPermission
-INSERT INTO ListMemberPermission (ListId, AccountId, Email, HighestPermissionCode, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'member' + CAST(n AS NVARCHAR) + '@example.com',
-    'PERM' + CAST(n AS NVARCHAR),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
 
--- Insert into FileAttachment
-INSERT INTO FileAttachment (ListItemId, FileName, FileUrl, Size, Status, CreateAt, UpdateAt)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    'File' + CAST(n AS NVARCHAR) + '.pdf',
-    'https://file.example.com/file' + CAST(n % 100 AS NVARCHAR) + '.pdf',
-    n % 1000000,
-    CASE WHEN n % 2 = 0 THEN 'Uploaded' ELSE 'Pending' END,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27')
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
+INSERT INTO ListType (Title, Icon, ListTypeDescription, HeaderImage)
+VALUES 
+    ('List', 'list-icon.png', 'A tabular list for structured data display', 'https://example.com/images/list-header.png'),
+    ('Form', 'form-icon.png', 'A form-based interface for data entry', 'https://example.com/images/form-header.png'),
+    ('Gallery', 'gallery-icon.png', 'A visual gallery for image or card-based data', 'https://example.com/images/gallery-header.png'),
+    ('Calendar', 'calendar-icon.png', 'A calendar view for date-based data', 'https://example.com/images/calendar-header.png'),
+    ('Board', 'board-icon.png', 'A kanban board for task and workflow management', 'https://example.com/images/board-header.png');
 
--- Insert into TrashItem
-INSERT INTO TrashItem (ObjectId, ObjectTypeId, ObjectName, Path, ViewType, ObjectStatus, CreatedBy, DeletedAt, DeleteBy)
-SELECT TOP 1000
-    (n - 1) % 1000 + 1,
-    (n - 1) % 1000 + 1,
-    'Object' + CAST(n AS NVARCHAR),
-    '/path/to/obj' + CAST(n % 100 AS NVARCHAR),
-    CASE WHEN n % 3 = 0 THEN 'Calendar' ELSE 'Grid' END,
-    'Deleted',
-    (n - 1) % 1000 + 1,
-    DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 912), '2025-07-27'),
-    (n - 1) % 1000 + 1
-FROM (SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
-      FROM sys.objects a CROSS JOIN sys.objects b) AS numbers
-WHERE n BETWEEN 1 AND 1000;
-GO
+
+INSERT INTO ViewSettingKey (SettingKey, ValueType)
+VALUES 
+    ('Set this as public view', 'BOOLEAN'),
+    ('Start date on calendar', 'COLUMN'),
+    ('End date on calendar', 'COLUMN'),
+    ('Default layout', 'TEXT'),
+    ('Title of items on calendar', 'COLUMN'),
+    ('Subtitle', 'COLUMN'),
+    ('Sort table by', 'COLUMN');
+
+
+INSERT INTO ViewTypeSettingKey (ViewTypeId, ViewSettingKeyId)
+VALUES 
+    (1, 1), -- List view with "Set this as public view"
+    (2, 1), -- Gallery view with "Set this as public view"
+    (3, 1), -- Calendar view with "Set this as public view"
+    (4, 1), -- Board view with "Set this as public view"
+    (3, 2), -- Calendar view with "Start date on calendar"
+    (3, 3), -- Calendar view with "End date on calendar"
+    (3, 4), -- Calendar view with "Default layout"
+    (3, 5), -- Calendar view with "Title of items on calendar"
+    (3, 6), -- Calendar view with "Subtitle"
+    (2, 7); -- Gallery view with "Sort table by"
+
+
+INSERT INTO SystemDataType (DisplayName, DataTypeValue, Icon, DataTypeDescription, CoverImg)
+VALUES 
+    ('Single line of text', 'Text', 'text-icon.png', 'A single line of text for short entries', 'https://example.com/images/text-cover.png'),
+    ('Multiple lines of text', 'Text', 'multiline-text-icon.png', 'Multiple lines of text for longer entries', 'https://example.com/images/multiline-text-cover.png'),
+    ('Number', 'Number', 'number-icon.png', 'Numeric values for calculations or counts', 'https://example.com/images/number-cover.png'),
+    ('Currency', 'Currency', 'currency-icon.png', 'Monetary values with currency format', 'https://example.com/images/currency-cover.png'),
+    ('Date and time', 'DateTime', 'datetime-icon.png', 'Date and time values', 'https://example.com/images/datetime-cover.png'),
+    ('Choice', 'Choice', 'choice-icon.png', 'Predefined options for selection', 'https://example.com/images/choice-cover.png'),
+    ('Yes/No', 'Boolean', 'yesno-icon.png', 'Boolean values for yes or no choices', 'https://example.com/images/yesno-cover.png'),
+    ('Lookup', 'Lookup', 'lookup-icon.png', 'Reference to data in another list', 'https://example.com/images/lookup-cover.png'),
+    ('Person or Group', 'Person', 'person-icon.png', 'Select a person or group', 'https://example.com/images/person-cover.png'),
+    ('Hyperlink', 'Text', 'hyperlink-icon.png', 'URL or web address', 'https://example.com/images/hyperlink-cover.png'),
+    ('Picture', 'Text', 'picture-icon.png', 'Image or picture URL', 'https://example.com/images/picture-cover.png'),
+    ('Location', 'Text', 'location-icon.png', 'Geographic location data', 'https://example.com/images/location-cover.png'),
+    ('Rate', 'Number', 'rate-icon.png', 'Rating or scoring value', 'https://example.com/images/rate-cover.png');
+
+
+INSERT INTO KeySetting (KeyName, ValueType, IsShareLinkSetting, IsDefaultValue, ValueOfDefault)
+VALUES 
+    ('Max length', 'number', 0, 1, '255'),
+    ('Is required', 'boolean', 0, 1, 'FALSE'),
+    ('Enforce unique values', 'boolean', 0, 1, 'FALSE'),
+    ('Add to all content types', 'boolean', 0, 1, 'TRUE'),
+    ('Choice setting', 'choice', 0, 0, NULL),
+    ('Allow users to add custom values', 'boolean', 0, 1, 'FALSE'),
+    ('Display type', 'text', 0, 0, NULL),
+    ('Allow multiple choice', 'boolean', 0, 1, 'FALSE'),
+    ('Default value', 'text', 0, 0, NULL),
+    ('Default value', 'Choice', 0, 0, NULL),
+    ('Include time', 'boolean', 0, 1, 'FALSE'),
+    ('Default value', 'dateTime', 0, 0, NULL),
+    ('Easy format to use', 'boolean', 0, 1, 'FALSE'),
+    ('Use enhanced rich text', 'boolean', 0, 1, 'FALSE'),
+    ('Append changes to existing text', 'boolean', 0, 1, 'FALSE'),
+    ('Show avatar', 'boolean', 0, 1, 'FALSE'),
+    ('Allow choose group', 'boolean', 0, 1, 'FALSE'),
+    ('Number symbol', 'text', 0, 0, NULL),
+    ('Number of decimal places', 'number', 0, 0, NULL),
+    ('Default value', 'number', 0, 0, NULL),
+    ('Minvalue allowed', 'number', 0, 0, NULL),
+    ('Maxvalue allowed', 'number', 0, 0, NULL),
+    ('Default value', 'boolean', 0, 1, 'FALSE'),
+    ('Expiration date', 'dateTime', 1, 0, NULL),
+    ('Password', 'text', 1, 0, NULL),
+    ('Is login required', 'boolean', 1, 1, 'TRUE');
+
+
+INSERT INTO DataTypeSettingKey (SystemDataTypeId, KeySettingId)
+VALUES 
+    (1, 1),  -- Single line of text - Max length
+    (1, 2),  -- Single line of text - Is required
+    (1, 3),  -- Single line of text - Enforce unique values
+    (1, 4),  -- Single line of text - Add to all content types
+    (1, 9),  -- Single line of text - Default value (text)
+    (6, 5),  -- Choice - Choice setting
+    (6, 6),  -- Choice - Allow users to add custom values
+    (6, 7),  -- Choice - Display type
+    (6, 8),  -- Choice - Allow multiple choice
+    (6, 2),  -- Choice - Is required
+    (6, 3),  -- Choice - Enforce unique values
+    (6, 4),  -- Choice - Add to all content types
+    (6, 10), -- Choice - Default value (Choice)
+    (5, 11), -- Date and time - Include time
+    (5, 12), -- Date and time - Default value (dateTime)
+    (5, 13), -- Date and time - Easy format to use
+    (5, 2),  -- Date and time - Is required
+    (5, 3),  -- Date and time - Enforce unique values
+    (5, 4),  -- Date and time - Add to all content types
+    (2, 14), -- Multiple lines of text - Use enhanced rich text
+    (2, 15), -- Multiple lines of text - Append changes to existing text
+    (2, 2),  -- Multiple lines of text - Is required
+    (2, 4),  -- Multiple lines of text - Add to all content types
+    (9, 16), -- Person or Group - Show avatar
+    (9, 17), -- Person or Group - Allow choose group
+    (9, 2),  -- Person or Group - Is required
+    (9, 3),  -- Person or Group - Enforce unique values
+    (9, 4),  -- Person or Group - Add to all content types
+    (3, 18), -- Number - Number symbol
+    (3, 19), -- Number - Number of decimal places
+    (3, 20), -- Number - Default value (number)
+    (3, 21), -- Number - Minvalue allowed
+    (3, 22), -- Number - Maxvalue allowed
+    (3, 2),  -- Number - Is required
+    (3, 3),  -- Number - Enforce unique values
+    (3, 4),  -- Number - Add to all content types
+    (7, 2),  -- Yes/No - Is required
+    (7, 4),  -- Yes/No - Add to all content types
+    (7, 23), -- Yes/No - Default value (boolean)
+    (10, 2), -- Hyperlink - Is required
+    (10, 4), -- Hyperlink - Add to all content types
+    (11, 2), -- Picture - Is required
+    (11, 4); -- Picture - Add to all content types
+
+
+INSERT INTO TemplateProvider (ProviderName)
+VALUES ('Microsoft');
+-- Insert the remaining 999 records with repeating pattern
+INSERT INTO TemplateProvider (ProviderName)
+SELECT 
+    'templateprovider_' + CAST((n % 3 + 2) AS NVARCHAR) -- Cycles through 2, 3, 4
+FROM (
+    SELECT ROW_NUMBER() OVER (ORDER BY a.object_id) - 1 AS n
+    FROM sys.objects a CROSS JOIN sys.objects b
+) AS numbers
+WHERE n BETWEEN 0 AND 998; -- Generate 999 records to reach total 1000
+
+INSERT INTO ListTemplate (Title, HeaderImage, TemplateDescription, Icon, Color, Sumary, Feature, ProviderId, ListTypeId)
+VALUES 
+    ('Asset Manager', 'https://example.com/templates/asset-manager-header.png', 'The Asset Manager template helps track physical assets used by your team, knowing who holds which asset, which assets are under repair, and the check-in/check-out dates.', 'asset-manager-icon.png', 'blue', 'Track physical assets', 'Manage check-in/check-out, repair status, asset allocation', 1, 1),
+    ('Content Scheduler', 'https://example.com/templates/content-scheduler-header.png', 'The Content Scheduler template helps plan and manage content strategy. Filter upcoming due items or get notifications when authors submit drafts.', 'content-scheduler-icon.png', 'green', 'Plan content', 'Manage content strategy, filter due items, notifications', 1, 1),
+    ('Employee Onboarding', 'https://example.com/templates/employee-onboarding-header.png', 'The Employee Onboarding template helps manage the onboarding process for new employees and guide them through relevant contacts and resources.', 'employee-onboarding-icon.png', 'orange', 'Onboard new employees', 'Manage onboarding process, contacts, resources', 1, 1),
+    ('Event Itinerary', 'https://example.com/templates/event-itinerary-header.png', 'The Event Itinerary template organizes all important event details in one place, ensuring everything runs smoothly. Switch to calendar view for a clear view of event activities by time (day, week, month).', 'event-itinerary-icon.png', 'purple', 'Organize events', 'Manage event details, calendar view', 1, 3),
+    ('Issue Tracker', 'https://example.com/templates/issue-tracker-header.png', 'The Issue Tracker template helps track, manage, and resolve issues by easily setting priority levels in the status column and notifying team members when issues arise.', 'issue-tracker-icon.png', 'red', 'Track issues', 'Manage issues, set priorities, notifications', 1, 1),
+    ('Recruitment Tracker', 'https://example.com/templates/recruitment-tracker-header.png', 'The Recruitment Tracker template helps track and manage the hiring process within your organization or team, capturing feedback for all candidates.', 'recruitment-tracker-icon.png', 'yellow', 'Manage hiring', 'Track hiring process, candidate feedback', 1, 1),
+    ('Travel Requests', 'https://example.com/templates/travel-requests-header.png', 'The Travel Requests template helps manage all travel requests and track budgets.', 'travel-requests-icon.png', 'teal', 'Manage travel requests', 'Track travel requests, budgets', 1, 1),
+    ('Work Tracker', 'https://example.com/templates/work-tracker-header.png', 'The Work Tracker template helps track priorities and progress as you work to deliver products and services.', 'work-tracker-icon.png', 'gray', 'Track work progress', 'Manage work priorities, progress', 1, 1),
+    ('Incidents', 'https://example.com/templates/incidents-header.png', 'The Incidents template helps track and manage incidents, such as IT issues or security breaches, with status updates and notifications.', 'incidents-icon.png', 'pink', 'Track incidents', 'Manage incidents, status updates, notifications', 1, 1),
+    ('Patients', 'https://example.com/templates/patients-header.png', 'The Patients template helps healthcare staff track patient information, including medical history, appointments, and treatment plans.', 'patients-icon.png', 'brown', 'Track patient information', 'Manage medical history, appointments, treatment plans', 1, 1),
+    ('Loans', 'https://example.com/templates/loans-header.png', 'The Loans template helps manage loan applications, approvals, and repayments, tracking all loan-related information.', 'loans-icon.png', 'black', 'Manage loans', 'Track loan applications, approvals, repayments', 1, 1),
+    ('Task Planner', 'https://example.com/templates/task-planner-header.png', 'The Task Planner template helps organize and prioritize tasks for team projects, with options to assign tasks and track completion.', 'task-planner-icon.png', 'cyan', 'Plan tasks', 'Organize tasks, assign team members, track completion', 1, 1),
+    ('Inventory Management', 'https://example.com/templates/inventory-management-header.png', 'The Inventory Management template helps track stock levels, reorder points, and supplier details for efficient inventory control.', 'inventory-management-icon.png', 'lime', 'Manage inventory', 'Track stock levels, reorder points, supplier details', 1, 1),
+    ('Feedback Collector', 'https://example.com/templates/feedback-collector-header.png', 'The Feedback Collector template helps gather and organize feedback from customers or team members, with options to categorize and prioritize responses.', 'feedback-collector-icon.png', 'magenta', 'Collect feedback', 'Gather feedback, categorize responses, prioritize actions', 1, 1);
+
+
+INSERT INTO ListTemplate (Title, HeaderImage, TemplateDescription, Icon, Color, Sumary, Feature, ProviderId, ListTypeId)
+SELECT 
+    'template' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) AS Title,
+    'https://example.com/templates/template' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) + '-header.png' AS HeaderImage,
+    'Description for template ' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) + ' provided by provider ' + CAST(p.Id AS NVARCHAR) AS TemplateDescription,
+    'template' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) + '-icon.png' AS Icon,
+    CASE 
+        WHEN n = 1 THEN 'blue'
+        WHEN n = 2 THEN 'green'
+        WHEN n = 3 THEN 'orange'
+    END AS Color,
+    'Summary for template ' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) AS Sumary,
+    'Feature for template ' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) AS Feature,
+    p.Id AS ProviderId,
+    1 AS ListTypeId
+FROM 
+    TemplateProvider p
+CROSS JOIN 
+    (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3) AS numbers
+WHERE 
+    p.Id BETWEEN 2 AND 200; -- Use ProviderId from 2 to 200
+
+
+INSERT INTO TemplateView (ListTemplateId, ViewTypeId, ViewName, DisplayOrder)
+SELECT 
+    lt.Id AS ListTemplateId,
+    vt.Id AS ViewTypeId,
+    lt.Title + ' ' + vt.Title AS ViewName,
+    vt.Id AS DisplayOrder
+FROM 
+    ListTemplate lt
+CROSS JOIN 
+    ViewType vt
+WHERE 
+    lt.Id BETWEEN 1 AND 100
+    AND vt.Id IN (1, 2, 3, 4)
+ORDER BY 
+    lt.Id, vt.Id;
+
