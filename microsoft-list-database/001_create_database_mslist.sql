@@ -283,7 +283,7 @@ CREATE TABLE ListDynamicColumn (
 );
 
 -- Store values for columns of type 'choice'
-CREATE TABLE ListColumnSettingObject (
+CREATE TABLE ColumnSettingObject (
     Id INT PRIMARY KEY IDENTITY,
     ColumnId INT,
     DisplayName NVARCHAR(255), -- Display name
