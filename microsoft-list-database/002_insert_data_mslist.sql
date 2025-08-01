@@ -216,25 +216,25 @@ FROM (
 ) AS numbers
 WHERE n BETWEEN 0 AND 998; -- Generate 999 records to reach total 1000
 
-INSERT INTO ListTemplate (Title, HeaderImage, TemplateDescription, Icon, Color, Sumary, Feature, ProviderId, ListTypeId)
+INSERT INTO ListTemplate (Title, HeaderImage, TemplateDescription, Icon, Color, Sumary, Feature, ProviderId)
 VALUES 
-    ('Asset Manager', 'https://example.com/templates/asset-manager-header.png', 'The Asset Manager template helps track physical assets used by your team, knowing who holds which asset, which assets are under repair, and the check-in/check-out dates.', 'asset-manager-icon.png', 'blue', 'Track physical assets', 'Manage check-in/check-out, repair status, asset allocation', 1, 1),
-    ('Content Scheduler', 'https://example.com/templates/content-scheduler-header.png', 'The Content Scheduler template helps plan and manage content strategy. Filter upcoming due items or get notifications when authors submit drafts.', 'content-scheduler-icon.png', 'green', 'Plan content', 'Manage content strategy, filter due items, notifications', 1, 1),
-    ('Employee Onboarding', 'https://example.com/templates/employee-onboarding-header.png', 'The Employee Onboarding template helps manage the onboarding process for new employees and guide them through relevant contacts and resources.', 'employee-onboarding-icon.png', 'orange', 'Onboard new employees', 'Manage onboarding process, contacts, resources', 1, 1),
-    ('Event Itinerary', 'https://example.com/templates/event-itinerary-header.png', 'The Event Itinerary template organizes all important event details in one place, ensuring everything runs smoothly. Switch to calendar view for a clear view of event activities by time (day, week, month).', 'event-itinerary-icon.png', 'purple', 'Organize events', 'Manage event details, calendar view', 1, 3),
-    ('Issue Tracker', 'https://example.com/templates/issue-tracker-header.png', 'The Issue Tracker template helps track, manage, and resolve issues by easily setting priority levels in the status column and notifying team members when issues arise.', 'issue-tracker-icon.png', 'red', 'Track issues', 'Manage issues, set priorities, notifications', 1, 1),
-    ('Recruitment Tracker', 'https://example.com/templates/recruitment-tracker-header.png', 'The Recruitment Tracker template helps track and manage the hiring process within your organization or team, capturing feedback for all candidates.', 'recruitment-tracker-icon.png', 'yellow', 'Manage hiring', 'Track hiring process, candidate feedback', 1, 1),
-    ('Travel Requests', 'https://example.com/templates/travel-requests-header.png', 'The Travel Requests template helps manage all travel requests and track budgets.', 'travel-requests-icon.png', 'teal', 'Manage travel requests', 'Track travel requests, budgets', 1, 1),
-    ('Work Tracker', 'https://example.com/templates/work-tracker-header.png', 'The Work Tracker template helps track priorities and progress as you work to deliver products and services.', 'work-tracker-icon.png', 'gray', 'Track work progress', 'Manage work priorities, progress', 1, 1),
-    ('Incidents', 'https://example.com/templates/incidents-header.png', 'The Incidents template helps track and manage incidents, such as IT issues or security breaches, with status updates and notifications.', 'incidents-icon.png', 'pink', 'Track incidents', 'Manage incidents, status updates, notifications', 1, 1),
-    ('Patients', 'https://example.com/templates/patients-header.png', 'The Patients template helps healthcare staff track patient information, including medical history, appointments, and treatment plans.', 'patients-icon.png', 'brown', 'Track patient information', 'Manage medical history, appointments, treatment plans', 1, 1),
-    ('Loans', 'https://example.com/templates/loans-header.png', 'The Loans template helps manage loan applications, approvals, and repayments, tracking all loan-related information.', 'loans-icon.png', 'black', 'Manage loans', 'Track loan applications, approvals, repayments', 1, 1),
-    ('Task Planner', 'https://example.com/templates/task-planner-header.png', 'The Task Planner template helps organize and prioritize tasks for team projects, with options to assign tasks and track completion.', 'task-planner-icon.png', 'cyan', 'Plan tasks', 'Organize tasks, assign team members, track completion', 1, 1),
-    ('Inventory Management', 'https://example.com/templates/inventory-management-header.png', 'The Inventory Management template helps track stock levels, reorder points, and supplier details for efficient inventory control.', 'inventory-management-icon.png', 'lime', 'Manage inventory', 'Track stock levels, reorder points, supplier details', 1, 1),
-    ('Feedback Collector', 'https://example.com/templates/feedback-collector-header.png', 'The Feedback Collector template helps gather and organize feedback from customers or team members, with options to categorize and prioritize responses.', 'feedback-collector-icon.png', 'magenta', 'Collect feedback', 'Gather feedback, categorize responses, prioritize actions', 1, 1);
+    ('Asset Manager', 'https://example.com/templates/asset-manager-header.png', 'The Asset Manager template helps track physical assets used by your team, knowing who holds which asset, which assets are under repair, and the check-in/check-out dates.', 'asset-manager-icon.png', 'blue', 'Track physical assets', 'Manage check-in/check-out, repair status, asset allocation', 1),
+    ('Content Scheduler', 'https://example.com/templates/content-scheduler-header.png', 'The Content Scheduler template helps plan and manage content strategy. Filter upcoming due items or get notifications when authors submit drafts.', 'content-scheduler-icon.png', 'green', 'Plan content', 'Manage content strategy, filter due items, notifications', 1),
+    ('Employee Onboarding', 'https://example.com/templates/employee-onboarding-header.png', 'The Employee Onboarding template helps manage the onboarding process for new employees and guide them through relevant contacts and resources.', 'employee-onboarding-icon.png', 'orange', 'Onboard new employees', 'Manage onboarding process, contacts, resources', 1),
+    ('Event Itinerary', 'https://example.com/templates/event-itinerary-header.png', 'The Event Itinerary template organizes all important event details in one place, ensuring everything runs smoothly. Switch to calendar view for a clear view of event activities by time (day, week, month).', 'event-itinerary-icon.png', 'purple', 'Organize events', 'Manage event details, calendar view', 1),
+    ('Issue Tracker', 'https://example.com/templates/issue-tracker-header.png', 'The Issue Tracker template helps track, manage, and resolve issues by easily setting priority levels in the status column and notifying team members when issues arise.', 'issue-tracker-icon.png', 'red', 'Track issues', 'Manage issues, set priorities, notifications', 1),
+    ('Recruitment Tracker', 'https://example.com/templates/recruitment-tracker-header.png', 'The Recruitment Tracker template helps track and manage the hiring process within your organization or team, capturing feedback for all candidates.', 'recruitment-tracker-icon.png', 'yellow', 'Manage hiring', 'Track hiring process, candidate feedback', 1),
+    ('Travel Requests', 'https://example.com/templates/travel-requests-header.png', 'The Travel Requests template helps manage all travel requests and track budgets.', 'travel-requests-icon.png', 'teal', 'Manage travel requests', 'Track travel requests, budgets', 1),
+    ('Work Tracker', 'https://example.com/templates/work-tracker-header.png', 'The Work Tracker template helps track priorities and progress as you work to deliver products and services.', 'work-tracker-icon.png', 'gray', 'Track work progress', 'Manage work priorities, progress', 1),
+    ('Incidents', 'https://example.com/templates/incidents-header.png', 'The Incidents template helps track and manage incidents, such as IT issues or security breaches, with status updates and notifications.', 'incidents-icon.png', 'pink', 'Track incidents', 'Manage incidents, status updates, notifications', 1),
+    ('Patients', 'https://example.com/templates/patients-header.png', 'The Patients template helps healthcare staff track patient information, including medical history, appointments, and treatment plans.', 'patients-icon.png', 'brown', 'Track patient information', 'Manage medical history, appointments, treatment plans', 1),
+    ('Loans', 'https://example.com/templates/loans-header.png', 'The Loans template helps manage loan applications, approvals, and repayments, tracking all loan-related information.', 'loans-icon.png', 'black', 'Manage loans', 'Track loan applications, approvals, repayments', 1),
+    ('Task Planner', 'https://example.com/templates/task-planner-header.png', 'The Task Planner template helps organize and prioritize tasks for team projects, with options to assign tasks and track completion.', 'task-planner-icon.png', 'cyan', 'Plan tasks', 'Organize tasks, assign team members, track completion', 1),
+    ('Inventory Management', 'https://example.com/templates/inventory-management-header.png', 'The Inventory Management template helps track stock levels, reorder points, and supplier details for efficient inventory control.', 'inventory-management-icon.png', 'lime', 'Manage inventory', 'Track stock levels, reorder points, supplier details', 1),
+    ('Feedback Collector', 'https://example.com/templates/feedback-collector-header.png', 'The Feedback Collector template helps gather and organize feedback from customers or team members, with options to categorize and prioritize responses.', 'feedback-collector-icon.png', 'magenta', 'Collect feedback', 'Gather feedback, categorize responses, prioritize actions', 1);
 
 
-INSERT INTO ListTemplate (Title, HeaderImage, TemplateDescription, Icon, Color, Sumary, Feature, ProviderId, ListTypeId)
+INSERT INTO ListTemplate (Title, HeaderImage, TemplateDescription, Icon, Color, Sumary, Feature, ProviderId)
 SELECT 
     'template' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) AS Title,
     'https://example.com/templates/template' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) + '-header.png' AS HeaderImage,
@@ -247,14 +247,13 @@ SELECT
     END AS Color,
     'Summary for template ' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) AS Sumary,
     'Feature for template ' + CAST(p.Id AS NVARCHAR) + '_' + CAST(n AS NVARCHAR) AS Feature,
-    p.Id AS ProviderId,
-    1 AS ListTypeId
+    p.Id AS ProviderId
 FROM 
     TemplateProvider p
 CROSS JOIN 
     (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3) AS numbers
 WHERE 
-    p.Id BETWEEN 2 AND 200; -- Use ProviderId from 2 to 200
+    p.Id BETWEEN 2 AND 200;
 
 
 INSERT INTO TemplateView (ListTemplateId, ViewTypeId, ViewName, DisplayOrder)
@@ -273,3 +272,96 @@ WHERE
 ORDER BY 
     lt.Id, vt.Id;
 
+
+INSERT INTO TemplateColumn (SystemDataTypeId, ListTemplateId, ColumnName, ColumnDescription, DisplayOrder, IsVisible)
+SELECT 
+    CASE n
+        WHEN 1 THEN 1  -- Text
+        WHEN 2 THEN 3  -- Number
+        WHEN 3 THEN 5  -- DateTime
+        WHEN 4 THEN 6  -- Choice
+        WHEN 5 THEN 11 -- Picture
+    END AS SystemDataTypeId,
+    lt.Id AS ListTemplateId,
+    lt.Title + ' col ' + CAST(n AS NVARCHAR) AS ColumnName,
+    CASE 
+        WHEN n = 1 THEN 'Text column for ' + lt.Title + ' col ' + CAST(n AS NVARCHAR)
+        WHEN n = 2 THEN 'Number column for ' + lt.Title + ' col ' + CAST(n AS NVARCHAR)
+        WHEN n = 3 THEN 'DateTime column for ' + lt.Title + ' col ' + CAST(n AS NVARCHAR)
+        WHEN n = 4 THEN 'Choice column for ' + lt.Title + ' col ' + CAST(n AS NVARCHAR)
+        WHEN n = 5 THEN 'Picture column for ' + lt.Title + ' col ' + CAST(n AS NVARCHAR)
+    END AS ColumnDescription,
+    n AS DisplayOrder,
+    1 AS IsVisible
+FROM 
+    ListTemplate lt
+CROSS JOIN 
+    (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5) AS numbers
+WHERE 
+    lt.Id BETWEEN 1 AND 100
+ORDER BY 
+    lt.Id, n;
+
+
+INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue)
+SELECT 
+    tc.Id AS TemplateColumnId,
+    dtsk.Id AS DataTypeSettingKeyId,
+    CASE 
+        -- Single line of text (SystemDataTypeId = 1)
+        WHEN dtsk.KeySettingId = 1 THEN CAST(tc.Id AS NVARCHAR) -- Max length = TemplateColumn.Id
+        WHEN dtsk.KeySettingId = 9 THEN LEFT(tc.ColumnName, 4) -- Default value = first 4 chars of ColumnName
+        -- Number (SystemDataTypeId = 3)
+        WHEN dtsk.KeySettingId = 19 THEN 
+            CASE 
+                WHEN tc.Id % 2 = 1 THEN '1' -- Odd Id: 1 decimal place
+                ELSE '2' -- Even Id: 2 decimal places
+            END
+        -- DateTime (SystemDataTypeId = 5)
+        WHEN dtsk.KeySettingId = 12 THEN 
+            CASE 
+                WHEN tc.Id % 2 = 1 THEN '01/08/2025' -- Odd Id: 01/08/2025
+                ELSE '02/08/2025' -- Even Id: 02/08/2025
+            END
+        -- Other settings: NULL
+        ELSE NULL
+    END AS KeyValue
+FROM 
+    TemplateColumn tc
+JOIN 
+    DataTypeSettingKey dtsk ON tc.SystemDataTypeId = dtsk.SystemDataTypeId
+WHERE 
+    tc.Id BETWEEN 1 AND 500
+    AND dtsk.Id IN (
+        1, 2, 3, 4, 5,  -- Text (Single line of text)
+        6, 7, 8, 9, 10, 11, 12, 13, -- Choice
+        14, 15, 16, 17, 18, 19, -- DateTime
+        29, 30, 31, 32, 33, 34, 35, 36, -- Number
+        42, 43 -- Picture
+    )
+ORDER BY 
+    tc.Id, dtsk.Id;
+
+
+INSERT INTO ColumnSettingObject (ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreatedAt, UpdatedAt)
+SELECT 
+    tc.Id AS ColumnId,
+    tc.ColumnName + ' choice ' + CAST(n AS NVARCHAR) AS DisplayName,
+    CASE 
+        WHEN n = 1 THEN 'blue'
+        WHEN n = 2 THEN 'green'
+        WHEN n = 3 THEN 'orange'
+    END AS DisplayColor,
+    n AS DisplayOrder,
+    'TEMPLATE' AS Context,
+    GETDATE() AS CreatedAt,
+    GETDATE() AS UpdatedAt
+FROM 
+    TemplateColumn tc
+CROSS JOIN 
+    (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3) AS numbers
+WHERE 
+    tc.ListTemplateId BETWEEN 1 AND 14
+    AND tc.SystemDataTypeId = 6
+ORDER BY 
+    tc.Id, n;
