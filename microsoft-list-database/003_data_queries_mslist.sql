@@ -1,4 +1,3 @@
-```sql
 USE MsList
 
 -- Dashboard Screen
@@ -13,7 +12,7 @@ USE MsList
 
     -- Get lists of a user
     DECLARE @AccountId INT;
-    SET @AccountId = 1;
+    SET @AccountId = 2;
     SELECT l.Id, l.Color, l.Icon, l.ListName, l.ListStatus, l.CreatedBy, l.UpdatedAt
     FROM 
 	    List AS l
@@ -48,9 +47,9 @@ USE MsList
 
     -- Get all templates of a provider
     DECLARE @ProviderId INT;
-    SET @ProviderId = 1;
+    SET @ProviderId = 4;
     SELECT 
-        tp.Id, tp.ProviderName, lt.Id,lt.Title, lt.TemplateDescription, lt.HeaderImage
+        lt.Id,lt.Title, lt.TemplateDescription, lt.HeaderImage
     FROM 
        TemplateProvider tp
     INNER JOIN 
@@ -121,7 +120,7 @@ USE MsList
 
     -- Get all views of a template
     DECLARE @TemplateId INT;
-    SET @TemplateId = 1;
+    SET @TemplateId = 2;
     SELECT
         tv.Id, 
         tv.ViewName, 
@@ -149,7 +148,7 @@ USE MsList
     DECLARE @TemplateId INT;
     SET @TemplateId = 1;
     SELECT
-        tc.Id, tc.ColumnName, sdt.Icon, ks.KeyName, tcsv.KeyValue
+        tc.Id, tc.ColumnName, sdt.Icon, ks.KeyName, ks.ValueType, tcsv.KeyValue
     FROM 
         TemplateColumn tc
     INNER JOIN
@@ -174,12 +173,11 @@ USE MsList
         lcso.DisplayColor,
         lcso.DisplayOrder
     FROM 
-        ListColumnSettingObject lcso
+        ColumnSettingObject lcso
     INNER JOIN 
-        TemplateColumn tc ON lcso.TemplateColumnId = tc.Id 
+        TemplateColumn tc ON lcso.ColumnId = tc.Id AND lcso.Context = 'TEMPLATE'
     WHERE 
-        lcso.Context = 'TEMPLATE'
-        AND tc.ListTemplateId = @TemplateId;
+        tc.ListTemplateId = @TemplateId;
 
 -- List Management
     
