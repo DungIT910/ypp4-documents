@@ -268,7 +268,7 @@ CROSS JOIN
     ViewType vt
 WHERE 
     lt.Id BETWEEN 1 AND 100
-    AND vt.Id IN (1, 2, 3, 4)
+    AND vt.Id IN (1, 2, 4)
 ORDER BY 
     lt.Id, vt.Id;
 
@@ -301,6 +301,8 @@ WHERE
     lt.Id BETWEEN 1 AND 100
 ORDER BY 
     lt.Id, n;
+    DELETE FROM FileAttachment;
+DBCC CHECKIDENT ('FileAttachment', RESEED, 0); -- hoặc 1 tùy bạn muốn ID tiếp theo là bao nhiêu
 
 
 INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue)
@@ -309,7 +311,7 @@ SELECT
     dtsk.Id AS DataTypeSettingKeyId,
     CASE 
         -- Single line of text (SystemDataTypeId = 1)
-        WHEN dtsk.KeySettingId = 1 THEN CAST(tc.Id AS NVARCHAR) -- Max length = TemplateColumn.Id
+        WHEN dtsk.KeySettingId = 1 THEN CAST(tc.Id * 100 AS NVARCHAR) -- Max length = TemplateColumn.Id * 100
         WHEN dtsk.KeySettingId = 9 THEN LEFT(tc.ColumnName, 4) -- Default value = first 4 chars of ColumnName
         -- Number (SystemDataTypeId = 3)
         WHEN dtsk.KeySettingId = 19 THEN 
@@ -320,9 +322,11 @@ SELECT
         -- DateTime (SystemDataTypeId = 5)
         WHEN dtsk.KeySettingId = 12 THEN 
             CASE 
-                WHEN tc.Id % 2 = 1 THEN '01/08/2025' -- Odd Id: 01/08/2025
-                ELSE '02/08/2025' -- Even Id: 02/08/2025
+                WHEN tc.Id % 2 = 1 THEN '2025-08-01' -- Odd Id
+                ELSE '2025-08-02' -- Even Id
             END
+        -- Apply ValueOfDefault if IsDefaultValue = true
+        WHEN ks.IsDefaultValue = 1 THEN ks.ValueOfDefault
         -- Other settings: NULL
         ELSE NULL
     END AS KeyValue
@@ -330,8 +334,10 @@ FROM
     TemplateColumn tc
 JOIN 
     DataTypeSettingKey dtsk ON tc.SystemDataTypeId = dtsk.SystemDataTypeId
+JOIN 
+    KeySetting ks ON dtsk.KeySettingId = ks.Id
 WHERE 
-    tc.Id BETWEEN 1 AND 500
+    tc.Id BETWEEN 1 AND 70
     AND dtsk.Id IN (
         1, 2, 3, 4, 5,  -- Text (Single line of text)
         6, 7, 8, 9, 10, 11, 12, 13, -- Choice
@@ -365,3 +371,429 @@ WHERE
     AND tc.SystemDataTypeId = 6
 ORDER BY 
     tc.Id, n;
+
+
+INSERT INTO TemplateViewSettingValue (TemplateViewId, ViewTypeSettingId, GroupByColumnId, RawValue)
+SELECT 
+    tv.Id AS TemplateViewId,
+    vtsk.Id AS ViewTypeSettingId,
+    CASE 
+        WHEN vtsk.Id = 7 THEN 
+            (SELECT Id FROM TemplateColumn tc 
+             WHERE tc.ListTemplateId = tv.ListTemplateId 
+             AND tc.SystemDataTypeId = 6)
+        ELSE NULL
+    END AS GroupByColumnId,
+    CASE 
+        WHEN vtsk.Id = 1 THEN 'true'
+        ELSE NULL
+    END AS RawValue
+FROM 
+    TemplateView tv
+CROSS JOIN 
+    (SELECT Id FROM ViewTypeSettingKey WHERE Id IN (1, 7)) vtsk
+WHERE 
+    tv.ListTemplateId BETWEEN 1 AND 14
+    AND (
+        vtsk.Id = 1 -- Applies to all view types (List, Gallery, Board)
+        OR (vtsk.Id = 7 AND tv.ViewTypeId = 4) -- Sort table by applies only to Board view
+    )
+ORDER BY 
+    tv.Id, vtsk.Id;
+
+
+INSERT INTO TemplateSampleRow (ListTemplateId, DisplayOrder)
+SELECT 
+    lt.Id AS ListTemplateId,
+    n AS DisplayOrder
+FROM 
+    (SELECT Id FROM ListTemplate WHERE Id BETWEEN 1 AND 14) lt
+CROSS JOIN 
+    (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6) numbers
+ORDER BY 
+    lt.Id, n;
+
+
+INSERT INTO TemplateSampleCell (TemplateColumnId, TemplateSampleRowId, CellValue)
+SELECT 
+    tc.Id AS TemplateColumnId,
+    tsr.Id AS TemplateSampleRowId,
+    CASE 
+        -- Text (SystemDataTypeId = 1)
+        WHEN tc.SystemDataTypeId = 1 THEN 
+            CASE 
+                WHEN LEN(tc.ColumnName) >= tc.Id * 100 THEN LEFT(tc.ColumnName, tc.Id * 100) -- Respect Max length
+                ELSE 'Row' + CAST(tsr.DisplayOrder AS NVARCHAR) + '_' + tc.ColumnName -- Fallback if Max length too long
+            END
+        -- Number (SystemDataTypeId = 3)
+        WHEN tc.SystemDataTypeId = 3 THEN 
+            CASE 
+                WHEN tc.Id % 2 = 1 THEN 
+                    CAST(CAST(100 + (tsr.DisplayOrder * 50) AS DECIMAL(6,1)) AS NVARCHAR) -- 1 decimal place for odd Id
+                ELSE 
+                    CAST(CAST(100 + (tsr.DisplayOrder * 50) AS DECIMAL(6,2)) AS NVARCHAR) -- 2 decimal places for even Id
+            END
+        -- DateTime (SystemDataTypeId = 5)
+        WHEN tc.SystemDataTypeId = 5 THEN 
+            CASE 
+                WHEN tc.Id % 2 = 1 THEN '2025-08-01' -- Odd Id
+                ELSE '2025-08-02' -- Even Id
+            END
+        -- Choice (SystemDataTypeId = 6)
+        WHEN tc.SystemDataTypeId = 6 THEN 
+            CAST((
+                SELECT cso.Id 
+                FROM ColumnSettingObject cso 
+                WHERE cso.ColumnId = tc.Id 
+                AND cso.DisplayOrder = ((tsr.DisplayOrder - 1) % 3 + 1)
+            ) AS NVARCHAR) -- Use ColumnSettingObject.Id
+        -- Picture (SystemDataTypeId = 11)
+        WHEN tc.SystemDataTypeId = 11 THEN 
+            'https://example.com/images/sample' + CAST(tsr.DisplayOrder AS NVARCHAR) + '.jpg'
+    END AS CellValue
+FROM 
+    TemplateColumn tc
+JOIN 
+    TemplateSampleRow tsr ON tc.ListTemplateId = tsr.ListTemplateId
+WHERE 
+    tc.Id BETWEEN 1 AND 70
+ORDER BY 
+    tsr.Id, tc.Id;
+
+INSERT INTO List (ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
+SELECT 
+    'User' + CAST(wm.AccountId AS NVARCHAR) + ' List ' + CAST(n AS NVARCHAR) AS ListName,
+    CASE n
+        WHEN 1 THEN 'list-icon.png'
+        WHEN 2 THEN 'task-icon.png'
+        WHEN 3 THEN 'project-icon.png'
+    END AS Icon,
+    CASE n
+        WHEN 1 THEN 'blue'
+        WHEN 2 THEN 'green'
+        WHEN 3 THEN 'red'
+    END AS Color,
+    wm.WorkspaceId,
+    wm.AccountId AS CreatedBy,
+    '2025-08-03 17:18:00' AS CreatedAt,
+    '2025-08-03 17:18:00' AS UpdatedAt,
+    'Active' AS ListStatus
+FROM 
+    WorkspaceMember wm
+CROSS JOIN 
+    (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3) numbers
+WHERE 
+    wm.MemberStatus = 'Active'
+ORDER BY 
+    wm.WorkspaceId, wm.AccountId, n;
+
+
+INSERT INTO ListView (ListId, CreatedBy, ViewTypeId, ViewName, DisplayOrder, CreatedAt, UpdatedAt)
+SELECT 
+    l.Id AS ListId,
+    l.CreatedBy,
+    vt.Id AS ViewTypeId,
+    vt.Title + ' ' + l.ListName AS ViewName,
+    vt.Id AS DisplayOrder,
+    '2025-08-03 18:01:00' AS CreatedAt,
+    '2025-08-03 18:01:00' AS UpdatedAt
+FROM 
+    List l
+CROSS JOIN 
+    ViewType vt
+WHERE 
+    l.Id BETWEEN 1 AND 60
+    AND vt.Id IN (1, 2, 3, 4)
+ORDER BY 
+    l.Id, vt.Id;
+
+
+INSERT INTO SystemColumn (SystemDataTypeId, ColumnName, DisplayOrder, CreatedAt, CanRename)
+VALUES 
+    (1, 'Title', 1, '2025-08-03 18:49:00', 1),            -- Title column (Text, can be renamed)
+    (3, 'AssetID', 2, '2025-08-03 18:49:00', 0),          -- Asset ID (Number, not renameable)
+    (3, 'ID', 3, '2025-08-03 18:49:00', 0),               -- Unique ID (Number, not renameable)
+    (5, 'CreatedDate', 4, '2025-08-03 18:49:00', 0),       -- Creation date (DateTime, not renameable)
+    (5, 'ModifiedDate', 5, '2025-08-03 18:49:00', 0),      -- Last modified date (DateTime, not renameable)
+    (9, 'CreatedBy', 6, '2025-08-03 18:49:00', 0),         -- Creator (Person, not renameable)
+    (10, 'Attachments', 7, '2025-08-03 18:49:00', 0),      -- Attachments (Hyperlink, not renameable)
+    (11, 'Type', 8, '2025-08-03 18:49:00', 0),             -- Type (Picture, not renameable)
+    (3, 'ViewCount', 9, '2025-08-03 18:49:00', 0),         -- View count (Number, not renameable)
+    (3, 'ChildCount', 10, '2025-08-03 18:49:00', 0),       -- Child count (Number, not renameable)
+    (1, 'Labels', 11, '2025-08-03 18:49:00', 0),           -- Labels (Text, not renameable, purpose TBD)
+    (9, 'AssignedTo', 12, '2025-08-03 18:49:00', 0),       -- Assigned to (Person, not renameable)
+    (7, 'IsRecord', 13, '2025-08-03 18:49:00', 0);         -- Is record flag (Yes/No, not renameable)
+
+
+INSERT INTO SystemColumnSettingValue (SystemColumnId, DataTypeSettingKeyId, KeyValue)
+SELECT 
+    sc.Id AS SystemColumnId,
+    dtsk.Id AS DataTypeSettingKeyId,
+    CASE 
+        WHEN ks.IsDefaultValue = 1 THEN ks.ValueOfDefault
+        ELSE NULL
+    END AS KeyValue
+FROM 
+    SystemColumn sc
+CROSS JOIN 
+    DataTypeSettingKey dtsk
+INNER JOIN 
+    KeySetting ks ON dtsk.KeySettingId = ks.Id
+WHERE 
+    sc.Id BETWEEN 1 AND 13
+    AND dtsk.SystemDataTypeId = sc.SystemDataTypeId
+ORDER BY 
+    sc.Id, dtsk.Id;
+
+
+INSERT INTO ListDynamicColumn (ListId, SystemDataTypeId, SystemColumnId, ColumnName, ColumnDescription, DisplayOrder, IsSystemColumn, IsVisible, CreatedBy, CreatedAt, UpdatedAt)
+SELECT 
+    l.Id AS ListId,
+    sc.SystemDataTypeId,
+    sc.Id AS SystemColumnId,
+    sc.ColumnName,
+    'System column: ' + sc.ColumnName,
+    sc.DisplayOrder + 7 AS DisplayOrder, -- Offset to prioritize custom columns
+    1 AS IsSystemColumn,
+    1 AS IsVisible,
+    l.CreatedBy,
+    '2025-08-03 19:29:00' AS CreatedAt,
+    '2025-08-03 19:29:00' AS UpdatedAt
+FROM 
+    List l
+CROSS JOIN 
+    SystemColumn sc
+WHERE 
+    l.Id BETWEEN 1 AND 60
+UNION
+SELECT 
+    l.Id AS ListId,
+    CASE 
+        WHEN c.ColumnName = 'itemname' THEN 1
+        WHEN c.ColumnName = 'number' THEN 3
+        WHEN c.ColumnName IN ('startdate', 'endDate') THEN 5
+        WHEN c.ColumnName = 'itemchoice' THEN 6
+        WHEN c.ColumnName = 'itemimage' THEN 11
+        WHEN c.ColumnName = 'itemhyperlink' THEN 10
+    END AS SystemDataTypeId,
+    NULL AS SystemColumnId,
+    c.ColumnName,
+    'Custom column: ' + c.ColumnName,
+    c.DisplayOrder,
+    0 AS IsSystemColumn,
+    1 AS IsVisible,
+    l.CreatedBy,
+    '2025-08-03 19:29:00' AS CreatedAt,
+    '2025-08-03 19:29:00' AS UpdatedAt
+FROM 
+    List l
+CROSS JOIN 
+    (VALUES 
+        (1, 'itemname'),
+        (2, 'number'),
+        (3, 'startdate'),
+        (3, 'endDate'),
+        (4, 'itemchoice'),
+        (5, 'itemimage'),
+        (6, 'itemhyperlink')
+    ) c(DisplayOrder, ColumnName)
+WHERE 
+    l.Id BETWEEN 1 AND 60
+ORDER BY 
+    ListId, DisplayOrder;
+
+
+INSERT INTO DynamicColumnSettingValue (DynamicColumnId, DataTypeSettingKeyId, KeyValue, CreatedAt, UpdatedAt)
+SELECT 
+    ldc.Id AS DynamicColumnId,
+    dtsk.Id AS DataTypeSettingKeyId,
+    CASE 
+        -- Single line of text (itemname, SystemDataTypeId = 1)
+        WHEN ldc.ColumnName = 'itemname' AND dtsk.KeySettingId = 1 THEN CAST(ldc.ListId * 100 AS NVARCHAR(255)) -- Max length = ListId * 100
+        WHEN ldc.ColumnName = 'itemname' AND dtsk.KeySettingId = 9 THEN LEFT(ldc.ColumnName, 4) -- Default value = first 4 chars
+        -- Number (number, SystemDataTypeId = 3)
+        WHEN ldc.ColumnName = 'number' AND dtsk.KeySettingId = 19 THEN 
+            CASE WHEN ldc.ListId % 2 = 1 THEN '1' ELSE '2' END -- Number of decimal places
+        -- DateTime (startdate, endDate, SystemDataTypeId = 5)
+        WHEN ldc.ColumnName IN ('startdate', 'endDate') AND dtsk.KeySettingId = 12 THEN 
+            CASE WHEN ldc.ListId % 2 = 1 THEN '2025-08-10' ELSE '2025-08-20' END -- Default value
+        -- Default value from KeySetting
+        WHEN ks.IsDefaultValue = 1 THEN ks.ValueOfDefault
+        ELSE NULL
+    END AS KeyValue,
+    '2025-08-03 19:43:00' AS CreatedAt,
+    '2025-08-03 19:43:00' AS UpdatedAt
+FROM 
+    ListDynamicColumn ldc
+CROSS JOIN 
+    DataTypeSettingKey dtsk
+LEFT JOIN 
+    KeySetting ks ON dtsk.KeySettingId = ks.Id
+WHERE 
+    ldc.IsSystemColumn = 0 -- just apply for custom columns
+    AND ldc.ListId BETWEEN 1 AND 60
+    AND dtsk.SystemDataTypeId = ldc.SystemDataTypeId
+ORDER BY 
+    ldc.Id, dtsk.Id;
+
+
+DECLARE @StartId INT = 5;
+DECLARE @EndId INT = 1185;
+DECLARE @CurrentId INT = @StartId;
+DECLARE @ChoiceCount INT = 3;
+
+WHILE @CurrentId <= @EndId
+BEGIN
+    INSERT INTO ColumnSettingObject (ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreatedAt, UpdatedAt)
+    SELECT 
+        @CurrentId AS ColumnId,
+        'itemchoice choice ' + CAST(n.Number AS NVARCHAR(10)) AS DisplayName,
+        CASE (n.Number - 1) % 3 
+            WHEN 0 THEN 'blue'
+            WHEN 1 THEN 'green'
+            WHEN 2 THEN 'orange'
+        END AS DisplayColor,
+        n.Number AS DisplayOrder,
+        'LIST' AS Context,
+        '2025-08-04 00:54:00' AS CreatedAt,
+        '2025-08-04 00:54:00' AS UpdatedAt
+    FROM master.dbo.spt_values n
+    WHERE n.type = 'P'
+    AND n.number BETWEEN 1 AND @ChoiceCount;
+
+    SET @CurrentId = @CurrentId + 20;
+END;
+
+DECLARE @ListCount INT = 60;
+DECLARE @RowsPerList INT = 5;
+DECLARE @CurrentListId INT = 1;
+
+WHILE @CurrentListId <= @ListCount
+BEGIN
+    DECLARE @CreatedBy INT = (SELECT TOP 1 CreatedBy FROM ListDynamicColumn WHERE ListId = @CurrentListId ORDER BY Id);
+
+    DECLARE @RowCounter INT = 1;
+    WHILE @RowCounter <= @RowsPerList
+    BEGIN
+        INSERT INTO ListRow (ListId, DisplayOrder, ModifiedAt, CreatedBy, ListRowStatus, CreatedAt, UpdatedAt)
+        VALUES (@CurrentListId, @RowCounter, DATEADD(hour, @RowCounter, '2025-08-04 01:18:00'), @CreatedBy, 'Active', '2025-08-04 01:18:00', '2025-08-04 01:18:00');
+        SET @RowCounter = @RowCounter + 1;
+    END;
+
+    SET @CurrentListId = @CurrentListId + 1;
+END;
+
+
+DECLARE @ListCount INT = 60;
+DECLARE @RowsPerList INT = 5;
+DECLARE @CurrentListId INT = 1;
+
+WHILE @CurrentListId <= @ListCount
+BEGIN
+    DECLARE @CreatedBy INT = (SELECT TOP 1 CreatedBy FROM ListRow WHERE ListId = @CurrentListId ORDER BY Id);
+
+    DECLARE @RowCounter INT = 1;
+    WHILE @RowCounter <= @RowsPerList
+    BEGIN
+        DECLARE @CurrentRowId INT = (SELECT TOP 1 Id FROM ListRow WHERE ListId = @CurrentListId AND DisplayOrder = @RowCounter ORDER BY Id DESC);
+
+        INSERT INTO ListCellValue (ListRowId, ListColumnId, CellValue, CreatedBy, CreatedAt, UpdatedAt)
+        SELECT 
+            @CurrentRowId AS ListRowId,
+            c.Id AS ListColumnId,
+            CASE 
+                WHEN c.ColumnName = 'itemname' THEN 'Item ' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'number' THEN CAST((@CurrentListId * 10 + @RowCounter) AS NVARCHAR(10))
+                WHEN c.ColumnName = 'endDate' THEN CONVERT(NVARCHAR(50), DATEADD(day, @RowCounter, '2025-08-04'), 120)
+                WHEN c.ColumnName = 'startdate' THEN CONVERT(NVARCHAR(50), DATEADD(day, -@RowCounter, '2025-08-04'), 120)
+                WHEN c.ColumnName = 'itemchoice' THEN 
+                    CAST((SELECT Id FROM ColumnSettingObject WHERE ColumnId = c.Id AND DisplayOrder = ((@RowCounter - 1) % 3 + 1) AND Context = 'LIST') AS NVARCHAR(10))
+                WHEN c.ColumnName = 'itemimage' THEN 'image' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10)) + '.jpg'
+                WHEN c.ColumnName = 'itemhyperlink' THEN 'http://example.com/' + CAST(@CurrentListId AS NVARCHAR(10)) + '/' + CAST(@RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'Title' THEN 'Title ' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'AssetID' THEN CAST(@CurrentListId * 100 + @RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'ID' THEN CAST(@CurrentListId * 1000 + @RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'CreatedDate' THEN CONVERT(NVARCHAR(50), DATEADD(hour, @RowCounter, '2025-08-03 19:29:00'), 120)
+                WHEN c.ColumnName = 'ModifiedDate' THEN CONVERT(NVARCHAR(50), DATEADD(hour, @RowCounter, '2025-08-03 19:29:00'), 120)
+                WHEN c.ColumnName = 'CreatedBy' THEN CAST(@CreatedBy AS NVARCHAR(10))
+                WHEN c.ColumnName = 'Attachments' THEN 'attachment' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'Type' THEN 'Type' + CAST(@RowCounter AS NVARCHAR(10))
+                WHEN c.ColumnName = 'ViewCount' THEN CAST(@RowCounter * 10 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'ChildCount' THEN CAST(@RowCounter * 5 AS NVARCHAR(10))
+                WHEN c.ColumnName IN ('Labels', 'AssignedTo') THEN NULL
+                WHEN c.ColumnName = 'IsRecord' THEN CAST(CASE WHEN @RowCounter % 2 = 0 THEN 1 ELSE 0 END AS NVARCHAR(1))
+            END AS CellValue,
+            @CreatedBy AS CreatedBy,
+            '2025-08-04 01:31:00' AS CreatedAt,
+            '2025-08-04 01:31:00' AS UpdatedAt
+        FROM ListDynamicColumn c
+        WHERE c.ListId = @CurrentListId;
+
+        SET @RowCounter = @RowCounter + 1;
+    END;
+
+    SET @CurrentListId = @CurrentListId + 1;
+END;
+
+
+WITH RankedLists AS (
+    SELECT 
+        Id AS ListId,
+        CreatedBy AS AccountId,
+        ROW_NUMBER() OVER (PARTITION BY CreatedBy ORDER BY Id) AS ListRank
+    FROM List
+    WHERE ListStatus = 'Active'
+)
+INSERT INTO FavoriteList (ListId, AccountId, CreatedAt, UpdatedAt)
+SELECT 
+    ListId,
+    AccountId,
+    '2025-08-04 01:55:00',
+    '2025-08-04 01:55:00'
+FROM RankedLists
+WHERE ListRank <= 2;
+
+
+INSERT INTO FileAttachment (ListRowId, FileAttachmentName, FileUrl, CreatedAt, UpdatedAt)
+SELECT 
+    lr.Id AS ListRowId,
+    'File 1 for Row ' + CAST(lr.Id AS NVARCHAR(10)) AS FileAttachmentName,
+    'https://example.com/files/row' + CAST(lr.Id AS NVARCHAR(10)) + '/file1.pdf' AS FileUrl,
+    '2025-08-04 02:02:00',
+    '2025-08-04 02:02:00'
+FROM ListRow lr
+WHERE lr.ListRowStatus = 'Active'
+UNION ALL
+SELECT 
+    lr.Id AS ListRowId,
+    'File 2 for Row ' + CAST(lr.Id AS NVARCHAR(10)) AS FileAttachmentName,
+    'https://example.com/files/row' + CAST(lr.Id AS NVARCHAR(10)) + '/file2.pdf' AS FileUrl,
+    '2025-08-04 02:02:00',
+    '2025-08-04 02:02:00'
+FROM ListRow lr
+WHERE lr.ListRowStatus = 'Active';
+
+INSERT INTO ListRowComment (ListRowId, Content, CreatedBy, CreatedAt, UpdatedAt)
+SELECT 
+    lr.Id AS ListRowId,
+    'Comment 1 for Row ' + CAST(lr.Id AS NVARCHAR(10)) + ': Great progress!' AS Content,
+    lr.CreatedBy AS CreatedBy,
+    '2025-08-04 02:09:00',
+    '2025-08-04 02:09:00'
+FROM ListRow lr
+WHERE lr.ListRowStatus = 'Active'
+UNION ALL
+SELECT 
+    lr.Id AS ListRowId,
+    'Comment 2 for Row ' + CAST(lr.Id AS NVARCHAR(10)) + ': Needs review.' AS Content,
+    lr.CreatedBy AS CreatedBy,
+    '2025-08-04 02:09:00',
+    '2025-08-04 02:09:00'
+FROM ListRow lr
+WHERE lr.ListRowStatus = 'Active';
+
+INSERT INTO ObjectType (Code, DisplayName, Icon)
+VALUES 
+    ('LIST', 'List', 'list-icon.png'),
+    ('LISTROW', 'List Row', 'row-icon.png'),
+    ('FILE', 'File', 'file-icon.png');

@@ -226,28 +226,14 @@ CREATE TABLE TemplateSampleCell (
 ------------------
 CREATE TABLE List (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    ListTypeId INT NOT NULL REFERENCES ListType(Id), -- FK to ListType
-    ListTemplateId INT REFERENCES ListTemplate(Id),
     ListName NVARCHAR(100) NOT NULL,
     Icon NVARCHAR(100),
     Color NVARCHAR(50),
+    WorkspaceId INT NOT NULL REFERENCES Workspace(Id), 
     CreatedBy INT NOT NULL, -- FK to User or Account
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     ListStatus NVARCHAR(50)  -- 'Active', 'Archived', etc.
-);
-
--- One list can have multiple views
--- Need a trigger to automatically create a view named "All Items"
-CREATE TABLE ListView (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    ListId INT NOT NULL REFERENCES List(Id), -- FK to List table
-    CreatedBy INT NOT NULL REFERENCES Account(Id), -- FK to Account/User table
-    ViewTypeId INT NOT NULL REFERENCES ViewType(Id),
-    ViewName NVARCHAR(255),
-    DisplayOrder INT NOT NULL DEFAULT 0, -- Display order
-    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
-    UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
 CREATE TABLE SystemColumn (
@@ -266,6 +252,20 @@ CREATE TABLE SystemColumnSettingValue (
     DataTypeSettingKeyId INT NOT NULL REFERENCES DataTypeSettingKey(Id),
     KeyValue NVARCHAR(255)
 );
+
+-- One list can have multiple views
+-- Need a trigger to automatically create a view named "All Items"
+CREATE TABLE ListView (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ListId INT NOT NULL REFERENCES List(Id), -- FK to List table
+    CreatedBy INT NOT NULL REFERENCES Account(Id), -- FK to Account/User table
+    ViewTypeId INT NOT NULL REFERENCES ViewType(Id),
+    ViewName NVARCHAR(255),
+    DisplayOrder INT NOT NULL DEFAULT 0, -- Display order
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
+);
+
 
 CREATE TABLE ListDynamicColumn (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -372,7 +372,7 @@ CREATE TABLE ObjectType (
 
 CREATE TABLE TrashItem (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    ObjectTypeId INT FOREIGN KEY REFERENCES ObjectType(Id), -- 'List', 'ListItem', 'FileAttachment'
+    ObjectTypeId INT FOREIGN KEY REFERENCES ObjectType(Id), -- 'List', 'ListRow', 'File'
     ObjectId INT, -- ID of the deleted object
     UserDeleteId INT FOREIGN KEY REFERENCES Account(Id),
     DeletedAt DATETIME NOT NULL DEFAULT GETDATE()
@@ -413,7 +413,7 @@ CREATE TABLE ShareLinkUserAccess (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ShareLinkId INT NOT NULL FOREIGN KEY REFERENCES ShareLink(Id),
     AccountId INT NULL FOREIGN KEY REFERENCES Account(Id),
-    Email NVARCHAR(255) NOT NULL,
+    Email NVARCHAR(255) NOT NULL   ,
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
