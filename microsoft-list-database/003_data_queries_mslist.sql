@@ -10,10 +10,10 @@ USE MsList
 	    Account AS acc
     WHERE acc.Id = @AccountId
 
-    -- Get lists of a user
+    -- Get lists created by a user
     DECLARE @AccountId INT;
     SET @AccountId = 2;
-    SELECT l.Id, l.Color, l.Icon, l.ListName, l.ListStatus, l.CreatedBy, l.UpdatedAt
+    SELECT l.Id, l.Color, l.Icon, l.ListName, l.ListStatus, l.UpdatedAt
     FROM 
 	    List AS l
     INNER JOIN 
@@ -27,7 +27,7 @@ USE MsList
     DECLARE @AccountId INT;
     SET @AccountId = 3;
     SELECT 
-        l.Id, l.Color, l.Icon, l.ListName, l.ListStatus, l.CreatedBy, l.CreatedAt
+        l.Id, l.Color, l.Icon, l.ListName, l.ListStatus
     FROM 
         List AS l
     INNER JOIN 
@@ -40,7 +40,7 @@ USE MsList
 -- Create List
 
     -- Get all list types 
-    SELECT lt.Id, lt.Icon, lt.Title, lt.ListTypeDescription FROM ListType lt
+    SELECT lt.Id, lt.Icon, lt.Title, lt.HeaderImage, lt.ListTypeDescription FROM ListType lt
 
     -- Get all providers
     SELECT tp.Id, tp.ProviderName FROM TemplateProvider tp
@@ -58,16 +58,6 @@ USE MsList
         tp.Id = @ProviderId; 
 
 -- Create List From List Type
-
-    -- Get HeaderImage of a list type
-    DECLARE @ListTypeId INT;
-    SET @ListTypeId = 1;
-    SELECT 
-        lt.Id, lt.HeaderImage
-    FROM 
-        ListType lt 
-    WHERE
-        lt.Id = @ListTypeId
 
     -- Get all workspaces of a user
     DECLARE @AccountId INT;
@@ -101,10 +91,9 @@ USE MsList
     SELECT
         tcol.Id AS colId,
         tcol.ColumnName,
-        sdt.Icon,
+        sdt.Icon AS DataTypeIcon,
         trow.Id rowid,
-        tcell.CellValue,  
-        tcol.ListTemplateId
+        tcell.CellValue
     FROM 
         TemplateColumn tcol
     INNER JOIN
@@ -117,12 +106,15 @@ USE MsList
             AND trow.Id = tcell.TemplateSampleRowId
     WHERE 
         tcol.ListTemplateId = @TemplateId
+    ORDER BY
+        tcol.DisplayOrder ASC,
+        trow.DisplayOrder ASC,
 
-    -- Get all views of a template
+    -- Get all views of a template and their setting value
     DECLARE @TemplateId INT;
     SET @TemplateId = 2;
     SELECT
-        tv.Id, 
+        tv.Id AS TemplateViewId, 
         tv.ViewName, 
         tv.ViewTypeId,
         vt.Icon, 
@@ -142,7 +134,8 @@ USE MsList
     WHERE
         tv.ListTemplateId = @TemplateId
     ORDER BY
-        tv.DisplayOrder
+        tv.DisplayOrder ASC
+
 
     -- Get all columns of a template and their setting value
     DECLARE @TemplateId INT;
@@ -162,7 +155,7 @@ USE MsList
     WHERE 
         tc.ListTemplateId = @TemplateId
     ORDER BY
-        tc.DisplayOrder
+        tc.DisplayOrder ASC
     
     -- Get all column setting object of needed columns (choice)
     DECLARE @TemplateId INT;
@@ -177,7 +170,9 @@ USE MsList
     INNER JOIN 
         TemplateColumn tc ON lcso.ColumnId = tc.Id AND lcso.Context = 'TEMPLATE'
     WHERE 
-        tc.ListTemplateId = @TemplateId;
+        tc.ListTemplateId = @TemplateId
+    ORDER BY
+        lcso.DisplayOrder ASC
 
 -- List Management
     
@@ -200,25 +195,29 @@ USE MsList
         SystemDataType AS sdt ON lc.SystemDataTypeId = sdt.Id
     WHERE
         lc.ListId = @ListId
-    ORDER BY lc.DisplayOrder ASC, lr.DisplayOrder ASC
+    ORDER BY 
+        lc.DisplayOrder ASC,
+        lr.DisplayOrder ASC
 
     -- Get all column setting object of needed columns (choice)
     DECLARE @ListId INT;
     SET @ListId = 1;
     SELECT 
         lcso.Id,
-        lcso.ListDynamicColumnId,
+        lcso.ColumnId,
         lcso.DisplayName,
         lcso.DisplayColor,
         lcso.DisplayOrder,
         lcso.Context
     FROM 
-        ListColumnSettingObject lcso
+        ColumnSettingObject lcso
     INNER JOIN 
-        ListDynamicColumn ldc ON lcso.ListDynamicColumnId = ldc.Id 
+        ListDynamicColumn ldc ON lcso.ColumnId = ldc.Id 
     WHERE 
         lcso.Context = 'LIST'
-        AND LDC.ListId = @ListId;
+        AND LDC.ListId = @ListId
+    ORDER BY
+        lcso.DisplayOrder
 
     -- Get all views of a list
     DECLARE @ListId INT;
@@ -236,9 +235,9 @@ USE MsList
 
     -- Get all view settings of a list view
     DECLARE @ListViewId INT;
-    SET @ListViewId = 1;
+    SET @ListViewId = 7;
     DECLARE @ViewTypeId INT;
-    SET @ViewTypeId = 4;
+    SET @ViewTypeId = 3;
     SELECT 
         vs.Id, 
         vs.SettingKey,
@@ -269,7 +268,7 @@ USE MsList
     WHERE 
         lrc.ListRowId = @RowId
     ORDER BY
-        lrc.UpdatedAt DESC
+        lrc.CreatedAt DESC
 
     -- Get all attachment files of a row
     DECLARE @RowId INT;
@@ -331,7 +330,7 @@ USE MsList
 
     -- Get all settings of a view type
     DECLARE @ViewTypeId INT;
-    SET @ViewTypeId = 4;
+    SET @ViewTypeId = 3;
     SELECT 
         vs.Id, 
         vs.SettingKey,
@@ -369,15 +368,18 @@ USE MsList
     SELECT 
         a.Avatar,
         a.FirstName,
-        a.LastName
+        a.LastName,
+        lmp.HighestPermissionId
     FROM 
         ListMemberPermission lmp
     LEFT JOIN 
         Account a ON a.Id = lmp.AccountId
     WHERE 
-        lmp.ListId = @ListId;  
+        lmp.ListId = @ListId
+    ORDER BY
+        lmp.UpdatedAt
     
-    -- Get all sharelinks of a list
+    -- Get all sharelinks of a list and its shared account
     DECLARE @ListId INT;
     SET @ListId = 1;
     SELECT 
@@ -389,11 +391,14 @@ USE MsList
     INNER JOIN 
         Permission p ON sl.PermissionId = p.Id
     LEFT JOIN 
-        ShareLinkUserAccess slua ON sl.Id = slua.ShareLinkId AND s.Code = 'SPECIFIC'
+        ShareLinkUserAccess slua ON sl.Id = slua.ShareLinkId AND s.Code != 'AUTHORIZED'
     LEFT JOIN 
         Account a ON slua.AccountId = a.Id
     WHERE 
         sl.ListId = @ListId 
+    ORDER BY
+        sl.ScopeId ASC,
+        sl.PermissionId DESC
 
    -- Get all settings of a sharelink
     DECLARE @ShareLinkId INT;
@@ -410,14 +415,36 @@ USE MsList
         ks.IsShareLinkSetting = 1
 
 -- SCREEN: TRASH 
-    -- Get all trash items of a user
+-- Get all trash items of a user based on createdBy of original object
     DECLARE @AccountId INT;
     SET @AccountId = 1;
+
     SELECT 
-        ti.Id, ti.ObjectId, ti.ObjectTypeId, ot.Icon, ti.UserDeleteId, ti.DeletedAt
+        ti.Id, 
+        ti.ObjectId, 
+        ti.ObjectTypeId, 
+        ot.Icon, 
+        ti.UserDeleteId, 
+        ti.DeletedAt,
+        -- Optional: Show who originally created the object
+        COALESCE(l.CreatedBy, lr.CreatedBy, lr_for_file.CreatedBy) AS OriginalCreatedBy
     FROM 
         TrashItem ti
     INNER JOIN
         ObjectType ot ON ti.ObjectTypeId = ot.Id
+    LEFT JOIN
+        List l ON ti.ObjectId = l.Id AND ti.ObjectTypeId = 1 -- LIST
+    LEFT JOIN
+        ListRow lr ON ti.ObjectId = lr.Id AND ti.ObjectTypeId = 2 -- LISTROW
+    LEFT JOIN
+        FileAttachment fa ON ti.ObjectId = fa.Id AND ti.ObjectTypeId = 3 -- FILE
+    LEFT JOIN
+        ListRow lr_for_file ON fa.ListRowId = lr_for_file.Id AND ti.ObjectTypeId = 3 -- JOIN ListRow for FileAttachment
     WHERE
-        ti.UserDeleteId = @AccountId
+        (
+            (ti.ObjectTypeId = 1 AND l.CreatedBy = @AccountId) OR
+            (ti.ObjectTypeId = 2 AND lr.CreatedBy = @AccountId) OR  
+            (ti.ObjectTypeId = 3 AND lr_for_file.CreatedBy = @AccountId)
+        )
+    ORDER BY
+        ti.DeletedAt
