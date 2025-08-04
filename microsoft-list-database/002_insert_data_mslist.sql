@@ -732,6 +732,32 @@ BEGIN
 END;
 
 
+INSERT INTO ListViewSettingValue (ListViewId, ViewTypeSettingKeyId, GroupByColumnId, RawValue, CreatedAt, UpdatedAt)
+SELECT 
+    lv.Id AS ListViewId,
+    vtsk.Id AS ViewTypeSettingKeyId,
+    CASE 
+        WHEN vtsk.ViewSettingKeyId = 2 AND lv.ViewTypeId = 3 THEN (SELECT Id FROM ListDynamicColumn WHERE ListId = lv.ListId AND ColumnName = 'startdate')
+        WHEN vtsk.ViewSettingKeyId = 3 AND lv.ViewTypeId = 3 THEN (SELECT Id FROM ListDynamicColumn WHERE ListId = lv.ListId AND ColumnName = 'endDate')
+        WHEN vtsk.ViewSettingKeyId = 5 AND lv.ViewTypeId = 3 THEN (SELECT Id FROM ListDynamicColumn WHERE ListId = lv.ListId AND ColumnName = 'itemname')
+        WHEN vtsk.ViewSettingKeyId = 7 AND lv.ViewTypeId = 2 THEN (SELECT Id FROM ListDynamicColumn WHERE ListId = lv.ListId AND ColumnName = 'itemchoice')
+        ELSE NULL
+    END AS GroupByColumnId,
+    CASE 
+        WHEN vtsk.ViewSettingKeyId = 1 THEN 'TRUE'
+        ELSE NULL
+    END AS RawValue,
+    '2025-08-04 13:26:00' AS CreatedAt,
+    '2025-08-04 13:26:00' AS UpdatedAt
+FROM ListView lv
+CROSS JOIN ViewTypeSettingKey vtsk
+WHERE (lv.ViewTypeId = 1 AND vtsk.Id = 1)
+   OR (lv.ViewTypeId = 2 AND vtsk.Id IN (2, 10))
+   OR (lv.ViewTypeId = 3 AND vtsk.Id IN (3, 5, 6, 7, 8, 9))
+   OR (lv.ViewTypeId = 4 AND vtsk.Id = 4)
+   AND lv.Id BETWEEN 1 AND 240;
+
+
 WITH RankedLists AS (
     SELECT 
         Id AS ListId,
@@ -740,8 +766,6 @@ WITH RankedLists AS (
     FROM List
     WHERE ListStatus = 'Active'
 )
-
-
 INSERT INTO FavoriteList (ListId, AccountId, CreatedAt, UpdatedAt)
 SELECT 
     ListId,
