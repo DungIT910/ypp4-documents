@@ -33,7 +33,7 @@ IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListView') DROP TABLE ListView
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'TemplateSampleCell') DROP TABLE TemplateSampleCell;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'TemplateSampleRow') DROP TABLE TemplateSampleRow;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'TemplateViewSettingValue') DROP TABLE TemplateViewSettingValue;
-IF EXISTS (SELECT 1 FROM sys. tables WHERE name = 'TemplateColumnSettingValue') DROP TABLE TemplateColumnSettingValue;
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'TemplateColumnSettingValue') DROP TABLE TemplateColumnSettingValue;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'TemplateColumn') DROP TABLE TemplateColumn;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'TemplateView') DROP TABLE TemplateView;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'List') DROP TABLE List;
@@ -52,7 +52,6 @@ IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Workspace') DROP TABLE Workspa
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Account') DROP TABLE Account;
 GO
 
--- Create tables in dependency order
 CREATE TABLE Account (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Avatar NVARCHAR(255),
@@ -67,7 +66,6 @@ CREATE TABLE Account (
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
--------- WORKSPACE --------
 CREATE TABLE Workspace (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     WorkspaceName NVARCHAR(255),
@@ -83,9 +81,7 @@ CREATE TABLE WorkspaceMember (
     MemberStatus NVARCHAR(50),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
----------------------------
----------------------- SYSTEM SETTING ---------------------
--- Table for three access permissions
+
 CREATE TABLE Permission (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     PermissionName NVARCHAR(100),
@@ -94,73 +90,66 @@ CREATE TABLE Permission (
     Icon NVARCHAR(255)
 );
 
--- Table to store view types
+
 CREATE TABLE ViewType (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Title NVARCHAR(100) NOT NULL, -- 'List', 'Gallery', 'Calendar', 'Board'
-    HeaderImage NVARCHAR(255), -- URL or file name of the image
-    Icon NVARCHAR(100), -- Icon name or path
-    ViewTypeDescription NVARCHAR(500) -- Description of the view type
+    HeaderImage NVARCHAR(255),
+    Icon NVARCHAR(100),
+    ViewTypeDescription NVARCHAR(500)
 );
 
--- Table for ListType
+
 CREATE TABLE ListType (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Title NVARCHAR(255) NOT NULL, -- Examples: 'List', 'Form', 'Gallery', 'Calendar', 'Board'
+    Title NVARCHAR(255) NOT NULL, -- 'List', 'Form', 'Gallery', 'Calendar', 'Board'
     Icon NVARCHAR(255),
     ListTypeDescription NVARCHAR(500),
     HeaderImage NVARCHAR(255)
 );
 
--- Table for ViewSettingKey
 CREATE TABLE ViewSettingKey (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     SettingKey NVARCHAR(100) NOT NULL, -- Examples: 'StartDate', 'EndDate', 'IsPublic'
     ValueType NVARCHAR(50) NOT NULL -- Examples: 'number', 'boolean', 'datetime', 'string'
 );
 
--- Table to define which settings are used by each view type
 CREATE TABLE ViewTypeSettingKey (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ViewTypeId INT FOREIGN KEY REFERENCES ViewType(Id),
     ViewSettingKeyId INT FOREIGN KEY REFERENCES ViewSettingKey(Id)
 );
 
--- Table for data types allowed for cell values
 CREATE TABLE SystemDataType (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Icon NVARCHAR(100), -- Icon name or path
-    DataTypeDescription NVARCHAR(500), -- Description
-    CoverImg NVARCHAR(255), -- Cover image (can be a URL)
+    Icon NVARCHAR(100),
+    DataTypeDescription NVARCHAR(500),
+    CoverImg NVARCHAR(255),
     DisplayName NVARCHAR(100) NOT NULL, -- Examples: 'Single Text', 'Choice'
     DataTypeValue NVARCHAR(50) NOT NULL -- Examples: 'Text', 'Number', 'Boolean'
 );
 
--- Table for column setting keys
 CREATE TABLE KeySetting (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Icon NVARCHAR(100), -- Icon or symbol name
-    KeyName NVARCHAR(100) NOT NULL, -- Setting name
+    Icon NVARCHAR(100),
+    KeyName NVARCHAR(100) NOT NULL,
     ValueType NVARCHAR(50) NOT NULL, -- Examples: 'text', 'number', 'datetime'
-    IsDefaultValue BIT DEFAULT 0, -- True if it is a default value
-    ValueOfDefault NVARCHAR(255), -- Default value if applicable
-    IsShareLinkSetting BIT DEFAULT 0 -- True if used for share link
+    IsDefaultValue BIT DEFAULT 0,
+    ValueOfDefault NVARCHAR(255),
+    IsShareLinkSetting BIT DEFAULT 0
 );
 
--- Table to define which settings apply to each column type
 CREATE TABLE DataTypeSettingKey (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     SystemDataTypeId INT FOREIGN KEY REFERENCES SystemDataType(Id),
     KeySettingId INT FOREIGN KEY REFERENCES KeySetting(Id)
 );
 
------------------ TEMPLATE -------------------
 CREATE TABLE TemplateProvider (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ProviderName NVARCHAR(255)
 );
 
--- Table for ListTemplate
 CREATE TABLE ListTemplate (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Title NVARCHAR(255),
@@ -173,7 +162,6 @@ CREATE TABLE ListTemplate (
     ProviderId INT NOT NULL REFERENCES TemplateProvider(Id)
 );
 
--- Table for TemplateView
 CREATE TABLE TemplateView (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ListTemplateId INT NOT NULL REFERENCES ListTemplate(Id),
@@ -182,7 +170,6 @@ CREATE TABLE TemplateView (
     DisplayOrder INT
 );
 
--- Table for TemplateColumn
 CREATE TABLE TemplateColumn (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     SystemDataTypeId INT NOT NULL REFERENCES SystemDataType(Id),
@@ -200,7 +187,6 @@ CREATE TABLE TemplateColumnSettingValue (
     KeyValue NVARCHAR(255)
 );
 
--- Table for TemplateViewSettingValue
 CREATE TABLE TemplateViewSettingValue (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     TemplateViewId INT NOT NULL REFERENCES TemplateView(Id),
@@ -208,14 +194,13 @@ CREATE TABLE TemplateViewSettingValue (
     GroupByColumnId INT REFERENCES TemplateColumn(Id),
     RawValue NVARCHAR(500)
 );
--- Table for TemplateSampleRow
+
 CREATE TABLE TemplateSampleRow (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ListTemplateId INT NOT NULL REFERENCES ListTemplate(Id),
     DisplayOrder INT
 );
 
--- Table for TemplateSampleCell
 CREATE TABLE TemplateSampleCell (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     TemplateColumnId INT NOT NULL REFERENCES TemplateColumn(Id),
@@ -223,7 +208,6 @@ CREATE TABLE TemplateSampleCell (
     CellValue NVARCHAR(500)
 );
 
-------------------
 CREATE TABLE List (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ListName NVARCHAR(100) NOT NULL,
@@ -243,7 +227,7 @@ CREATE TABLE SystemColumn (
     DisplayOrder INT,
     CreatedBy INT REFERENCES Account(Id),
     CreatedAt DATETIME DEFAULT GETDATE(),
-    CanRename BIT DEFAULT 0 --  only SystemColumn name "Title" has value = 1
+    CanRename BIT DEFAULT 0 -- only SystemColumn name "Title" has value = 1
 );
 
 CREATE TABLE SystemColumnSettingValue (
@@ -253,15 +237,13 @@ CREATE TABLE SystemColumnSettingValue (
     KeyValue NVARCHAR(255)
 );
 
--- One list can have multiple views
--- Need a trigger to automatically create a view named "All Items"
 CREATE TABLE ListView (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    ListId INT NOT NULL REFERENCES List(Id), -- FK to List table
-    CreatedBy INT NOT NULL REFERENCES Account(Id), -- FK to Account/User table
+    ListId INT NOT NULL REFERENCES List(Id),
+    CreatedBy INT NOT NULL REFERENCES Account(Id),
     ViewTypeId INT NOT NULL REFERENCES ViewType(Id),
     ViewName NVARCHAR(255),
-    DisplayOrder INT NOT NULL DEFAULT 0, -- Display order
+    DisplayOrder INT NOT NULL DEFAULT 0,
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
@@ -270,31 +252,29 @@ CREATE TABLE ListView (
 CREATE TABLE ListDynamicColumn (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ListId INT NOT NULL REFERENCES List(Id),
-    SystemDataTypeId INT NOT NULL REFERENCES SystemDataType(Id), -- If type is 'choice', settings can specify multi-choice or single-choice
+    SystemDataTypeId INT NOT NULL REFERENCES SystemDataType(Id),
     SystemColumnId INT REFERENCES SystemColumn(Id),
-    ColumnName NVARCHAR(100) NOT NULL, -- Column name displayed on UI
-    ColumnDescription NVARCHAR(255), -- Short description of the column
-    DisplayOrder INT NOT NULL DEFAULT 0, -- Display order in the list
-    IsSystemColumn BIT NOT NULL DEFAULT 0, -- System columns cannot be modified by users
-    IsVisible BIT NOT NULL DEFAULT 1, -- 1: Visible | 0: Hidden from view
-    CreatedBy INT NOT NULL REFERENCES Account(Id), -- Who created this column
+    ColumnName NVARCHAR(100) NOT NULL,
+    ColumnDescription NVARCHAR(255),
+    DisplayOrder INT NOT NULL DEFAULT 0,
+    IsSystemColumn BIT NOT NULL DEFAULT 0,
+    IsVisible BIT NOT NULL DEFAULT 1,
+    CreatedBy INT NOT NULL REFERENCES Account(Id),
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
--- Store values for columns of type 'choice'
 CREATE TABLE ColumnSettingObject (
     Id INT PRIMARY KEY IDENTITY,
     ColumnId INT,
-    DisplayName NVARCHAR(255), -- Display name
-    DisplayColor NVARCHAR(20), -- Default color if none selected
-    DisplayOrder INT NOT NULL DEFAULT 0, -- Display order in dropdown
+    DisplayName NVARCHAR(255),
+    DisplayColor NVARCHAR(20),
+    DisplayOrder INT NOT NULL DEFAULT 0, 
     Context NVARCHAR(50) NOT NULL, -- TEMPLATE: template's object | LIST: list's object
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
--- Should also store additional values
 CREATE TABLE ListViewSettingValue (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ListViewId INT FOREIGN KEY REFERENCES ListView(Id),
@@ -306,28 +286,26 @@ CREATE TABLE ListViewSettingValue (
 );
 
 CREATE TABLE ListRow (
-    Id INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incrementing primary key
-    ListId INT NOT NULL REFERENCES List(Id), -- FK to the list containing this row
-    DisplayOrder INT NOT NULL DEFAULT 0, -- Display order (row sorting)
-    ModifiedAt DATETIME, -- Last modified timestamp
-    CreatedBy INT NOT NULL REFERENCES Account(Id), -- Who created this row
-    ListRowStatus NVARCHAR(50),  -- Status: Active, Archived, Deleted, etc.
+    Id INT IDENTITY(1,1) PRIMARY KEY, 
+    ListId INT NOT NULL REFERENCES List(Id),
+    DisplayOrder INT NOT NULL DEFAULT 0,
+    ModifiedAt DATETIME,
+    CreatedBy INT NOT NULL REFERENCES Account(Id),
+    ListRowStatus NVARCHAR(50),
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
--- Store the value of a row in a specific column
 CREATE TABLE ListCellValue (
-    Id INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incrementing primary key
-    ListRowId INT NOT NULL REFERENCES ListRow(Id), -- FK to the row containing the value
-    ListColumnId INT NOT NULL REFERENCES ListDynamicColumn(Id), -- FK to the corresponding dynamic column
-    CellValue NVARCHAR(500), -- Input value (text, number, JSON, etc.)
-    CreatedBy INT NOT NULL REFERENCES Account(Id), -- Who created this value
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ListRowId INT NOT NULL REFERENCES ListRow(Id),
+    ListColumnId INT NOT NULL REFERENCES ListDynamicColumn(Id),
+    CellValue NVARCHAR(500),
+    CreatedBy INT NOT NULL REFERENCES Account(Id),
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
--- Store values for column settings
 CREATE TABLE DynamicColumnSettingValue (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     DynamicColumnId INT FOREIGN KEY REFERENCES ListDynamicColumn(Id),
@@ -375,7 +353,8 @@ CREATE TABLE TrashItem (
     ObjectTypeId INT FOREIGN KEY REFERENCES ObjectType(Id), -- 'List', 'ListRow', 'File'
     ObjectId INT, -- ID of the deleted object
     UserDeleteId INT FOREIGN KEY REFERENCES Account(Id),
-    DeletedAt DATETIME NOT NULL DEFAULT GETDATE()
+    DeletedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    OriginalPath NVARCHAR(255)
 );
 
 CREATE TABLE ListMemberPermission (
@@ -392,9 +371,9 @@ CREATE TABLE ListMemberPermission (
 CREATE TABLE Scope (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Code NVARCHAR(50) NOT NULL UNIQUE, -- e.g., 'PUBLIC', 'AUTHORIZED', 'SPECIFIC'
-    DisplayName NVARCHAR(100) NOT NULL,       -- Display name
-    ScopeDescription NVARCHAR(255),         -- Optional description
-    Icon NVARCHAR(100)                 -- Icon name or path
+    DisplayName NVARCHAR(100) NOT NULL,
+    ScopeDescription NVARCHAR(255),
+    Icon NVARCHAR(100)
 );
 
 CREATE TABLE ShareLink (
