@@ -1,7 +1,6 @@
 ﻿USE MsList;
 GO
 
--- ACCOUNT
 INSERT INTO Account (FirstName, LastName, Email, AccountPassword, Avatar, Company, AccountStatus, DateBirth, CreatedAt, UpdatedAt)
 SELECT TOP 1000
     'FirstName' + CAST(n AS NVARCHAR),
@@ -21,7 +20,6 @@ FROM (
 WHERE n BETWEEN 1 AND 1000;
 
 
--- WORKSPACE
 INSERT INTO Workspace (WorkspaceName, CreatedAt, UpdatedAt)
 SELECT TOP 1000
     'Workspace' + CAST(n AS NVARCHAR),
@@ -34,7 +32,7 @@ FROM (
 WHERE n BETWEEN 1 AND 1000;
 
 
--- WORKSPACEMEMBER
+
 INSERT INTO WorkspaceMember (WorkspaceId, AccountId, JoinedAt, MemberStatus, UpdatedAt)
 SELECT 
     WorkspaceId,
@@ -60,7 +58,6 @@ FROM (
 ORDER BY WorkspaceId, AccountId;
 
 
--- Insert 3 Permission records
 INSERT INTO Permission (PermissionName, PermissionCode, PermissionDescription, Icon)
 VALUES 
     ('Administrator', 'Admin', 'Full access to manage and edit all resources', 'admin-icon.png'),
@@ -301,8 +298,6 @@ WHERE
     lt.Id BETWEEN 1 AND 100
 ORDER BY 
     lt.Id, n;
-    DELETE FROM FileAttachment;
-DBCC CHECKIDENT ('FileAttachment', RESEED, 0); -- hoặc 1 tùy bạn muốn ID tiếp theo là bao nhiêu
 
 
 INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue)
@@ -459,6 +454,7 @@ WHERE
     tc.Id BETWEEN 1 AND 70
 ORDER BY 
     tsr.Id, tc.Id;
+
 
 INSERT INTO List (ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
 SELECT 
@@ -684,55 +680,55 @@ BEGIN
 END;
 
 
-DECLARE @ListCount INT = 60;
-DECLARE @RowsPerList INT = 5;
-DECLARE @CurrentListId INT = 1;
+DECLARE @ListCount2 INT = 60;
+DECLARE @RowsPerList2 INT = 5;
+DECLARE @CurrentListId2 INT = 1;
 
-WHILE @CurrentListId <= @ListCount
+WHILE @CurrentListId2 <= @ListCount2
 BEGIN
-    DECLARE @CreatedBy INT = (SELECT TOP 1 CreatedBy FROM ListRow WHERE ListId = @CurrentListId ORDER BY Id);
+    DECLARE @CreatedBy2 INT = (SELECT TOP 1 CreatedBy FROM ListRow WHERE ListId = @CurrentListId2 ORDER BY Id);
 
-    DECLARE @RowCounter INT = 1;
-    WHILE @RowCounter <= @RowsPerList
+    DECLARE @RowCounter2 INT = 1;
+    WHILE @RowCounter2 <= @RowsPerList2
     BEGIN
-        DECLARE @CurrentRowId INT = (SELECT TOP 1 Id FROM ListRow WHERE ListId = @CurrentListId AND DisplayOrder = @RowCounter ORDER BY Id DESC);
+        DECLARE @CurrentRowId2 INT = (SELECT TOP 1 Id FROM ListRow WHERE ListId = @CurrentListId2 AND DisplayOrder = @RowCounter2 ORDER BY Id DESC);
 
         INSERT INTO ListCellValue (ListRowId, ListColumnId, CellValue, CreatedBy, CreatedAt, UpdatedAt)
         SELECT 
-            @CurrentRowId AS ListRowId,
+            @CurrentRowId2 AS ListRowId,
             c.Id AS ListColumnId,
             CASE 
-                WHEN c.ColumnName = 'itemname' THEN 'Item ' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'number' THEN CAST((@CurrentListId * 10 + @RowCounter) AS NVARCHAR(10))
-                WHEN c.ColumnName = 'endDate' THEN CONVERT(NVARCHAR(50), DATEADD(day, @RowCounter, '2025-08-04'), 120)
-                WHEN c.ColumnName = 'startdate' THEN CONVERT(NVARCHAR(50), DATEADD(day, -@RowCounter, '2025-08-04'), 120)
+                WHEN c.ColumnName = 'itemname' THEN 'Item ' + CAST(@CurrentListId2 AS NVARCHAR(10)) + '-' + CAST(@RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'number' THEN CAST((@CurrentListId2 * 10 + @RowCounter2) AS NVARCHAR(10))
+                WHEN c.ColumnName = 'endDate' THEN CONVERT(NVARCHAR(50), DATEADD(day, @RowCounter2, '2025-08-04'), 120)
+                WHEN c.ColumnName = 'startdate' THEN CONVERT(NVARCHAR(50), DATEADD(day, -@RowCounter2, '2025-08-04'), 120)
                 WHEN c.ColumnName = 'itemchoice' THEN 
-                    CAST((SELECT Id FROM ColumnSettingObject WHERE ColumnId = c.Id AND DisplayOrder = ((@RowCounter - 1) % 3 + 1) AND Context = 'LIST') AS NVARCHAR(10))
-                WHEN c.ColumnName = 'itemimage' THEN 'image' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10)) + '.jpg'
-                WHEN c.ColumnName = 'itemhyperlink' THEN 'http://example.com/' + CAST(@CurrentListId AS NVARCHAR(10)) + '/' + CAST(@RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'Title' THEN 'Title ' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'AssetID' THEN CAST(@CurrentListId * 100 + @RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'ID' THEN CAST(@CurrentListId * 1000 + @RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'CreatedDate' THEN CONVERT(NVARCHAR(50), DATEADD(hour, @RowCounter, '2025-08-03 19:29:00'), 120)
-                WHEN c.ColumnName = 'ModifiedDate' THEN CONVERT(NVARCHAR(50), DATEADD(hour, @RowCounter, '2025-08-03 19:29:00'), 120)
-                WHEN c.ColumnName = 'CreatedBy' THEN CAST(@CreatedBy AS NVARCHAR(10))
-                WHEN c.ColumnName = 'Attachments' THEN 'attachment' + CAST(@CurrentListId AS NVARCHAR(10)) + '-' + CAST(@RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'Type' THEN 'Type' + CAST(@RowCounter AS NVARCHAR(10))
-                WHEN c.ColumnName = 'ViewCount' THEN CAST(@RowCounter * 10 AS NVARCHAR(10))
-                WHEN c.ColumnName = 'ChildCount' THEN CAST(@RowCounter * 5 AS NVARCHAR(10))
+                    CAST((SELECT Id FROM ColumnSettingObject WHERE ColumnId = c.Id AND DisplayOrder = ((@RowCounter2 - 1) % 3 + 1) AND Context = 'LIST') AS NVARCHAR(10))
+                WHEN c.ColumnName = 'itemimage' THEN 'image' + CAST(@CurrentListId2 AS NVARCHAR(10)) + '-' + CAST(@RowCounter2 AS NVARCHAR(10)) + '.jpg'
+                WHEN c.ColumnName = 'itemhyperlink' THEN 'http://example.com/' + CAST(@CurrentListId2 AS NVARCHAR(10)) + '/' + CAST(@RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'Title' THEN 'Title ' + CAST(@CurrentListId2 AS NVARCHAR(10)) + '-' + CAST(@RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'AssetID' THEN CAST(@CurrentListId2 * 100 + @RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'ID' THEN CAST(@CurrentListId2 * 1000 + @RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'CreatedDate' THEN CONVERT(NVARCHAR(50), DATEADD(hour, @RowCounter2, '2025-08-03 19:29:00'), 120)
+                WHEN c.ColumnName = 'ModifiedDate' THEN CONVERT(NVARCHAR(50), DATEADD(hour, @RowCounter2, '2025-08-03 19:29:00'), 120)
+                WHEN c.ColumnName = 'CreatedBy' THEN CAST(@CreatedBy2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'Attachments' THEN 'attachment' + CAST(@CurrentListId2 AS NVARCHAR(10)) + '-' + CAST(@RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'Type' THEN 'Type' + CAST(@RowCounter2 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'ViewCount' THEN CAST(@RowCounter2 * 10 AS NVARCHAR(10))
+                WHEN c.ColumnName = 'ChildCount' THEN CAST(@RowCounter2 * 5 AS NVARCHAR(10))
                 WHEN c.ColumnName IN ('Labels', 'AssignedTo') THEN NULL
-                WHEN c.ColumnName = 'IsRecord' THEN CAST(CASE WHEN @RowCounter % 2 = 0 THEN 1 ELSE 0 END AS NVARCHAR(1))
+                WHEN c.ColumnName = 'IsRecord' THEN CAST(CASE WHEN @RowCounter2 % 2 = 0 THEN 1 ELSE 0 END AS NVARCHAR(1))
             END AS CellValue,
-            @CreatedBy AS CreatedBy,
-            '2025-08-04 01:31:00' AS CreatedAt,
-            '2025-08-04 01:31:00' AS UpdatedAt
+            @CreatedBy2 AS CreatedBy,
+            '2025-08-04 10:28:00' AS CreatedAt,
+            '2025-08-04 10:28:00' AS UpdatedAt
         FROM ListDynamicColumn c
-        WHERE c.ListId = @CurrentListId;
+        WHERE c.ListId = @CurrentListId2;
 
-        SET @RowCounter = @RowCounter + 1;
+        SET @RowCounter2 = @RowCounter2 + 1;
     END;
 
-    SET @CurrentListId = @CurrentListId + 1;
+    SET @CurrentListId2 = @CurrentListId2 + 1;
 END;
 
 
@@ -744,6 +740,8 @@ WITH RankedLists AS (
     FROM List
     WHERE ListStatus = 'Active'
 )
+
+
 INSERT INTO FavoriteList (ListId, AccountId, CreatedAt, UpdatedAt)
 SELECT 
     ListId,
@@ -773,6 +771,7 @@ SELECT
 FROM ListRow lr
 WHERE lr.ListRowStatus = 'Active';
 
+
 INSERT INTO ListRowComment (ListRowId, Content, CreatedBy, CreatedAt, UpdatedAt)
 SELECT 
     lr.Id AS ListRowId,
@@ -792,8 +791,181 @@ SELECT
 FROM ListRow lr
 WHERE lr.ListRowStatus = 'Active';
 
-INSERT INTO ObjectType (Code, DisplayName, Icon)
-VALUES 
-    ('LIST', 'List', 'list-icon.png'),
-    ('LISTROW', 'List Row', 'row-icon.png'),
-    ('FILE', 'File', 'file-icon.png');
+
+INSERT INTO ObjectType (Code, DisplayName, Icon) VALUES
+('LIST', 'List', 'list-icon.png'),
+('LISTROW', 'List Row', 'row-icon.png'),
+('FILE', 'File', 'file-icon.png');
+
+
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 3;   -- User1, ListId=3
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 6;   -- User41, ListId=6
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 9;   -- User81, ListId=9
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 12;  -- User2, ListId=12
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 15;  -- User42, ListId=15
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 18;  -- User82, ListId=18
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 21;  -- User3, ListId=21
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 24;  -- User43, ListId=24
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 27;  -- User83, ListId=27
+UPDATE List SET ListStatus = 'Inactive', UpdatedAt = GETDATE() WHERE Id = 30;  -- User4, ListId=30
+
+INSERT INTO TrashItem (ObjectTypeId, ObjectId, UserDeleteId, DeletedAt, OriginalPath) VALUES
+(1, 3, 1, GETDATE(), '/list/3'),   -- User1, ListId=3
+(1, 6, 41, GETDATE(), '/list/6'),  -- User41, ListId=6
+(1, 9, 81, GETDATE(), '/list/9'),  -- User81, ListId=9
+(1, 12, 2, GETDATE(), '/list/12'), -- User2, ListId=12
+(1, 15, 42, GETDATE(), '/list/15'),-- User42, ListId=15
+(1, 18, 82, GETDATE(), '/list/18'),-- User82, ListId=18
+(1, 21, 3, GETDATE(), '/list/21'), -- User3, ListId=21
+(1, 24, 43, GETDATE(), '/list/24'),-- User43, ListId=24
+(1, 27, 83, GETDATE(), '/list/27'),-- User83, ListId=27
+(1, 30, 4, GETDATE(), '/list/30'); -- User4, ListId=30
+
+
+INSERT INTO Scope (Code, DisplayName, ScopeDescription, Icon) VALUES
+('PUBLIC', 'Public', 'Accessible to everyone', 'public-icon.png'),
+('AUTHORIZED', 'Authorized', 'Accessible to authorized users', 'auth-icon.png'),
+('SPECIFIC', 'Specific', 'Accessible to specific users', 'specific-icon.png');
+
+
+INSERT INTO ShareLink (ListId, TargetUrl, ScopeId, PermissionId, LinkStatus, CreatedBy, CreatedAt, UpdatedAt)
+SELECT 
+    l.Id AS ListId,
+    '/share/list/' + CAST(l.Id AS NVARCHAR(10)) + '/PUBLIC' AS TargetUrl,
+    1 AS ScopeId, -- PUBLIC
+    1 AS PermissionId, -- Admin
+    'ACTIVE' AS LinkStatus,
+    l.CreatedBy AS CreatedBy,
+    GETDATE() AS CreatedAt,
+    GETDATE() AS UpdatedAt
+FROM List l
+WHERE l.Id <= 60
+UNION ALL
+SELECT 
+    l.Id AS ListId,
+    '/share/list/' + CAST(l.Id AS NVARCHAR(10)) + '/AUTHORIZED' AS TargetUrl,
+    2 AS ScopeId, -- AUTHORIZED
+    2 AS PermissionId, -- Contributor
+    'ACTIVE' AS LinkStatus,
+    l.CreatedBy AS CreatedBy,
+    GETDATE() AS CreatedAt,
+    GETDATE() AS UpdatedAt
+FROM List l
+WHERE l.Id <= 60
+UNION ALL
+SELECT 
+    l.Id AS ListId,
+    '/share/list/' + CAST(l.Id AS NVARCHAR(10)) + '/SPECIFIC' AS TargetUrl,
+    3 AS ScopeId, -- SPECIFIC
+    3 AS PermissionId, -- Reader
+    'ACTIVE' AS LinkStatus,
+    l.CreatedBy AS CreatedBy,
+    GETDATE() AS CreatedAt,
+    GETDATE() AS UpdatedAt
+FROM List l
+WHERE l.Id <= 60;
+
+
+INSERT INTO ShareLinkUserAccess (ShareLinkId, AccountId, Email, CreatedAt, UpdatedAt)
+SELECT 
+    sl.Id AS ShareLinkId,
+    l.CreatedBy + 1 AS AccountId,
+    a.Email AS Email,
+    '2025-08-04 10:12:00',
+    '2025-08-04 10:12:00'
+FROM ShareLink sl
+JOIN List l ON sl.ListId = l.Id
+JOIN Account a ON a.Id = l.CreatedBy + 1
+WHERE sl.Id <= 180
+AND sl.Id NOT BETWEEN 61 AND 120
+AND sl.ListId <= 60
+AND (
+    (sl.PermissionId = 1) -- PUBLIC
+    OR (sl.PermissionId = 3) -- READER
+)
+UNION ALL
+SELECT 
+    sl.Id AS ShareLinkId,
+    l.CreatedBy + 2 AS AccountId,
+    a.Email AS Email,
+    '2025-08-04 10:12:00',
+    '2025-08-04 10:12:00'
+FROM ShareLink sl
+JOIN List l ON sl.ListId = l.Id
+JOIN Account a ON a.Id = l.CreatedBy + 2
+WHERE sl.Id <= 180
+AND sl.Id NOT BETWEEN 61 AND 120
+AND sl.ListId <= 60
+AND (
+    (sl.PermissionId = 1) -- PUBLIC
+    OR (sl.PermissionId = 3) -- READER
+)
+UNION ALL
+SELECT 
+    sl.Id AS ShareLinkId,
+    l.CreatedBy + 3 AS AccountId,
+    a.Email AS Email,
+    '2025-08-04 10:12:00',
+    '2025-08-04 10:12:00'
+FROM ShareLink sl
+JOIN List l ON sl.ListId = l.Id
+JOIN Account a ON a.Id = l.CreatedBy + 3
+WHERE sl.Id <= 180
+AND sl.Id NOT BETWEEN 61 AND 120 
+AND sl.ListId <= 60
+AND (
+    (sl.PermissionId = 1) -- PUBLIC
+    OR (sl.PermissionId = 3) -- READER
+);
+
+
+INSERT INTO ListMemberPermission (ListId, AccountId, HighestPermissionId, GrantedBy, Note, CreatedAt, UpdatedAt)
+SELECT 
+    sl.ListId,
+    slua.AccountId,
+    1 AS HighestPermissionId,
+    l.CreatedBy AS GrantedBy,
+    'Permission granted via public link access on ' + CAST(GETDATE() AS NVARCHAR(20)) AS Note,
+    '2025-08-04 10:17:00',
+    '2025-08-04 10:17:00'
+FROM ShareLinkUserAccess slua
+JOIN ShareLink sl ON slua.ShareLinkId = sl.Id
+JOIN List l ON sl.ListId = l.Id
+WHERE sl.ScopeId = 1
+AND sl.Id BETWEEN 1 AND 60;
+
+
+INSERT INTO ShareLinkSettingValue (ShareLinkId, KeySettingId, KeyValue)
+SELECT 
+    sl.Id AS ShareLinkId,
+    24 AS KeySettingId, -- Expiration date
+    '2026-08-20 00:00:00' AS KeyValue
+FROM ShareLink sl
+WHERE sl.Id % 2 = 1
+AND sl.Id BETWEEN 1 AND 180
+UNION ALL
+SELECT 
+    sl.Id AS ShareLinkId,
+    26 AS KeySettingId, -- Is login required
+    'TRUE' AS KeyValue
+FROM ShareLink sl
+WHERE sl.Id % 2 = 1
+AND sl.Id BETWEEN 1 AND 180
+UNION ALL
+SELECT 
+    sl.Id AS ShareLinkId,
+    25 AS KeySettingId, -- Password
+    'Pass' + CAST(sl.Id AS NVARCHAR(10)) AS KeyValue
+FROM ShareLink sl
+WHERE sl.Id % 2 = 0
+AND sl.Id BETWEEN 1 AND 180
+UNION ALL
+SELECT 
+    sl.Id AS ShareLinkId,
+    26 AS KeySettingId, -- Is login required
+    'FALSE' AS KeyValue
+FROM ShareLink sl
+WHERE sl.Id % 2 = 0
+AND sl.Id BETWEEN 1 AND 180;
+
+GO
