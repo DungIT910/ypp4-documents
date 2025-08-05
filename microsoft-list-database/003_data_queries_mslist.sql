@@ -5,7 +5,14 @@ USE MsList
     -- Get information of a user
     DECLARE @AccountId INT;
     SET @AccountId = 1;
-    SELECT acc.Id, acc.Avatar, acc.Email, acc.FirstName, acc.LastName, acc.Company, acc.AccountStatus
+    SELECT 
+        acc.Id,
+        acc.Avatar, 
+        acc.Email, 
+        acc.FirstName, 
+        acc.LastName, 
+        acc.Company, 
+        acc.AccountStatus
     FROM 
 	    Account AS acc
     WHERE acc.Id = @AccountId
@@ -13,7 +20,13 @@ USE MsList
     -- Get lists created by a user
     DECLARE @AccountId INT;
     SET @AccountId = 2;
-    SELECT l.Id, l.Color, l.Icon, l.ListName, l.ListStatus, l.UpdatedAt
+    SELECT 
+        l.Id,
+        l.Color,
+        l.Icon,
+        l.ListName,
+        l.ListStatus,
+        l.UpdatedAt
     FROM 
 	    List AS l
     INNER JOIN 
@@ -27,7 +40,11 @@ USE MsList
     DECLARE @AccountId INT;
     SET @AccountId = 3;
     SELECT 
-        l.Id, l.Color, l.Icon, l.ListName, l.ListStatus
+        l.Id,
+        l.Color,
+        l.Icon,
+        l.ListName,
+        l.ListStatus
     FROM 
         List AS l
     INNER JOIN 
@@ -40,7 +57,13 @@ USE MsList
 -- Create List
 
     -- Get all list types 
-    SELECT lt.Id, lt.Icon, lt.Title, lt.HeaderImage, lt.ListTypeDescription FROM ListType lt
+    SELECT
+        lt.Id,
+        lt.Icon,
+        lt.Title,
+        lt.HeaderImage,
+        lt.ListTypeDescription
+    FROM ListType lt
 
     -- Get all providers
     SELECT tp.Id, tp.ProviderName FROM TemplateProvider tp
@@ -100,7 +123,7 @@ USE MsList
         SystemDataType sdt ON tcol.SystemDataTypeId = sdt.Id
     INNER JOIN
         TemplateSampleRow trow ON tcol.ListTemplateId = trow.ListTemplateId
-    LEFT  JOIN 
+    LEFT JOIN 
         TemplateSampleCell tcell 
             ON tcol.Id = tcell.TemplateColumnId 
             AND trow.Id = tcell.TemplateSampleRowId
