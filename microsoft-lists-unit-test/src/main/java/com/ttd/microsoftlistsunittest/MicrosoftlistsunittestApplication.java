@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MicrosoftlistsunittestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MicrosoftlistsunittestApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MicrosoftlistsunittestApplication.class, args);
+    }
+
 
 }
