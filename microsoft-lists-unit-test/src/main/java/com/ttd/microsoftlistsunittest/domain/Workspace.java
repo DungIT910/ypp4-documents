@@ -1,16 +1,18 @@
 package com.ttd.microsoftlistsunittest.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 public class Workspace {
-    private int id;
+    @NonNull
+    private Integer id;
+    @NonNull
     private String workspaceName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
