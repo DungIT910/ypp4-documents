@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Account {
     @NonNull
     private Integer id;
@@ -23,6 +24,4 @@ public class Account {
     private String accountPassword;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }
-
