@@ -225,7 +225,8 @@ ORDER BY
     tpl.Viewed DESC, 
     tpl.Copied DESC;
 
--- 11. Get Boards belonging to Workspace where User is also a Member of the Board
+-- 11. Get "Your boards" section: 
+--     Get Boards belonging to Workspace where User is also a Member of the Board
 SELECT DISTINCT
     brd.Id AS BoardId,
     brd.BoardName,
@@ -242,3 +243,62 @@ WHERE
 -- -----------------------------------------------------------------------------
 -- SCREEN 5: MEMBER TAB OF WORKSPACE
 -- -----------------------------------------------------------------------------
+WITH WorkspaceMembers AS (
+    SELECT 
+        m.UserId, 
+        m.RolePermissonId
+    FROM 
+        Members m
+    INNER JOIN 
+        Categories ctg ON ctg.Id = m.CategoryId 
+                     AND ctg.Id = 1  -- WORKSPACE
+    WHERE 
+        m.OwnerId = 1
+),
+BoardsInWorkspace AS (
+    SELECT 
+        b.Id AS BoardId,
+        b.BoardName,
+        b.BackgroundUrl
+    FROM 
+        Boards b
+    WHERE 
+        b.WorkspaceId = 1
+),
+BoardMembersInWorkspace AS (
+    SELECT 
+        m.UserId,
+        m.OwnerId AS BoardId
+    FROM 
+        Members m
+    INNER JOIN 
+        Categories ctg ON ctg.Id = m.CategoryId 
+                     AND ctg.Id = 2  -- BOARD
+    INNER JOIN 
+        BoardsInWorkspace biw ON biw.BoardId = m.OwnerId
+)
+SELECT
+    u.Id AS UserId,
+    u.Username, 
+    u.Email AS UserEmail,
+    u.LastActive,
+    p.PermissionName AS Permission,
+    COUNT(DISTINCT biw.BoardId) AS NumBoardsJoined,
+    STRING_AGG(biw.BoardName, ', ') AS JoinedBoardNames,
+    STRING_AGG(biw.BackgroundUrl, ', ') AS JoinedBoardBackground
+FROM 
+    WorkspaceMembers wm
+LEFT JOIN 
+    BoardMembersInWorkspace bm ON bm.UserId = wm.UserId
+LEFT JOIN 
+    BoardsInWorkspace biw ON biw.BoardId = bm.BoardId
+INNER JOIN 
+    Users u ON u.Id = wm.UserId
+INNER JOIN 
+    RolePermissions p ON p.Id = wm.RolePermissonId
+GROUP BY 
+    u.Id, 
+    u.Username, 
+    u.Email, 
+    u.LastActive, 
+    p.PermissionName;
