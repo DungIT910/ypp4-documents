@@ -10,6 +10,8 @@ public interface AccountService {
 
     Optional<Account> findById(Integer id);
 
+    Optional<Account> findByEmail(String email);
+
     int save(Account account);
 
     int update(Account account);

@@ -31,5 +31,4 @@ public class AccountRowMapper extends BaseRowMapper<Account> {
 
         return account;
     }
-
 }
