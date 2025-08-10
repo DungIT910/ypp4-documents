@@ -17,17 +17,17 @@ public class AccountRowMapper extends BaseRowMapper<Account> {
     protected Account mapFromResultSet(ResultSet rs, int rowNum) throws SQLException {
         Account account = new Account();
 
-        account.setId(rs.getInt("id"));
-        account.setAvatar(rs.getString("avatar"));
-        account.setFirstName(rs.getString("firstName"));
-        account.setLastName(rs.getString("lastName"));
-        account.setDateBirth(rs.getObject("dateBirth", LocalDate.class));
-        account.setEmail(rs.getString("email"));
-        account.setCompany(rs.getString("company"));
-        account.setAccountStatus(rs.getString("accountStatus"));
-        account.setAccountPassword(rs.getString("accountPassword"));
-        account.setCreatedAt(rs.getObject("createdAt", LocalDateTime.class));
-        account.setUpdatedAt(rs.getObject("updatedAt", LocalDateTime.class));
+        account.setId(rs.getInt("Id"));
+        account.setAvatar(rs.getString("Avatar"));
+        account.setFirstName(rs.getString("FirstName"));
+        account.setLastName(rs.getString("LastName"));
+        account.setDateBirth(rs.getObject("DateBirth", LocalDate.class));
+        account.setEmail(rs.getString("Email"));
+        account.setCompany(rs.getString("Company"));
+        account.setAccountStatus(rs.getString("AccountStatus"));
+        account.setAccountPassword(rs.getString("AccountPassword"));
+        account.setCreatedAt(rs.getObject("CreatedAt", LocalDateTime.class));
+        account.setUpdatedAt(rs.getObject("UpdatedAt", LocalDateTime.class));
 
         return account;
     }
