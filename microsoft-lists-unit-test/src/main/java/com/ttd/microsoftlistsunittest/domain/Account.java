@@ -7,17 +7,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account {
-    @NonNull
     private Integer id;
     private String avatar;
     private String firstName;
     private String lastName;
     private LocalDate dateBirth;
-    @NonNull
     private String email;
     private String company;
     private String accountStatus;
