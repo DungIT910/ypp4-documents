@@ -42,9 +42,9 @@ public class FileAttachmentServiceImpl implements FileAttachmentService {
     public int save(FileAttachment attachment) {
         validate(attachment);
         String sql = """
-            INSERT INTO FileAttachment (ListRowId, FileAttachmentName, FileUrl, CreatedAt, UpdatedAt)
-            VALUES (?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO FileAttachment (ListRowId, FileAttachmentName, FileUrl, CreatedAt, UpdatedAt)
+                    VALUES (?, ?, ?, ?, ?)
+                """;
         try {
             return jdbcTemplate.update(sql,
                     attachment.getListRowId(),
@@ -65,10 +65,10 @@ public class FileAttachmentServiceImpl implements FileAttachmentService {
         }
         validate(attachment);
         String sql = """
-            UPDATE FileAttachment 
-            SET ListRowId = ?, FileAttachmentName = ?, FileUrl = ?, CreatedAt = ?, UpdatedAt = ?
-            WHERE Id = ?
-        """;
+                    UPDATE FileAttachment 
+                    SET ListRowId = ?, FileAttachmentName = ?, FileUrl = ?, CreatedAt = ?, UpdatedAt = ?
+                    WHERE Id = ?
+                """;
         try {
             return jdbcTemplate.update(sql,
                     attachment.getListRowId(),

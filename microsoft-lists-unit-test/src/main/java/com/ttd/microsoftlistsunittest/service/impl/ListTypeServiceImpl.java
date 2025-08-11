@@ -4,7 +4,6 @@ import com.ttd.microsoftlistsunittest.domain.ListType;
 import com.ttd.microsoftlistsunittest.service.ListTypeService;
 import com.ttd.microsoftlistsunittest.service.rowmapper.ListTypeRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,9 @@ public class ListTypeServiceImpl implements ListTypeService {
     @Override
     public int save(ListType listType) {
         String sql = """
-            INSERT INTO ListType (Title, Icon, ListTypeDescription, HeaderImage)
-            VALUES (?, ?, ?, ?)
-        """;
+                    INSERT INTO ListType (Title, Icon, ListTypeDescription, HeaderImage)
+                    VALUES (?, ?, ?, ?)
+                """;
         return jdbcTemplate.update(sql,
                 listType.getTitle(),
                 listType.getIcon(),
@@ -47,9 +46,9 @@ public class ListTypeServiceImpl implements ListTypeService {
     @Override
     public int update(ListType listType) {
         String sql = """
-            UPDATE ListType SET Title = ?, Icon = ?, ListTypeDescription = ?, HeaderImage = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ListType SET Title = ?, Icon = ?, ListTypeDescription = ?, HeaderImage = ?
+                    WHERE Id = ?
+                """;
         return jdbcTemplate.update(sql,
                 listType.getTitle(),
                 listType.getIcon(),

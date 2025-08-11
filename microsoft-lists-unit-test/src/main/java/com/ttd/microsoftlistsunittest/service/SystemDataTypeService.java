@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public interface SystemDataTypeService {
     List<SystemDataType> findAll();
+
     Optional<SystemDataType> findById(Integer id);
+
     int save(SystemDataType systemDataType);
+
     int update(SystemDataType systemDataType);
+
     int deleteById(Integer id);
 }

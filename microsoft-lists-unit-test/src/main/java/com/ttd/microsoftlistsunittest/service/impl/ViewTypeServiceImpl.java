@@ -4,7 +4,6 @@ import com.ttd.microsoftlistsunittest.domain.ViewType;
 import com.ttd.microsoftlistsunittest.service.ViewTypeService;
 import com.ttd.microsoftlistsunittest.service.rowmapper.ViewTypeRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,9 @@ public class ViewTypeServiceImpl implements ViewTypeService {
     @Override
     public int save(ViewType viewType) {
         String sql = """
-            INSERT INTO ViewType (Title, HeaderImage, Icon, ViewTypeDescription)
-            VALUES (?, ?, ?, ?)
-        """;
+                    INSERT INTO ViewType (Title, HeaderImage, Icon, ViewTypeDescription)
+                    VALUES (?, ?, ?, ?)
+                """;
         return jdbcTemplate.update(sql,
                 viewType.getTitle(),
                 viewType.getHeaderImage(),
@@ -47,9 +46,9 @@ public class ViewTypeServiceImpl implements ViewTypeService {
     @Override
     public int update(ViewType viewType) {
         String sql = """
-            UPDATE ViewType SET Title = ?, HeaderImage = ?, Icon = ?, ViewTypeDescription = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ViewType SET Title = ?, HeaderImage = ?, Icon = ?, ViewTypeDescription = ?
+                    WHERE Id = ?
+                """;
         return jdbcTemplate.update(sql,
                 viewType.getTitle(),
                 viewType.getHeaderImage(),

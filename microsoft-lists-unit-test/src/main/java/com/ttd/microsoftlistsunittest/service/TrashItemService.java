@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public interface TrashItemService {
     List<TrashItem> findAll();
+
     Optional<TrashItem> findById(Integer id);
+
     int save(TrashItem item);
+
     int update(TrashItem item);
+
     int deleteById(Integer id);
 }

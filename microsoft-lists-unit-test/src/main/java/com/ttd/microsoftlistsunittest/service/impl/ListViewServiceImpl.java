@@ -31,9 +31,9 @@ public class ListViewServiceImpl implements ListViewService {
     @Override
     public void create(ListView view) {
         String sql = """
-            INSERT INTO ListView (ListId, CreatedBy, ViewTypeId, ViewName, DisplayOrder, CreatedAt, UpdatedAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO ListView (ListId, CreatedBy, ViewTypeId, ViewName, DisplayOrder, CreatedAt, UpdatedAt)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
         jdbcTemplate.update(sql,
                 view.getListId(),
                 view.getCreatedBy(),
@@ -48,10 +48,10 @@ public class ListViewServiceImpl implements ListViewService {
     @Override
     public void update(ListView view) {
         String sql = """
-            UPDATE ListView
-            SET ViewTypeId = ?, ViewName = ?, DisplayOrder = ?, UpdatedAt = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ListView
+                    SET ViewTypeId = ?, ViewName = ?, DisplayOrder = ?, UpdatedAt = ?
+                    WHERE Id = ?
+                """;
         jdbcTemplate.update(sql,
                 view.getViewTypeId(),
                 view.getViewName(),

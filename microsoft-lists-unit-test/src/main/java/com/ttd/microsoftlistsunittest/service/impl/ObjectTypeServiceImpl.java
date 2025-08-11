@@ -4,7 +4,6 @@ import com.ttd.microsoftlistsunittest.domain.ObjectType;
 import com.ttd.microsoftlistsunittest.service.ObjectTypeService;
 import com.ttd.microsoftlistsunittest.service.rowmapper.ObjectTypeRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,9 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public int save(ObjectType objectType) {
         validate(objectType);
         String sql = """
-            INSERT INTO ObjectType (Code, DisplayName, Icon)
-            VALUES (?, ?, ?)
-        """;
+                    INSERT INTO ObjectType (Code, DisplayName, Icon)
+                    VALUES (?, ?, ?)
+                """;
         return jdbcTemplate.update(sql,
                 objectType.getCode(),
                 objectType.getDisplayName(),
@@ -50,10 +49,10 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         }
         validate(objectType);
         String sql = """
-            UPDATE ObjectType
-            SET Code = ?, DisplayName = ?, Icon = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ObjectType
+                    SET Code = ?, DisplayName = ?, Icon = ?
+                    WHERE Id = ?
+                """;
         return jdbcTemplate.update(sql,
                 objectType.getCode(),
                 objectType.getDisplayName(),

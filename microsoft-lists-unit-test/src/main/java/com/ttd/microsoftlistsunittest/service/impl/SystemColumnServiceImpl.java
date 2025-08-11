@@ -31,9 +31,9 @@ public class SystemColumnServiceImpl implements SystemColumnService {
     @Override
     public void create(SystemColumn column) {
         String sql = """
-                INSERT INTO SystemColumn (SystemDataTypeId, ColumnName, DisplayOrder, CreatedBy, CreatedAt, CanRename)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """;
+                    INSERT INTO SystemColumn (SystemDataTypeId, ColumnName, DisplayOrder, CreatedBy, CreatedAt, CanRename)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """;
         jdbcTemplate.update(sql,
                 column.getSystemDataTypeId(),
                 column.getColumnName(),
@@ -47,10 +47,10 @@ public class SystemColumnServiceImpl implements SystemColumnService {
     @Override
     public void update(SystemColumn column) {
         String sql = """
-                UPDATE SystemColumn
-                SET SystemDataTypeId = ?, ColumnName = ?, DisplayOrder = ?, CanRename = ?
-                WHERE Id = ?
-            """;
+                    UPDATE SystemColumn
+                    SET SystemDataTypeId = ?, ColumnName = ?, DisplayOrder = ?, CanRename = ?
+                    WHERE Id = ?
+                """;
         jdbcTemplate.update(sql,
                 column.getSystemDataTypeId(),
                 column.getColumnName(),

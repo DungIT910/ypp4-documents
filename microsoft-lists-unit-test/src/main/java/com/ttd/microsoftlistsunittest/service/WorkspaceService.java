@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public interface WorkspaceService {
     List<Workspace> findAll();
+
     Optional<Workspace> findById(Integer id);
+
     int save(Workspace workspace);
+
     int update(Workspace workspace);
+
     int deleteById(Integer id);
 }

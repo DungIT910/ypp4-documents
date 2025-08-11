@@ -62,10 +62,10 @@ public class ListTemplateServiceImpl implements ListTemplateService {
         validateTemplate(template);
 
         String sql = """
-                INSERT INTO ListTemplate 
-                (Title, HeaderImage, TemplateDescription, Icon, Color, Summary, Feature, ProviderId)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+                    INSERT INTO ListTemplate 
+                    (Title, HeaderImage, TemplateDescription, Icon, Color, Summary, Feature, ProviderId)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """;
 
         try {
             return jdbcTemplate.update(sql,
@@ -92,11 +92,11 @@ public class ListTemplateServiceImpl implements ListTemplateService {
         validateTemplate(template);
 
         String sql = """
-                UPDATE ListTemplate
-                SET Title = ?, HeaderImage = ?, TemplateDescription = ?, Icon = ?, 
-                    Color = ?, Summary = ?, Feature = ?, ProviderId = ?
-                WHERE Id = ?
-            """;
+                    UPDATE ListTemplate
+                    SET Title = ?, HeaderImage = ?, TemplateDescription = ?, Icon = ?, 
+                        Color = ?, Summary = ?, Feature = ?, ProviderId = ?
+                    WHERE Id = ?
+                """;
 
         try {
             int rowsAffected = jdbcTemplate.update(sql,

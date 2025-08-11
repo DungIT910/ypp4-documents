@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public interface ListRowCommentService {
     List<ListRowComment> findAll();
+
     Optional<ListRowComment> findById(Integer id);
+
     int save(ListRowComment comment);
+
     int update(ListRowComment comment);
+
     int deleteById(Integer id);
 }

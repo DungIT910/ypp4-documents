@@ -46,9 +46,9 @@ public class TemplateProviderServiceImpl implements TemplateProviderService {
         validateProvider(provider);
 
         String sql = """
-            INSERT INTO TemplateProvider (providerName)
-            VALUES (?)
-        """;
+                    INSERT INTO TemplateProvider (providerName)
+                    VALUES (?)
+                """;
 
         try {
             return jdbcTemplate.update(sql, provider.getProviderName());
@@ -63,8 +63,8 @@ public class TemplateProviderServiceImpl implements TemplateProviderService {
         validateProvider(provider);
 
         String sql = """
-            UPDATE TemplateProvider SET providerName = ? WHERE Id = ?
-        """;
+                    UPDATE TemplateProvider SET providerName = ? WHERE Id = ?
+                """;
 
         try {
             int rowsAffected = jdbcTemplate.update(sql,
