@@ -1,12 +1,13 @@
 package com.ttd.microsoftlistsunittest.service;
 
 import com.ttd.microsoftlistsunittest.domain.ListType;
+import com.ttd.microsoftlistsunittest.dto.ListTypeCardDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ListTypeService {
-    List<ListType> findAll();
+    List<ListTypeCardDto> findAll();
 
     Optional<ListType> findById(Integer id);
 

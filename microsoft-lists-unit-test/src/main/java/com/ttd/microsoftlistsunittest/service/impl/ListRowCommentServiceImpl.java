@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ListRowComment;
 import com.ttd.microsoftlistsunittest.service.ListRowCommentService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ListRowCommentRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ListRowCommentRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

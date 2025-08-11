@@ -1,8 +1,10 @@
 package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ListType;
+import com.ttd.microsoftlistsunittest.dto.ListTypeCardDto;
 import com.ttd.microsoftlistsunittest.service.ListTypeService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ListTypeRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ListTypeRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.dto.ListTypeCardDtoRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -15,18 +17,28 @@ import java.util.Optional;
 public class ListTypeServiceImpl implements ListTypeService {
 
     private final JdbcTemplate jdbcTemplate;
-    private final ListTypeRowMapper rowMapper;
+    private final ListTypeRowMapper listTypeRowMapper;
+    private final ListTypeCardDtoRowMapper listTypeCardDtoRowMapper;
 
+    // Get list types for list creation screen
     @Override
-    public List<ListType> findAll() {
-        String sql = "SELECT * FROM ListType";
-        return jdbcTemplate.query(sql, rowMapper);
+    public List<ListTypeCardDto> findAll() {
+        String sql = """
+                    SELECT
+                        lt.Id, 
+                        lt.Icon,
+                        lt.Title,
+                        lt.HeaderImage,
+                        lt.ListTypeDescription
+                    FROM ListType lt
+                """;
+        return jdbcTemplate.query(sql, listTypeCardDtoRowMapper);
     }
 
     @Override
     public Optional<ListType> findById(Integer id) {
         String sql = "SELECT * FROM ListType WHERE Id = ?";
-        List<ListType> results = jdbcTemplate.query(sql, rowMapper, id);
+        List<ListType> results = jdbcTemplate.query(sql, listTypeRowMapper, id);
         return results.stream().findFirst();
     }
 

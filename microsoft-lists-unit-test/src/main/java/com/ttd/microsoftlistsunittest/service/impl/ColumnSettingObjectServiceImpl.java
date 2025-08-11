@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ColumnSettingObject;
 import com.ttd.microsoftlistsunittest.service.ColumnSettingObjectService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ColumnSettingObjectRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ColumnSettingObjectRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

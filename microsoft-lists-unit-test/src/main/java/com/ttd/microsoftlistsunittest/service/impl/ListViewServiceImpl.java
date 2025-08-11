@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ListView;
 import com.ttd.microsoftlistsunittest.service.ListViewService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ListViewRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ListViewRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
