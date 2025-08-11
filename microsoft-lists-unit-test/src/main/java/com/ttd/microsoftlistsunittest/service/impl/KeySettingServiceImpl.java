@@ -42,9 +42,9 @@ public class KeySettingServiceImpl implements KeySettingService {
     public int save(KeySetting keySetting) {
         validate(keySetting);
         String sql = """
-            INSERT INTO KeySetting (Icon, KeyName, ValueType, IsDefaultValue, ValueOfDefault, IsShareLinkSetting)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO KeySetting (Icon, KeyName, ValueType, IsDefaultValue, ValueOfDefault, IsShareLinkSetting)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """;
         try {
             return jdbcTemplate.update(sql,
                     keySetting.getIcon(),
@@ -66,10 +66,10 @@ public class KeySettingServiceImpl implements KeySettingService {
         }
         validate(keySetting);
         String sql = """
-            UPDATE KeySetting 
-            SET Icon = ?, KeyName = ?, ValueType = ?, IsDefaultValue = ?, ValueOfDefault = ?, IsShareLinkSetting = ?
-            WHERE Id = ?
-        """;
+                    UPDATE KeySetting 
+                    SET Icon = ?, KeyName = ?, ValueType = ?, IsDefaultValue = ?, ValueOfDefault = ?, IsShareLinkSetting = ?
+                    WHERE Id = ?
+                """;
         try {
             return jdbcTemplate.update(sql,
                     keySetting.getIcon(),

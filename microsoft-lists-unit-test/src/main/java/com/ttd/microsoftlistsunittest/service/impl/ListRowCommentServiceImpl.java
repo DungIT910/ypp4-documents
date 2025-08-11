@@ -42,9 +42,9 @@ public class ListRowCommentServiceImpl implements ListRowCommentService {
     public int save(ListRowComment comment) {
         validate(comment);
         String sql = """
-            INSERT INTO ListRowComment (ListRowId, Content, CreatedBy, CreatedAt, UpdatedAt)
-            VALUES (?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO ListRowComment (ListRowId, Content, CreatedBy, CreatedAt, UpdatedAt)
+                    VALUES (?, ?, ?, ?, ?)
+                """;
         try {
             return jdbcTemplate.update(sql,
                     comment.getListRowId(),
@@ -65,10 +65,10 @@ public class ListRowCommentServiceImpl implements ListRowCommentService {
         }
         validate(comment);
         String sql = """
-            UPDATE ListRowComment
-            SET ListRowId = ?, Content = ?, CreatedBy = ?, UpdatedAt = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ListRowComment
+                    SET ListRowId = ?, Content = ?, CreatedBy = ?, UpdatedAt = ?
+                    WHERE Id = ?
+                """;
         try {
             return jdbcTemplate.update(sql,
                     comment.getListRowId(),

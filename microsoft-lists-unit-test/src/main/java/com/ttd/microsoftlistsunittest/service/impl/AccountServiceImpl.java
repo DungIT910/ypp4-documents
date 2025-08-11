@@ -15,12 +15,11 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    private final JdbcTemplate jdbcTemplate;
-    private final AccountRowMapper accountRowMapper;
-
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$"
     );
+    private final JdbcTemplate jdbcTemplate;
+    private final AccountRowMapper accountRowMapper;
 
     @Override
     public List<Account> findAll() {

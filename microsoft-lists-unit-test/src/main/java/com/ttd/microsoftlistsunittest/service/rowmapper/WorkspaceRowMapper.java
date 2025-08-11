@@ -2,7 +2,6 @@ package com.ttd.microsoftlistsunittest.service.rowmapper;
 
 import com.ttd.microsoftlistsunittest.domain.Workspace;
 import com.ttd.microsoftlistsunittest.service.rowmapper.base.BaseRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;

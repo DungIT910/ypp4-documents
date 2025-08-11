@@ -39,9 +39,9 @@ public class TemplateColumnServiceImpl implements TemplateColumnService {
     public int save(TemplateColumn column) {
         validate(column);
         String sql = """
-            INSERT INTO TemplateColumn (SystemDataTypeId, ListTemplateId, ColumnName, ColumnDescription, DisplayOrder, IsVisible)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO TemplateColumn (SystemDataTypeId, ListTemplateId, ColumnName, ColumnDescription, DisplayOrder, IsVisible)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """;
         return jdbcTemplate.update(sql,
                 column.getSystemDataTypeId(),
                 column.getListTemplateId(),
@@ -59,10 +59,10 @@ public class TemplateColumnServiceImpl implements TemplateColumnService {
         }
         validate(column);
         String sql = """
-            UPDATE TemplateColumn
-            SET SystemDataTypeId = ?, ListTemplateId = ?, ColumnName = ?, ColumnDescription = ?, DisplayOrder = ?, IsVisible = ?
-            WHERE Id = ?
-        """;
+                    UPDATE TemplateColumn
+                    SET SystemDataTypeId = ?, ListTemplateId = ?, ColumnName = ?, ColumnDescription = ?, DisplayOrder = ?, IsVisible = ?
+                    WHERE Id = ?
+                """;
         return jdbcTemplate.update(sql,
                 column.getSystemDataTypeId(),
                 column.getListTemplateId(),

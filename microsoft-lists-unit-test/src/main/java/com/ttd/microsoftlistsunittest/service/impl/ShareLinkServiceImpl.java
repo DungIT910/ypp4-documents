@@ -41,9 +41,9 @@ public class ShareLinkServiceImpl implements ShareLinkService {
     @Override
     public int save(ShareLink link) {
         String sql = """
-            INSERT INTO ShareLink (ListId, TargetUrl, ScopeId, PermissionId, LinkStatus, CreatedBy)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO ShareLink (ListId, TargetUrl, ScopeId, PermissionId, LinkStatus, CreatedBy)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """;
         try {
             return jdbcTemplate.update(sql,
                     link.getListId(),
@@ -64,10 +64,10 @@ public class ShareLinkServiceImpl implements ShareLinkService {
             throw new IllegalArgumentException("ID must not be null or negative");
         }
         String sql = """
-            UPDATE ShareLink 
-            SET ListId = ?, TargetUrl = ?, ScopeId = ?, PermissionId = ?, LinkStatus = ?, CreatedBy = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ShareLink 
+                    SET ListId = ?, TargetUrl = ?, ScopeId = ?, PermissionId = ?, LinkStatus = ?, CreatedBy = ?
+                    WHERE Id = ?
+                """;
         try {
             return jdbcTemplate.update(sql,
                     link.getListId(),

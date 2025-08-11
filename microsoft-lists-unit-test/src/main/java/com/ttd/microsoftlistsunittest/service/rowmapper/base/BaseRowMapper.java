@@ -11,5 +11,5 @@ public abstract class BaseRowMapper<T> implements RowMapper<T> {
         return mapFromResultSet(rs, rowNum);
     }
 
-    protected abstract T mapFromResultSet (ResultSet rs, int rowNum) throws SQLException;
+    protected abstract T mapFromResultSet(ResultSet rs, int rowNum) throws SQLException;
 }

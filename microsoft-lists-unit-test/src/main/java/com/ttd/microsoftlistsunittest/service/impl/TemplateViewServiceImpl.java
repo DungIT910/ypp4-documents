@@ -39,9 +39,9 @@ public class TemplateViewServiceImpl implements TemplateViewService {
     public int save(TemplateView view) {
         validate(view);
         String sql = """
-            INSERT INTO TemplateView (ListTemplateId, ViewTypeId, ViewName, DisplayOrder)
-            VALUES (?, ?, ?, ?)
-        """;
+                    INSERT INTO TemplateView (ListTemplateId, ViewTypeId, ViewName, DisplayOrder)
+                    VALUES (?, ?, ?, ?)
+                """;
         return jdbcTemplate.update(sql,
                 view.getListTemplateId(),
                 view.getViewTypeId(),
@@ -57,10 +57,10 @@ public class TemplateViewServiceImpl implements TemplateViewService {
         }
         validate(view);
         String sql = """
-            UPDATE TemplateView 
-            SET ListTemplateId = ?, ViewTypeId = ?, ViewName = ?, DisplayOrder = ?
-            WHERE Id = ?
-        """;
+                    UPDATE TemplateView 
+                    SET ListTemplateId = ?, ViewTypeId = ?, ViewName = ?, DisplayOrder = ?
+                    WHERE Id = ?
+                """;
         return jdbcTemplate.update(sql,
                 view.getListTemplateId(),
                 view.getViewTypeId(),

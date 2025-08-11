@@ -42,10 +42,10 @@ public class ColumnSettingObjectServiceImpl implements ColumnSettingObjectServic
     public int save(ColumnSettingObject obj) {
         validate(obj);
         String sql = """
-            INSERT INTO ColumnSettingObject (
-                ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreatedAt, UpdatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO ColumnSettingObject (
+                        ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreatedAt, UpdatedAt
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
         try {
             return jdbcTemplate.update(sql,
                     obj.getColumnId(),
@@ -68,10 +68,10 @@ public class ColumnSettingObjectServiceImpl implements ColumnSettingObjectServic
         }
         validate(obj);
         String sql = """
-            UPDATE ColumnSettingObject
-            SET ColumnId = ?, DisplayName = ?, DisplayColor = ?, DisplayOrder = ?, Context = ?, UpdatedAt = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ColumnSettingObject
+                    SET ColumnId = ?, DisplayName = ?, DisplayColor = ?, DisplayOrder = ?, Context = ?, UpdatedAt = ?
+                    WHERE Id = ?
+                """;
         try {
             return jdbcTemplate.update(sql,
                     obj.getColumnId(),

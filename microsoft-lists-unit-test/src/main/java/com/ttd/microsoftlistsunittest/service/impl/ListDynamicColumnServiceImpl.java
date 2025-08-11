@@ -31,11 +31,11 @@ public class ListDynamicColumnServiceImpl implements ListDynamicColumnService {
     @Override
     public void create(ListDynamicColumn column) {
         String sql = """
-            INSERT INTO ListDynamicColumn (
-                ListId, SystemDataTypeId, SystemColumnId, ColumnName, ColumnDescription,
-                DisplayOrder, IsSystemColumn, IsVisible, CreatedBy, CreatedAt, UpdatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """;
+                    INSERT INTO ListDynamicColumn (
+                        ListId, SystemDataTypeId, SystemColumnId, ColumnName, ColumnDescription,
+                        DisplayOrder, IsSystemColumn, IsVisible, CreatedBy, CreatedAt, UpdatedAt
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
         jdbcTemplate.update(sql,
                 column.getListId(),
                 column.getSystemDataTypeId(),
@@ -54,11 +54,11 @@ public class ListDynamicColumnServiceImpl implements ListDynamicColumnService {
     @Override
     public void update(ListDynamicColumn column) {
         String sql = """
-            UPDATE ListDynamicColumn SET
-                SystemDataTypeId = ?, SystemColumnId = ?, ColumnName = ?, ColumnDescription = ?,
-                DisplayOrder = ?, IsSystemColumn = ?, IsVisible = ?, UpdatedAt = ?
-            WHERE Id = ?
-        """;
+                    UPDATE ListDynamicColumn SET
+                        SystemDataTypeId = ?, SystemColumnId = ?, ColumnName = ?, ColumnDescription = ?,
+                        DisplayOrder = ?, IsSystemColumn = ?, IsVisible = ?, UpdatedAt = ?
+                    WHERE Id = ?
+                """;
         jdbcTemplate.update(sql,
                 column.getSystemDataTypeId(),
                 column.getSystemColumnId(),

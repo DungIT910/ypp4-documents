@@ -45,9 +45,9 @@ public class SystemDataTypeServiceImpl implements SystemDataTypeService {
     public int save(SystemDataType dataType) {
         validate(dataType);
         String sql = """
-                INSERT INTO SystemDataType (Icon, DataTypeDescription, CoverImg, DisplayName, DataTypeValue)
-                VALUES (?, ?, ?, ?, ?)
-            """;
+                    INSERT INTO SystemDataType (Icon, DataTypeDescription, CoverImg, DisplayName, DataTypeValue)
+                    VALUES (?, ?, ?, ?, ?)
+                """;
         try {
             return jdbcTemplate.update(sql,
                     dataType.getIcon(),
@@ -67,10 +67,10 @@ public class SystemDataTypeServiceImpl implements SystemDataTypeService {
         }
         validate(dataType);
         String sql = """
-                UPDATE SystemDataType 
-                SET Icon = ?, DataTypeDescription = ?, CoverImg = ?, DisplayName = ?, DataTypeValue = ?
-                WHERE Id = ?
-            """;
+                    UPDATE SystemDataType 
+                    SET Icon = ?, DataTypeDescription = ?, CoverImg = ?, DisplayName = ?, DataTypeValue = ?
+                    WHERE Id = ?
+                """;
         try {
             return jdbcTemplate.update(sql,
                     dataType.getIcon(),

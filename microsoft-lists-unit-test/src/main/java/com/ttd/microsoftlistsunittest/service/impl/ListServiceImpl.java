@@ -4,7 +4,6 @@ import com.ttd.microsoftlistsunittest.domain.ListEntity;
 import com.ttd.microsoftlistsunittest.service.ListService;
 import com.ttd.microsoftlistsunittest.service.rowmapper.ListRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +32,9 @@ public class ListServiceImpl implements ListService {
     @Override
     public int save(ListEntity list) {
         String sql = """
-            INSERT INTO List (ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
-            VALUES (?, ?, ?, ?, ?, GETDATE(), GETDATE(), ?)
-        """;
+                    INSERT INTO List (ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
+                    VALUES (?, ?, ?, ?, ?, GETDATE(), GETDATE(), ?)
+                """;
         return jdbcTemplate.update(sql,
                 list.getListName(),
                 list.getIcon(),
@@ -49,15 +48,15 @@ public class ListServiceImpl implements ListService {
     @Override
     public int update(ListEntity list) {
         String sql = """
-            UPDATE List SET
-                ListName = ?,
-                Icon = ?,
-                Color = ?,
-                WorkspaceId = ?,
-                UpdatedAt = GETDATE(),
-                ListStatus = ?
-            WHERE Id = ?
-        """;
+                    UPDATE List SET
+                        ListName = ?,
+                        Icon = ?,
+                        Color = ?,
+                        WorkspaceId = ?,
+                        UpdatedAt = GETDATE(),
+                        ListStatus = ?
+                    WHERE Id = ?
+                """;
         return jdbcTemplate.update(sql,
                 list.getListName(),
                 list.getIcon(),

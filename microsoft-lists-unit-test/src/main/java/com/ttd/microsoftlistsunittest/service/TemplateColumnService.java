@@ -7,9 +7,14 @@ import java.util.Optional;
 
 public interface TemplateColumnService {
     List<TemplateColumn> findAll();
+
     Optional<TemplateColumn> findById(Integer id);
+
     List<TemplateColumn> findByListTemplateId(Integer listTemplateId);
+
     int save(TemplateColumn column);
+
     int update(TemplateColumn column);
+
     int deleteById(Integer id);
 }
