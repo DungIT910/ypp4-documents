@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.Scope;
 import com.ttd.microsoftlistsunittest.service.ScopeService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ScopeRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ScopeRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

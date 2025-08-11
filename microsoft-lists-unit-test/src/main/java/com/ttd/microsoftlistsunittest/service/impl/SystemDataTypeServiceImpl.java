@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.SystemDataType;
 import com.ttd.microsoftlistsunittest.service.SystemDataTypeService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.SystemDataTypeRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.SystemDataTypeRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

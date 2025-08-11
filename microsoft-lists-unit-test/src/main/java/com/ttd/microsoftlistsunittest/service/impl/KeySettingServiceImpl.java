@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.KeySetting;
 import com.ttd.microsoftlistsunittest.service.KeySettingService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.KeySettingRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.KeySettingRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

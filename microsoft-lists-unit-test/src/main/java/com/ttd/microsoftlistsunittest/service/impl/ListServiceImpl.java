@@ -1,8 +1,10 @@
 package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ListEntity;
+import com.ttd.microsoftlistsunittest.dto.ListSummaryDto;
 import com.ttd.microsoftlistsunittest.service.ListService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ListRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ListRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.dto.ListSummaryDtoRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class ListServiceImpl implements ListService {
     private final JdbcTemplate jdbcTemplate;
     private final ListRowMapper listRowMapper;
+    private final ListSummaryDtoRowMapper listSummaryDtoRowMapper;
 
     @Override
     public List<ListEntity> findAll() {
@@ -27,6 +30,70 @@ public class ListServiceImpl implements ListService {
         String sql = "SELECT * FROM List WHERE Id = ?";
         List<ListEntity> results = jdbcTemplate.query(sql, listRowMapper, id);
         return results.stream().findFirst();
+    }
+
+    // Used in Dashboard screen to show all active lists owned or shared with the user
+    @Override
+    public List<ListSummaryDto> findAllByAccountId(Integer accountId) {
+        String sql = """
+                SELECT
+                     l.Id,
+                     l.Color,
+                     l.Icon,
+                     l.ListName
+                 FROM
+                     List AS l
+                 INNER JOIN
+                     ListMemberPermission AS lmp ON l.Id = lmp.ListId
+                 WHERE
+                     lmp.AccountId = ?
+                     AND l.ListStatus = 'active'
+                 ORDER BY
+                     l.UpdatedAt DESC 
+                """;
+        return jdbcTemplate.query(sql, listSummaryDtoRowMapper, accountId);
+    }
+
+    // Get all favorite lists of a user for dashboard display
+    @Override
+    public List<ListSummaryDto> findAllFavoriteListsByAccountId(Integer accountId) {
+        String sql = """
+                SELECT
+                l.Id,
+                        l.Color,
+                        l.Icon,
+                        l.ListName
+                FROM
+                    List AS l
+                INNER JOIN
+                    FavoriteList AS fl ON l.Id = fl.ListId
+                WHERE
+                    fl.AccountId = ?
+                ORDER BY
+                    l.UpdatedAt DESC;
+                """;
+        return jdbcTemplate.query(sql, listSummaryDtoRowMapper, accountId);
+    }
+
+    // Get all recent lists of a user for dashboard display
+    @Override
+    public List<ListSummaryDto> findAllRecentListsByAccountId(Integer accountId) {
+        String sql = """
+                SELECT
+                l.Id,
+                        l.Color,
+                        l.Icon,
+                        l.ListName
+                FROM
+                    List AS l
+                INNER JOIN
+                    RecentList AS rl ON l.Id = rl.ListId
+                WHERE
+                    rl.AccountId = ?
+                ORDER BY
+                    rl.AccessedAt DESC;
+                """;
+        return jdbcTemplate.query(sql, listSummaryDtoRowMapper, accountId);
     }
 
     @Override

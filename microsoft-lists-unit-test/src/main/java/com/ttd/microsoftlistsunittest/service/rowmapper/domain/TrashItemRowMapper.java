@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.service.rowmapper;
+package com.ttd.microsoftlistsunittest.service.rowmapper.domain;
 
 import com.ttd.microsoftlistsunittest.domain.TrashItem;
 import org.springframework.jdbc.core.RowMapper;

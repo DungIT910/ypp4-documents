@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ViewSettingKey;
 import com.ttd.microsoftlistsunittest.service.ViewSettingKeyService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ViewSettingKeyRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ViewSettingKeyRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;

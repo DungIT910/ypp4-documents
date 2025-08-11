@@ -11,30 +11,27 @@ USE MsList
         acc.Email, 
         acc.FirstName, 
         acc.LastName, 
-        acc.Company, 
-        acc.AccountStatus
+        acc.Company
     FROM 
 	    Account AS acc
-    WHERE acc.Id = @AccountId
+    WHERE acc.Id = @AccountId AND acc.AccountStatus = 'active'
 
-    -- Get lists created by a user
+    -- Get my lists section of a user
     DECLARE @AccountId INT;
     SET @AccountId = 2;
     SELECT 
         l.Id,
         l.Color,
         l.Icon,
-        l.ListName,
-        l.ListStatus,
-        l.UpdatedAt
+        l.ListName
     FROM 
 	    List AS l
     INNER JOIN 
-	    Account AS acc ON l.CreatedBy = acc.Id
+	    ListMemberPermission AS lmp ON l.Id = lmp.ListId
     WHERE 
-        acc.Id = @AccountId
+        lmp.AccountId = @AccountId AND l.ListStatus = 'active'
     ORDER BY 
-	    l.UpdatedAt ASC
+	    l.UpdatedAt DESC
 
     -- Get favorite lists of a user
     DECLARE @AccountId INT;
@@ -43,8 +40,7 @@ USE MsList
         l.Id,
         l.Color,
         l.Icon,
-        l.ListName,
-        l.ListStatus
+        l.ListName
     FROM 
         List AS l
     INNER JOIN 
@@ -52,7 +48,24 @@ USE MsList
     WHERE 
         fl.AccountId = @AccountId
     ORDER BY 
-        l.UpdatedAt ASC;
+        l.UpdatedAt DESC;
+
+    -- Get recent lists of a user
+    DECLARE @AccountId INT;
+    SET @AccountId = 3;
+    SELECT 
+        l.Id,
+        l.Color,
+        l.Icon,
+        l.ListName
+    FROM 
+        List AS l
+    INNER JOIN 
+        RecentList AS rl ON l.Id = rl.ListId
+    WHERE 
+        rl.AccountId = @AccountId
+    ORDER BY 
+        l.AccessedAt DESC;
 
 -- Create List
 

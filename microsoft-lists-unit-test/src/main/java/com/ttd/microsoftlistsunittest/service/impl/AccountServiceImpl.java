@@ -1,8 +1,10 @@
 package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.Account;
+import com.ttd.microsoftlistsunittest.dto.AccountProfileDto;
+import com.ttd.microsoftlistsunittest.dto.AccountProfileDtoRowMapper;
 import com.ttd.microsoftlistsunittest.service.AccountService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.AccountRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.AccountRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,6 +22,7 @@ public class AccountServiceImpl implements AccountService {
     );
     private final JdbcTemplate jdbcTemplate;
     private final AccountRowMapper accountRowMapper;
+    private final AccountProfileDtoRowMapper profileDtoRowMapper;
 
     @Override
     public List<Account> findAll() {
@@ -58,6 +61,35 @@ public class AccountServiceImpl implements AccountService {
             return results.stream().findFirst();
         } catch (DataAccessException e) {
             throw new RuntimeException("Error finding account by email: " + email, e);
+        }
+    }
+
+    // Get account profile in Dashboard Screene
+    @Override
+    public Optional<AccountProfileDto> findAccountProfileById(Integer id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID cannot be null or negative");
+        }
+
+        String sql = """
+                    SELECT
+                        acc.Id,
+                        acc.Avatar,
+                        acc.Email,
+                        acc.FirstName,
+                        acc.LastName,
+                        acc.Company
+                    FROM
+                        Account AS acc
+                    WHERE 
+                        acc.Id = @AccountId 
+                        AND acc.AccountStatus = 'active'
+                """;
+        try {
+            List<AccountProfileDto> results = jdbcTemplate.query(sql, profileDtoRowMapper, id);
+            return results.stream().findFirst();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Error finding account by ID: " + id, e);
         }
     }
 

@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.ShareLink;
 import com.ttd.microsoftlistsunittest.service.ShareLinkService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.ShareLinkRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.ShareLinkRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

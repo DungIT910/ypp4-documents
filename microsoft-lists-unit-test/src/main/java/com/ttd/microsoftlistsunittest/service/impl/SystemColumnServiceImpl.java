@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.SystemColumn;
 import com.ttd.microsoftlistsunittest.service.SystemColumnService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.SystemColumnRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.SystemColumnRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.FileAttachment;
 import com.ttd.microsoftlistsunittest.service.FileAttachmentService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.FileAttachmentRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.FileAttachmentRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

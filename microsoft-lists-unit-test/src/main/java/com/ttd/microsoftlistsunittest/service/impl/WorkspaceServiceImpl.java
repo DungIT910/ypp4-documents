@@ -2,7 +2,7 @@ package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.domain.Workspace;
 import com.ttd.microsoftlistsunittest.service.WorkspaceService;
-import com.ttd.microsoftlistsunittest.service.rowmapper.WorkspaceRowMapper;
+import com.ttd.microsoftlistsunittest.service.rowmapper.domain.WorkspaceRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
