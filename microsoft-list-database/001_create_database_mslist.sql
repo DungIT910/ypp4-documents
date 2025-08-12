@@ -24,7 +24,7 @@ IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'FavoriteList') DROP TABLE Favo
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'DynamicColumnSettingValue') DROP TABLE DynamicColumnSettingValue;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListCellValue') DROP TABLE ListCellValue;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListRow') DROP TABLE ListRow;
-IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListColumnSettingObject') DROP TABLE ListColumnSettingObject;
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListColumnChoice') DROP TABLE ListColumnChoice;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListViewSettingValue') DROP TABLE ListViewSettingValue;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListDynamicColumn') DROP TABLE ListDynamicColumn;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SystemColumnSettingValue') DROP TABLE SystemColumnSettingValue;
@@ -41,7 +41,6 @@ IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ListTemplate') DROP TABLE List
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'DataTypeSettingKey') DROP TABLE DataTypeSettingKey;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ViewTypeSettingKey') DROP TABLE ViewTypeSettingKey;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'KeySetting') DROP TABLE KeySetting;
-IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ViewSettingKey') DROP TABLE ViewSettingKey;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Permission') DROP TABLE Permission;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SystemDataType') DROP TABLE SystemDataType;
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'ViewType') DROP TABLE ViewType;
@@ -108,18 +107,6 @@ CREATE TABLE ListType (
     HeaderImage NVARCHAR(255)
 );
 
-CREATE TABLE ViewSettingKey (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    SettingKey NVARCHAR(100) NOT NULL, -- Examples: 'StartDate', 'EndDate', 'IsPublic'
-    ValueType NVARCHAR(50) NOT NULL -- Examples: 'number', 'boolean', 'datetime', 'string'
-);
-
-CREATE TABLE ViewTypeSettingKey (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    ViewTypeId INT FOREIGN KEY REFERENCES ViewType(Id),
-    ViewSettingKeyId INT FOREIGN KEY REFERENCES ViewSettingKey(Id)
-);
-
 CREATE TABLE SystemDataType (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Icon NVARCHAR(100),
@@ -137,6 +124,12 @@ CREATE TABLE KeySetting (
     IsDefaultValue BIT DEFAULT 0,
     ValueOfDefault NVARCHAR(255),
     IsShareLinkSetting BIT DEFAULT 0
+);
+
+CREATE TABLE ViewTypeSettingKey (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ViewTypeId INT FOREIGN KEY REFERENCES ViewType(Id),
+    KeySettingId INT FOREIGN KEY REFERENCES KeySetting(Id)
 );
 
 CREATE TABLE DataTypeSettingKey (
@@ -226,7 +219,7 @@ CREATE TABLE SystemColumn (
     ColumnName NVARCHAR(100) NOT NULL,
     DisplayOrder INT,
     CreatedBy INT REFERENCES Account(Id),
-    CreatedAt DATETIME DEFAULT GETDATE(),
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     CanRename BIT DEFAULT 0 -- only SystemColumn name "Title" has value = 1
 );
 
@@ -264,7 +257,7 @@ CREATE TABLE ListDynamicColumn (
     UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
-CREATE TABLE ColumnSettingObject (
+CREATE TABLE ColumnChoice (
     Id INT PRIMARY KEY IDENTITY,
     ColumnId INT,
     DisplayName NVARCHAR(255),
@@ -289,7 +282,6 @@ CREATE TABLE ListRow (
     Id INT IDENTITY(1,1) PRIMARY KEY, 
     ListId INT NOT NULL REFERENCES List(Id),
     DisplayOrder INT NOT NULL DEFAULT 0,
-    ModifiedAt DATETIME,
     CreatedBy INT NOT NULL REFERENCES Account(Id),
     ListRowStatus NVARCHAR(50),
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
