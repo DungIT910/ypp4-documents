@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.domain;
+package com.ttd.microsoftlistsunittest.dto.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,21 +6,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Account {
-    private Integer id;
+public class AccountCreateDto {
     private String avatar;
     private String firstName;
     private String lastName;
     private LocalDate dateBirth;
     private String email;
     private String company;
-    private String accountStatus;
     private String accountPassword;
-    private LocalDateTime createdAt;
 }

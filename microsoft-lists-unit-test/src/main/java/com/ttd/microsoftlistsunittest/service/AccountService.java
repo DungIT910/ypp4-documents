@@ -1,23 +1,13 @@
 package com.ttd.microsoftlistsunittest.service;
 
-import com.ttd.microsoftlistsunittest.domain.Account;
-import com.ttd.microsoftlistsunittest.dto.AccountProfileDto;
-
-import java.util.List;
-import java.util.Optional;
+import com.ttd.microsoftlistsunittest.dto.account.AccountCreateDto;
+import com.ttd.microsoftlistsunittest.dto.account.AccountUpdateDto;
+import com.ttd.microsoftlistsunittest.dto.account.AccounDisplayDto;
 
 public interface AccountService {
-    List<Account> findAll();
+    AccounDisplayDto findAccountById(Integer id);
 
-    Optional<Account> findById(Integer id);
+    int createAccount(AccountCreateDto accountCreateDto);
 
-    Optional<Account> findByEmail(String email);
-
-    Optional<AccountProfileDto> findAccountProfileById(Integer id);
-
-    int save(Account account);
-
-    int update(Account account);
-
-    int deleteById(Integer id);
+    int updateAccount(Integer accountId, AccountUpdateDto accountUpdateDto);
 }
