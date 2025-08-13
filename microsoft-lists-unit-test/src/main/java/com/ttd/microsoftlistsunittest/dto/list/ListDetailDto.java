@@ -5,15 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListDisplayDto {
-    private Integer id;
+public class ListDetailDto {
+    private Integer listId;
     private String listName;
     private String icon;
     private String color;
-    private Integer workspaceId;
-    private Integer createdBy;
+    private String workspaceName;
+    private Boolean isFavorite;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

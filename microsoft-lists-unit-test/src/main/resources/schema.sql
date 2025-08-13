@@ -1,14 +1,60 @@
+-- Drop tables if they exist
+DROP TABLE IF EXISTS FavoriteList;
+DROP TABLE IF EXISTS List;
+DROP TABLE IF EXISTS Workspace;
+DROP TABLE IF EXISTS Account;
+
+-- Account table
 CREATE TABLE Account
 (
-    Id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    Id              INT AUTO_INCREMENT PRIMARY KEY,
     Avatar          VARCHAR(255),
     FirstName       VARCHAR(255),
     LastName        VARCHAR(255),
     DateBirth       DATE,
-    Email           VARCHAR(255) NOT NULL UNIQUE,
+    Email           VARCHAR(255)                        NOT NULL UNIQUE,
     Company         VARCHAR(255),
-    AccountStatus   VARCHAR(255),
+    AccountStatus   VARCHAR(50),
     AccountPassword VARCHAR(255),
-    CreatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UpdatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    CreatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UpdatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+-- Workspace table
+CREATE TABLE Workspace
+(
+    Id            INT AUTO_INCREMENT PRIMARY KEY,
+    WorkspaceName VARCHAR(255),
+    CreatedBy     INT                                 NOT NULL,
+    isPresonal    BOOLEAN   DEFAULT FALSE             NOT NULL,
+    CreatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UpdatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+-- List table
+CREATE TABLE List
+(
+    Id          INT AUTO_INCREMENT PRIMARY KEY,
+    ListName    VARCHAR(100)                        NOT NULL,
+    Icon        VARCHAR(100),
+    Color       VARCHAR(50),
+    WorkspaceId INT                                 NOT NULL,
+    CreatedBy   INT                                 NOT NULL,
+    CreatedAt   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UpdatedAt   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    ListStatus  VARCHAR(50),
+    FOREIGN KEY (WorkspaceId) REFERENCES Workspace (Id),
+    FOREIGN KEY (CreatedBy) REFERENCES Account (Id)
+);
+
+-- FavoriteList table
+CREATE TABLE FavoriteList
+(
+    Id        INT AUTO_INCREMENT PRIMARY KEY,
+    ListId    INT,
+    AccountId INT,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (ListId) REFERENCES List (Id),
+    FOREIGN KEY (AccountId) REFERENCES Account (Id)
 );
