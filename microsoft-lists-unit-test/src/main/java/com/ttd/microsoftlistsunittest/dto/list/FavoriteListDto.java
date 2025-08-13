@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListUpdateDto {
+public class FavoriteListDto {
+    private Integer listId;
     private String listName;
     private String icon;
     private String color;
-    private Integer workspaceId;
+    private Integer workspaceName;
 }

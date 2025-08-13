@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.rowmapper.domain;
+package com.ttd.microsoftlistsunittest.rowmapper;
 
 import com.ttd.microsoftlistsunittest.domain.Workspace;
 import com.ttd.microsoftlistsunittest.rowmapper.base.BaseRowMapper;

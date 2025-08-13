@@ -1,23 +1,19 @@
 package com.ttd.microsoftlistsunittest.repository;
 
-import com.ttd.microsoftlistsunittest.domain.ListEntity;
-import com.ttd.microsoftlistsunittest.dto.list.ListDisplayDto;
+import com.ttd.microsoftlistsunittest.dto.list.FavoriteListDto;
+import com.ttd.microsoftlistsunittest.dto.list.ListDetailDto;
+import com.ttd.microsoftlistsunittest.dto.list.MyListDto;
+import com.ttd.microsoftlistsunittest.dto.list.RecentListDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ListRepository {
-    Optional<ListDisplayDto> findById(Integer id);
+    Optional<ListDetailDto> findListDetailByListIdAndAccountId(Integer id, Integer accountId);
 
-    List<ListDisplayDto> findAllByAccountId(Integer accountId);
+    List<MyListDto> findAllByAccountId(Integer accountId);
 
-    List<ListDisplayDto> findAllFavoriteListsByAccountId(Integer accountId);
+    List<FavoriteListDto> findAllFavoriteListsByAccountId(Integer accountId);
 
-    List<ListDisplayDto> findAllRecentListsByAccountId(Integer accountId);
-
-    int save(ListEntity list);
-
-    int update(ListEntity list);
-
-    int deleteById(Integer id);
+    List<RecentListDto> findAllRecentListsByAccountId(Integer accountId);
 }

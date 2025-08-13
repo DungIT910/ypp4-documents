@@ -1,25 +1,19 @@
 package com.ttd.microsoftlistsunittest.service;
 
-import com.ttd.microsoftlistsunittest.domain.ListEntity;
-import com.ttd.microsoftlistsunittest.dto.list.ListCreateDto;
-import com.ttd.microsoftlistsunittest.dto.list.ListDisplayDto;
+import com.ttd.microsoftlistsunittest.dto.list.FavoriteListDto;
+import com.ttd.microsoftlistsunittest.dto.list.ListDetailDto;
+import com.ttd.microsoftlistsunittest.dto.list.MyListDto;
+import com.ttd.microsoftlistsunittest.dto.list.RecentListDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ListService {
 
-    ListDisplayDto findListById(Integer id);
+    ListDetailDto findListDetailByListIdAndAccountId(Integer listId, Integer accountId);
 
-    List<ListDisplayDto> getAllListsByAccountId(Integer accountId);
+    List<MyListDto> getAllListsByAccountId(Integer accountId);
 
-    List<ListDisplayDto> getFavoriteListsByAccountId(Integer accountId);
+    List<FavoriteListDto> getFavoriteListsByAccountId(Integer accountId);
 
-    List<ListDisplayDto> getRecentListsByAccountId(Integer accountId);
-
-    int createList(ListCreateDto listCreateDto);
-
-    int updateList(ListUpdateDto listUpdateDto);
-
-    int deleteListById(Integer id);
+    List<RecentListDto> getRecentListsByAccountId(Integer accountId);
 }

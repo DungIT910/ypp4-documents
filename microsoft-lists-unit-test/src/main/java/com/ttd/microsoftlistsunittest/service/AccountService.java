@@ -1,13 +1,7 @@
 package com.ttd.microsoftlistsunittest.service;
 
-import com.ttd.microsoftlistsunittest.dto.account.AccountCreateDto;
-import com.ttd.microsoftlistsunittest.dto.account.AccountUpdateDto;
-import com.ttd.microsoftlistsunittest.dto.account.AccounDisplayDto;
+import com.ttd.microsoftlistsunittest.dto.account.AccountProfileDto;
 
 public interface AccountService {
-    AccounDisplayDto findAccountById(Integer id);
-
-    int createAccount(AccountCreateDto accountCreateDto);
-
-    int updateAccount(Integer accountId, AccountUpdateDto accountUpdateDto);
+    AccountProfileDto findAccountById(Integer accountId);
 }

@@ -1,10 +1,16 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.domain.ListEntity;
-import com.ttd.microsoftlistsunittest.dto.list.ListDisplayDto;
+import com.ttd.microsoftlistsunittest.dto.list.FavoriteListDto;
+import com.ttd.microsoftlistsunittest.dto.list.ListDetailDto;
+import com.ttd.microsoftlistsunittest.dto.list.MyListDto;
+import com.ttd.microsoftlistsunittest.dto.list.RecentListDto;
 import com.ttd.microsoftlistsunittest.repository.ListRepository;
-import com.ttd.microsoftlistsunittest.rowmapper.domain.ListDisplayDtoRowMapper;
+import com.ttd.microsoftlistsunittest.rowmapper.list.FavoriteListDtoRowMapper;
+import com.ttd.microsoftlistsunittest.rowmapper.list.ListDetailDtoRowMapper;
+import com.ttd.microsoftlistsunittest.rowmapper.list.MyListDtoRowMapper;
+import com.ttd.microsoftlistsunittest.rowmapper.list.RecentListDtoRowMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +21,40 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ListRepositoryImpl implements ListRepository {
     private final JdbcTemplate jdbcTemplate;
-    private final ListDisplayDtoRowMapper listDisplayDtoRowMapper;
-    private final com.ttd.microsoftlistsunittest.rowmapper.dto.ListDisplayDtoRowMapper listDisplayDtoRowMapper;
+    private final RecentListDtoRowMapper recentListDtoRowMapper;
+    private final MyListDtoRowMapper myListDtoRowMapper;
+    private final FavoriteListDtoRowMapper favoriteListDtoRowMapper;
+    private final ListDetailDtoRowMapper listDetailDtoRowMapper;
 
     @Override
-    public Optional<ListDisplayDto> findById(Integer id) {
-        String sql = "SELECT l.Id, l.Color, l.Icon, l.ListName FROM List l WHERE Id = ?";
-        List<ListDisplayDto> results = jdbcTemplate.query(sql, listDisplayDtoRowMapper, id);
-        return results.stream().findFirst();
+    public Optional<ListDetailDto> findListDetailByListIdAndAccountId(Integer listId, Integer accountId) {
+        String sql = """
+                SELECT
+                    l.Id AS listId,
+                    l.ListName AS listName,
+                    l.Icon AS icon,
+                    l.Color AS color,
+                    w.WorkspaceName AS workspaceName,
+                    CASE
+                        WHEN fl.Id IS NOT NULL THEN TRUE
+                        ELSE FALSE
+                    END AS isFavorite
+                FROM
+                    List l
+                INNER JOIN
+                    Workspace w ON l.WorkspaceId = w.Id
+                LEFT JOIN
+                    FavoriteList fl ON l.Id = fl.ListId AND fl.AccountId = ?
+                WHERE
+                        l.Id = ?
+                LIMIT 1
+                """;
+        ListDetailDto result = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ListDetailDto.class), accountId, listId);
+        return Optional.ofNullable(result);
     }
 
     @Override
-    public List<ListDisplayDto> findAllByAccountId(Integer accountId) {
+    public List<MyListDto> findAllByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                      l.Id,
@@ -43,11 +71,11 @@ public class ListRepositoryImpl implements ListRepository {
                  ORDER BY
                      l.UpdatedAt DESC 
                 """;
-        return jdbcTemplate.query(sql, listDisplayDtoRowMapper, accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(MyListDto.class), accountId);
     }
 
     @Override
-    public List<ListDisplayDto> findAllFavoriteListsByAccountId(Integer accountId) {
+    public List<FavoriteListDto> findAllFavoriteListsByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                 l.Id,
@@ -63,11 +91,11 @@ public class ListRepositoryImpl implements ListRepository {
                 ORDER BY
                     l.UpdatedAt DESC;
                 """;
-        return jdbcTemplate.query(sql, listDisplayDtoRowMapper, accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(FavoriteListDto.class), accountId);
     }
 
     @Override
-    public List<ListDisplayDto> findAllRecentListsByAccountId(Integer accountId) {
+    public List<RecentListDto> findAllRecentListsByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                 l.Id,
@@ -83,50 +111,6 @@ public class ListRepositoryImpl implements ListRepository {
                 ORDER BY
                     rl.AccessedAt DESC;
                 """;
-        return jdbcTemplate.query(sql, listDisplayDtoRowMapper, accountId);
-    }
-
-    @Override
-    public int save(ListEntity list) {
-        String sql = """
-                    INSERT INTO List (ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
-                    VALUES (?, ?, ?, ?, ?, GETDATE(), GETDATE(), ?)
-                """;
-        return jdbcTemplate.update(sql,
-                list.getListName(),
-                list.getIcon(),
-                list.getColor(),
-                list.getWorkspaceId(),
-                list.getCreatedBy(),
-                list.getListStatus()
-        );
-    }
-
-    @Override
-    public int update(ListEntity list) {
-        String sql = """
-                    UPDATE List SET
-                        ListName = ?,
-                        Icon = ?,
-                        Color = ?,
-                        WorkspaceId = ?,
-                        UpdatedAt = GETDATE(),
-                        ListStatus = ?
-                    WHERE Id = ?
-                """;
-        return jdbcTemplate.update(sql,
-                list.getListName(),
-                list.getIcon(),
-                list.getColor(),
-                list.getWorkspaceId(),
-                list.getListStatus(),
-                list.getId()
-        );
-    }
-
-    @Override
-    public int deleteById(Integer id) {
-        String sql = "DELETE FROM List WHERE Id = ?";
-        return jdbcTemplate.update(sql, id);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(RecentListDto.class), accountId);
     }
 }
