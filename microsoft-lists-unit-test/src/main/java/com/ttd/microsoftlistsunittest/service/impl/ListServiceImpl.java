@@ -16,8 +16,9 @@ public class ListServiceImpl implements ListService {
     private final ListRepository listRepository;
 
     @Override
-    public ListSummaryDto findListDetailByListIdAndAccountId(Integer listId, Integer accountId) {
-        return listRepository.findListDetailByListIdAndAccountId(listId, accountId)
+    public ListSummaryDto findListSummaryByListIdAndAccountId(Integer listId, Integer accountId) {
+        return listRepository.findListSummaryByListIdAndAccountId(listId, accountId)
+                .map(ListSummaryDto::from)
                 .orElseThrow(() -> new MsListRuntimeException("List not found with id: " + listId));
     }
 

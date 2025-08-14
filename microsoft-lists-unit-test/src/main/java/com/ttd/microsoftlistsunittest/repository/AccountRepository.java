@@ -1,9 +1,9 @@
 package com.ttd.microsoftlistsunittest.repository;
 
-import com.ttd.microsoftlistsunittest.dto.account.AccountProfileDto;
+import com.ttd.microsoftlistsunittest.projection.account.AccountProfileProjection;
 
 import java.util.Optional;
 
 public interface AccountRepository {
-    Optional<AccountProfileDto> findAccountById(Integer id);
+    Optional<AccountProfileProjection> findAccountById(Integer id);
 }

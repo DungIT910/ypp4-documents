@@ -1,7 +1,7 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
+import com.ttd.microsoftlistsunittest.projection.list.ListSummaryProjection;
+import com.ttd.microsoftlistsunittest.projection.list.RecentListSummaryProjection;
 import com.ttd.microsoftlistsunittest.repository.ListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -17,7 +17,7 @@ public class ListRepositoryImpl implements ListRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Optional<ListSummaryDto> findListDetailByListIdAndAccountId(Integer listId, Integer accountId) {
+    public Optional<ListSummaryProjection> findListSummaryByListIdAndAccountId(Integer listId, Integer accountId) {
         String sql = """
                 SELECT
                     l.Id AS listId,
@@ -39,12 +39,12 @@ public class ListRepositoryImpl implements ListRepository {
                         l.Id = ?
                 LIMIT 1
                 """;
-        ListSummaryDto result = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ListSummaryDto.class), accountId, listId);
+        ListSummaryProjection result = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ListSummaryProjection.class), accountId, listId);
         return Optional.ofNullable(result);
     }
 
     @Override
-    public List<ListSummaryDto> findAllByAccountId(Integer accountId) {
+    public List<ListSummaryProjection> findAllByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                      l.Id,
@@ -61,11 +61,11 @@ public class ListRepositoryImpl implements ListRepository {
                  ORDER BY
                      l.UpdatedAt DESC 
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryDto.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryProjection.class), accountId);
     }
 
     @Override
-    public List<ListSummaryDto> findAllFavoriteListsByAccountId(Integer accountId) {
+    public List<ListSummaryProjection> findAllFavoriteListsByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                 l.Id,
@@ -81,11 +81,11 @@ public class ListRepositoryImpl implements ListRepository {
                 ORDER BY
                     l.UpdatedAt DESC;
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryDto.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryProjection.class), accountId);
     }
 
     @Override
-    public List<RecentListSummaryDto> findAllRecentListsByAccountId(Integer accountId) {
+    public List<RecentListSummaryProjection> findAllRecentListsByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                 l.Id,
@@ -101,6 +101,6 @@ public class ListRepositoryImpl implements ListRepository {
                 ORDER BY
                     rl.AccessedAt DESC;
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(RecentListSummaryDto.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(RecentListSummaryProjection.class), accountId);
     }
 }
