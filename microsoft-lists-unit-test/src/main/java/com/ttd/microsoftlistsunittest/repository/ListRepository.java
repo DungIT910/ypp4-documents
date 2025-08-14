@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ListRepository {
     Optional<ListSummaryProjection> findListSummaryByListIdAndAccountId(Integer id, Integer accountId);
 
-    List<ListSummaryProjection> findAllByAccountId(Integer accountId);
+    List<ListSummaryProjection> findAllPersonalListsByAccountId(Integer accountId);
 
     List<ListSummaryProjection> findAllFavoriteListsByAccountId(Integer accountId);
 
