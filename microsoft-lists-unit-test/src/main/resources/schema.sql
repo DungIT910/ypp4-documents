@@ -1,4 +1,4 @@
--- Drop tables if they exist
+-- Drop tables in reverse order of foreign key dependency
 DROP TABLE IF EXISTS FavoriteList;
 DROP TABLE IF EXISTS List;
 DROP TABLE IF EXISTS Workspace;
@@ -26,7 +26,7 @@ CREATE TABLE Workspace
     Id            INT AUTO_INCREMENT PRIMARY KEY,
     WorkspaceName VARCHAR(255),
     CreatedBy     INT                                 NOT NULL,
-    isPresonal    BOOLEAN   DEFAULT FALSE             NOT NULL,
+    isPersonal    BOOLEAN   DEFAULT FALSE             NOT NULL,
     CreatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UpdatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

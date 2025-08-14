@@ -1,14 +1,8 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.dto.list.FavoriteListDto;
-import com.ttd.microsoftlistsunittest.dto.list.ListDetailDto;
-import com.ttd.microsoftlistsunittest.dto.list.MyListDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListDto;
+import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
+import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
 import com.ttd.microsoftlistsunittest.repository.ListRepository;
-import com.ttd.microsoftlistsunittest.rowmapper.list.FavoriteListDtoRowMapper;
-import com.ttd.microsoftlistsunittest.rowmapper.list.ListDetailDtoRowMapper;
-import com.ttd.microsoftlistsunittest.rowmapper.list.MyListDtoRowMapper;
-import com.ttd.microsoftlistsunittest.rowmapper.list.RecentListDtoRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,13 +15,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ListRepositoryImpl implements ListRepository {
     private final JdbcTemplate jdbcTemplate;
-    private final RecentListDtoRowMapper recentListDtoRowMapper;
-    private final MyListDtoRowMapper myListDtoRowMapper;
-    private final FavoriteListDtoRowMapper favoriteListDtoRowMapper;
-    private final ListDetailDtoRowMapper listDetailDtoRowMapper;
 
     @Override
-    public Optional<ListDetailDto> findListDetailByListIdAndAccountId(Integer listId, Integer accountId) {
+    public Optional<ListSummaryDto> findListDetailByListIdAndAccountId(Integer listId, Integer accountId) {
         String sql = """
                 SELECT
                     l.Id AS listId,
@@ -49,12 +39,12 @@ public class ListRepositoryImpl implements ListRepository {
                         l.Id = ?
                 LIMIT 1
                 """;
-        ListDetailDto result = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ListDetailDto.class), accountId, listId);
+        ListSummaryDto result = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ListSummaryDto.class), accountId, listId);
         return Optional.ofNullable(result);
     }
 
     @Override
-    public List<MyListDto> findAllByAccountId(Integer accountId) {
+    public List<ListSummaryDto> findAllByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                      l.Id,
@@ -71,11 +61,11 @@ public class ListRepositoryImpl implements ListRepository {
                  ORDER BY
                      l.UpdatedAt DESC 
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(MyListDto.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryDto.class), accountId);
     }
 
     @Override
-    public List<FavoriteListDto> findAllFavoriteListsByAccountId(Integer accountId) {
+    public List<ListSummaryDto> findAllFavoriteListsByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                 l.Id,
@@ -91,11 +81,11 @@ public class ListRepositoryImpl implements ListRepository {
                 ORDER BY
                     l.UpdatedAt DESC;
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(FavoriteListDto.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryDto.class), accountId);
     }
 
     @Override
-    public List<RecentListDto> findAllRecentListsByAccountId(Integer accountId) {
+    public List<RecentListSummaryDto> findAllRecentListsByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                 l.Id,
@@ -111,6 +101,6 @@ public class ListRepositoryImpl implements ListRepository {
                 ORDER BY
                     rl.AccessedAt DESC;
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(RecentListDto.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(RecentListSummaryDto.class), accountId);
     }
 }

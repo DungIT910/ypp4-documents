@@ -1,41 +1,59 @@
 package com.ttd.microsoftlistsunittest.api;
 
 import com.ttd.microsoftlistsunittest.dto.account.AccountProfileDto;
+import com.ttd.microsoftlistsunittest.repository.AccountRepository;
 import com.ttd.microsoftlistsunittest.service.AccountService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@WebMvcTest(AccountResource.class)
+@SpringBootTest
+@AutoConfigureTestDatabase
+@Sql(scripts = "/schema.sql")
 class AccountResourceTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private AccountRepository accountRepository;
 
-    @MockBean
+    @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private AccountResource accountResource;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setUp() {
+        jdbcTemplate.execute("DELETE FROM Account");
+        jdbcTemplate.execute("INSERT INTO Account (Id, Avatar, FirstName, LastName, DateBirth, Email, Company, AccountStatus, AccountPassword) " +
+                "VALUES (1, 'avatar.png', 'John', 'Doe', '1990-01-01', 'john.doe@example.com', 'ExampleCorp', 'active', 'password')");
+    }
+
     @Test
-    void testGetAccountById() throws Exception {
-        AccountProfileDto mockDto = new AccountProfileDto();
-        mockDto.setAccountId(1);
-        mockDto.setFirstName("John");
-        mockDto.setLastName("Doe");
+    void testGetAccountById_Integration() {
+        Integer accountId = 1;
 
-        Mockito.when(accountService.findAccountById(1)).thenReturn(mockDto);
+        // Direct repository call
+        var repoResult = accountRepository.findAccountById(accountId);
+        assertTrue(repoResult.isPresent());
+        assertEquals("John", repoResult.get().getFirstName());
 
-        mockMvc.perform(get("/api/v1/accounts/1")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"));
+        // Service call
+        AccountProfileDto serviceResult = accountService.findAccountById(accountId);
+        assertNotNull(serviceResult);
+        assertEquals("John", serviceResult.getFirstName());
+
+        // API call
+        AccountProfileDto apiResult = accountResource.getAccountById(accountId);
+        assertNotNull(apiResult);
+        assertEquals("John", apiResult.getFirstName());
     }
 }

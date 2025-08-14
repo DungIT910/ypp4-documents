@@ -9,11 +9,6 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class ListSummaryDto {
-    private Integer listId;
-    private String listName;
-    private String icon;
-    private String color;
-    private String workspaceName;
-    private Boolean isFavorite;
+public class RecentListSummaryDto extends ListSummaryDto {
+    private String accessedAt;
 }
