@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS List;
 DROP TABLE IF EXISTS WorkspaceMember;
 DROP TABLE IF EXISTS Workspace;
 DROP TABLE IF EXISTS Account;
+DROP TABLE IF EXISTS ListType;
 
 -- Account table
 CREATE TABLE Account
@@ -28,7 +29,7 @@ CREATE TABLE Workspace
     Id            INT AUTO_INCREMENT PRIMARY KEY,
     WorkspaceName VARCHAR(255),
     CreatedBy     INT                     NOT NULL,
-    IsPersonal    BOOLEAN DEFAULT FALSE   NOT NULL,
+    IsPersonal    BOOLEAN   DEFAULT FALSE NOT NULL,
     CreatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UpdatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (CreatedBy) REFERENCES Account (Id)
@@ -84,4 +85,13 @@ CREATE TABLE RecentList
     AccessedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (ListId) REFERENCES List (Id),
     FOREIGN KEY (AccountId) REFERENCES Account (Id)
+);
+
+CREATE TABLE ListType
+(
+    Id                  INT AUTO_INCREMENT PRIMARY KEY,
+    Title               VARCHAR(255) NOT NULL, -- 'List', 'Form', 'Gallery', 'Calendar', 'Board'
+    Icon                VARCHAR(255),
+    ListTypeDescription VARCHAR(500),
+    HeaderImage         VARCHAR(255)
 );
