@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS WorkspaceMember;
 DROP TABLE IF EXISTS Workspace;
 DROP TABLE IF EXISTS Account;
 DROP TABLE IF EXISTS ListType;
+DROP TABLE IF EXISTS ListTemplate;
+DROP TABLE IF EXISTS TemplateProvider;
 
 -- Account table
 CREATE TABLE Account
@@ -94,4 +96,24 @@ CREATE TABLE ListType
     Icon                VARCHAR(255),
     ListTypeDescription VARCHAR(500),
     HeaderImage         VARCHAR(255)
+);
+
+CREATE TABLE TemplateProvider
+(
+    Id           INT AUTO_INCREMENT PRIMARY KEY,
+    ProviderName VARCHAR(255)
+);
+
+CREATE TABLE ListTemplate
+(
+    Id                  INT AUTO_INCREMENT PRIMARY KEY,
+    Title               VARCHAR(255),
+    HeaderImage         VARCHAR(500),
+    TemplateDescription VARCHAR(500),
+    Icon                VARCHAR(100),
+    Color               VARCHAR(50),
+    Summary              VARCHAR(500),
+    Feature             VARCHAR(500),
+    ProviderId          INT NOT NULL,
+    FOREIGN KEY (ProviderId) REFERENCES TemplateProvider (Id)
 );
