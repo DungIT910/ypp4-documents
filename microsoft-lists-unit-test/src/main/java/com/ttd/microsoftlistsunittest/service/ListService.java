@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ListService {
 
-    ListSummaryDto findListDetailByListIdAndAccountId(Integer listId, Integer accountId);
+    ListSummaryDto findListSummaryByListIdAndAccountId(Integer listId, Integer accountId);
 
     List<ListSummaryDto> getAllListsByAccountId(Integer accountId);
 

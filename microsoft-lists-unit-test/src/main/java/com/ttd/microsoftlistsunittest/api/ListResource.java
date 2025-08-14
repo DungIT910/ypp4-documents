@@ -14,6 +14,6 @@ public class ListResource {
     @GetMapping("/{listId}")
     public ListSummaryDto getListDetailsById(@PathVariable Integer listId,
                                              @RequestParam(value = "accountId", required = true) Integer accountId) {
-        return listService.findListDetailByListIdAndAccountId(listId, accountId);
+        return listService.findListSummaryByListIdAndAccountId(listId, accountId);
     }
 }

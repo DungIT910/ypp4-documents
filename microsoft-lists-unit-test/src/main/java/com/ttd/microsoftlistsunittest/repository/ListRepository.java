@@ -1,17 +1,17 @@
 package com.ttd.microsoftlistsunittest.repository;
 
-import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
+import com.ttd.microsoftlistsunittest.projection.list.ListSummaryProjection;
+import com.ttd.microsoftlistsunittest.projection.list.RecentListSummaryProjection;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ListRepository {
-    Optional<ListSummaryDto> findListDetailByListIdAndAccountId(Integer id, Integer accountId);
+    Optional<ListSummaryProjection> findListSummaryByListIdAndAccountId(Integer id, Integer accountId);
 
-    List<ListSummaryDto> findAllByAccountId(Integer accountId);
+    List<ListSummaryProjection> findAllByAccountId(Integer accountId);
 
-    List<ListSummaryDto> findAllFavoriteListsByAccountId(Integer accountId);
+    List<ListSummaryProjection> findAllFavoriteListsByAccountId(Integer accountId);
 
-    List<RecentListSummaryDto> findAllRecentListsByAccountId(Integer accountId);
+    List<RecentListSummaryProjection> findAllRecentListsByAccountId(Integer accountId);
 }

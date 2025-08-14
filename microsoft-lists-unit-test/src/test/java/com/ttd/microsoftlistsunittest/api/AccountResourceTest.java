@@ -38,20 +38,17 @@ class AccountResourceTest {
     }
 
     @Test
-    void testGetAccountById_Integration() {
+    void testGetAccountById_ReturnsExpectedData() {
         Integer accountId = 1;
 
-        // Direct repository call
         var repoResult = accountRepository.findAccountById(accountId);
         assertTrue(repoResult.isPresent());
         assertEquals("John", repoResult.get().getFirstName());
 
-        // Service call
         AccountProfileDto serviceResult = accountService.findAccountById(accountId);
         assertNotNull(serviceResult);
         assertEquals("John", serviceResult.getFirstName());
 
-        // API call
         AccountProfileDto apiResult = accountResource.getAccountById(accountId);
         assertNotNull(apiResult);
         assertEquals("John", apiResult.getFirstName());

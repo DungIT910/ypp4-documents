@@ -1,14 +1,13 @@
 package com.ttd.microsoftlistsunittest.dto.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ttd.microsoftlistsunittest.projection.account.AccountProfileProjection;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class AccountProfileDto {
     private Integer accountId;
     private String avatar;
@@ -16,4 +15,15 @@ public class AccountProfileDto {
     private String firstName;
     private String lastName;
     private String company;
+
+    public static AccountProfileDto from(AccountProfileProjection projection) {
+        return AccountProfileDto.builder()
+                .accountId(projection.getAccountId())
+                .avatar(projection.getAvatar())
+                .email(projection.getEmail())
+                .firstName(projection.getFirstName())
+                .lastName(projection.getLastName())
+                .company(projection.getCompany())
+                .build();
+    }
 }
