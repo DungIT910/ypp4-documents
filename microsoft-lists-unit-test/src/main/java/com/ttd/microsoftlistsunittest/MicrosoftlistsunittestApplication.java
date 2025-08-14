@@ -22,19 +22,19 @@ public class MicrosoftlistsunittestApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        logger.info("Starting database check...");
-        try {
-            var account = accountService.findAccountById(1);
-            if (account == null) {
-                logger.warn("No account with id = 1 found in the database!");
-            } else {
-                logger.info("Found 1 accounts");
-                logger.info("Account: {} {}", account.getFirstName(), account.getLastName());
-            }
-        } catch (Exception e) {
-            logger.error("Error accessing database: {}", e.getMessage());
-            throw e;
-        }
-        logger.info("Database check completed.");
+//        logger.info("Starting database check...");
+//        try {
+//            var account = accountService.findAccountById(1);
+//            if (account == null) {
+//                logger.warn("No account with id = 1 found in the database!");
+//            } else {
+//                logger.info("Found 1 accounts");
+//                logger.info("Account: {} {}", account.getFirstName(), account.getLastName());
+//            }
+//        } catch (Exception e) {
+//            logger.error("Error accessing database: {}", e.getMessage());
+//            throw e;
+//        }
+//        logger.info("Database check completed.");
     }
 }
