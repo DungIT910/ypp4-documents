@@ -17,13 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @Sql(scripts = "/schema.sql")
 class AccountResourceTest {
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private AccountService accountService;
-
     @Autowired
     private AccountResource accountResource;
 
@@ -40,14 +33,6 @@ class AccountResourceTest {
     @Test
     void testGetAccountById_ReturnsExpectedData() {
         Integer accountId = 1;
-
-        var repoResult = accountRepository.findAccountById(accountId);
-        assertTrue(repoResult.isPresent());
-        assertEquals("John", repoResult.get().getFirstName());
-
-        AccountProfileDto serviceResult = accountService.findAccountById(accountId);
-        assertNotNull(serviceResult);
-        assertEquals("John", serviceResult.getFirstName());
 
         AccountProfileDto apiResult = accountResource.getAccountById(accountId);
         assertNotNull(apiResult);

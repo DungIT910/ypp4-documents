@@ -6,12 +6,12 @@ import com.ttd.microsoftlistsunittest.repository.ListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class ListRepositoryImpl implements ListRepository {
     private final JdbcTemplate jdbcTemplate;

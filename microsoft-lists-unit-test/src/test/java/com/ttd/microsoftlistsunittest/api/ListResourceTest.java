@@ -102,5 +102,4 @@ class ListResourceTest {
         assertEquals("List 1", list.getListName());
         assertEquals("Workspace A", list.getWorkspaceName());
     }
-
 }
