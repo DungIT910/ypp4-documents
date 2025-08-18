@@ -1,6 +1,6 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.projection.workspace.WorkspaceProjection;
+import com.ttd.microsoftlistsunittest.dto.workspace.WorkspaceDto;
 import com.ttd.microsoftlistsunittest.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -15,7 +15,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<WorkspaceProjection> findAllWorkspacesByAccountId(Integer accountId) {
+    public List<WorkspaceDto> findAllWorkspacesByAccountId(Integer accountId) {
         String sql = """
                 SELECT
                     wsp.Id AS id,
@@ -29,6 +29,6 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
                 ORDER BY
                     wm.JoinedAt DESC
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(WorkspaceProjection.class), accountId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(WorkspaceDto.class), accountId);
     }
 }

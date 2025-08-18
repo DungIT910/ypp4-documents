@@ -1,6 +1,6 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.projection.listtype.ListTypeProjection;
+import com.ttd.microsoftlistsunittest.dto.listtype.ListTypeDto;
 import com.ttd.microsoftlistsunittest.repository.ListTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -15,7 +15,7 @@ public class ListTypeRepositoryImpl implements ListTypeRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<ListTypeProjection> findAllListTypes() {
+    public List<ListTypeDto> findAllListTypes() {
         String sql = """
                 SELECT
                     lt.Id AS listTypeId,
@@ -26,6 +26,6 @@ public class ListTypeRepositoryImpl implements ListTypeRepository {
                 FROM
                     ListType lt
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListTypeProjection.class));
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListTypeDto.class));
     }
 }

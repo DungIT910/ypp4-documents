@@ -18,28 +18,21 @@ public class ListServiceImpl implements ListService {
     @Override
     public ListSummaryDto getListSummaryByListIdAndAccountId(Integer listId, Integer accountId) {
         return listRepository.findListSummaryByListIdAndAccountId(listId, accountId)
-                .map(ListSummaryDto::from)
                 .orElseThrow(() -> new MsListRuntimeException("List not found with id: " + listId));
     }
 
     @Override
     public List<ListSummaryDto> getPersonalListsByAccountId(Integer accountId) {
-        return listRepository.findAllPersonalListsByAccountId(accountId).stream()
-                .map(ListSummaryDto::from)
-                .toList();
+        return listRepository.findAllPersonalListsByAccountId(accountId).stream().toList();
     }
 
     @Override
     public List<ListSummaryDto> getFavoriteListsByAccountId(Integer accountId) {
-        return listRepository.findAllFavoriteListsByAccountId(accountId).stream()
-                .map(ListSummaryDto::from)
-                .toList();
+        return listRepository.findAllFavoriteListsByAccountId(accountId).stream().toList();
     }
 
     @Override
     public List<RecentListSummaryDto> getRecentListsByAccountId(Integer accountId) {
-        return listRepository.findAllRecentListsByAccountId(accountId).stream()
-                .map(RecentListSummaryDto::from)
-                .toList();
+        return listRepository.findAllRecentListsByAccountId(accountId).stream().toList();
     }
 }

@@ -1,9 +1,9 @@
 package com.ttd.microsoftlistsunittest.repository;
 
-import com.ttd.microsoftlistsunittest.projection.listtype.ListTypeProjection;
+import com.ttd.microsoftlistsunittest.dto.listtype.ListTypeDto;
 
 import java.util.List;
 
 public interface ListTypeRepository {
-    List<ListTypeProjection> findAllListTypes();
+    List<ListTypeDto> findAllListTypes();
 }

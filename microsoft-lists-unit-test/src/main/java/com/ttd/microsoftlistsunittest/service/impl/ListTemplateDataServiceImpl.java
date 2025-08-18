@@ -16,7 +16,6 @@ public class ListTemplateDataServiceImpl implements ListTemplateDataService {
     @Override
     public List<ListTemplateSampleDataDto> getListTemplateSampleData(Integer listTemplateId) {
         return listTemplateDataRepository.getListTemplateSampleData(listTemplateId).stream()
-                .map(ListTemplateSampleDataDto::from)
                 .toList();
     }
 }
