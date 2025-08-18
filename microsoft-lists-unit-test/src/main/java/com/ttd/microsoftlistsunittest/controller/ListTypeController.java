@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.api;
+package com.ttd.microsoftlistsunittest.controller;
 
 import com.ttd.microsoftlistsunittest.dto.listtype.ListTypeDto;
 import com.ttd.microsoftlistsunittest.service.ListTypeService;
@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/list-types")
 @RequiredArgsConstructor
-public class ListTypeResource {
+public class ListTypeController {
     private final ListTypeService listTypeService;
 
     @GetMapping

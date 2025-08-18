@@ -18,7 +18,7 @@ public class ListTypeRepositoryImpl implements ListTypeRepository {
     public List<ListTypeProjection> findAllListTypes() {
         String sql = """
                 SELECT
-                    lt.Id AS id,
+                    lt.Id AS listTypeId,
                     lt.Title AS title,
                     lt.Icon AS icon,
                     lt.ListTypeDescription AS listTypeDescription,

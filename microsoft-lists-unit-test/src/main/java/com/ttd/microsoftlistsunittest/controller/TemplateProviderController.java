@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.api;
+package com.ttd.microsoftlistsunittest.controller;
 
 import com.ttd.microsoftlistsunittest.dto.listtemplate.ListTemplateSummaryDto;
 import com.ttd.microsoftlistsunittest.dto.templateprovider.TemplateProviderDto;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/template-providers")
 @RequiredArgsConstructor
-public class TemplateProviderResource {
+public class TemplateProviderController {
     private final TemplateProviderService templateProviderService;
     private final ListTemplateService listTemplateService;
 
