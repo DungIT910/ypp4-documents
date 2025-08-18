@@ -1,8 +1,10 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
+import com.ttd.microsoftlistsunittest.domain.model.ListStatus;
 import com.ttd.microsoftlistsunittest.projection.list.ListSummaryProjection;
 import com.ttd.microsoftlistsunittest.projection.list.RecentListSummaryProjection;
 import com.ttd.microsoftlistsunittest.repository.ListRepository;
+import com.ttd.microsoftlistsunittest.repository.sql.ListSqlFragment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,17 +20,9 @@ public class ListRepositoryImpl implements ListRepository {
 
     @Override
     public Optional<ListSummaryProjection> findListSummaryByListIdAndAccountId(Integer listId, Integer accountId) {
-        String sql = """
+        String sql = String.format("""
                 SELECT
-                    l.Id AS listId,
-                    l.ListName AS listName,
-                    l.Icon AS icon,
-                    l.Color AS color,
-                    w.WorkspaceName AS workspaceName,
-                    CASE
-                        WHEN fl.Id IS NOT NULL THEN TRUE
-                        ELSE FALSE
-                    END AS isFavorite
+                    %s
                 FROM
                     List l
                 INNER JOIN
@@ -36,53 +30,48 @@ public class ListRepositoryImpl implements ListRepository {
                 LEFT JOIN
                     FavoriteList fl ON l.Id = fl.ListId AND fl.AccountId = ?
                 WHERE
-                        l.Id = ?
-                """;
-        ListSummaryProjection result = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ListSummaryProjection.class), accountId, listId);
+                    l.Id = ?
+                """, ListSqlFragment.SELECT_LIST_SUMMARY);
+
+        ListSummaryProjection result = jdbcTemplate.queryForObject(sql,
+                new BeanPropertyRowMapper<>(ListSummaryProjection.class),
+                accountId, listId);
         return Optional.ofNullable(result);
     }
 
     @Override
     public List<ListSummaryProjection> findAllPersonalListsByAccountId(Integer accountId) {
-        String sql = """
+        String sql = String.format("""
                 SELECT
-                    l.Id,
-                    l.Color,
-                    l.Icon,
-                    l.ListName,
-                    wsp.WorkspaceName,
-                    CASE
-                        WHEN fl.Id IS NOT NULL THEN TRUE
-                        ELSE FALSE
-                    END AS isFavorite
+                    %s
                 FROM
                     List AS l
                 INNER JOIN
-                    Workspace wsp ON wsp.Id = l.WorkspaceId
+                    Workspace w ON w.Id = l.WorkspaceId
                 INNER JOIN
-                    WorkspaceMember wmb ON wsp.Id = wmb.WorkspaceId
+                    WorkspaceMember wmb ON w.Id = wmb.WorkspaceId
                 LEFT JOIN
                     FavoriteList fl ON fl.ListId = l.Id AND fl.AccountId = ?
                 WHERE
-                    wsp.IsPersonal = TRUE
+                    w.IsPersonal = TRUE
                     AND wmb.AccountId = ?
-                    AND l.ListStatus = 'ACTIVE'
+                    AND l.ListStatus = ?
                 ORDER BY
                     l.UpdatedAt DESC
-                """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryProjection.class), accountId, accountId);
+                """, ListSqlFragment.SELECT_LIST_SUMMARY);
+
+        return jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(ListSummaryProjection.class),
+                accountId,
+                accountId,
+                ListStatus.ACTIVE.name());
     }
 
     @Override
     public List<ListSummaryProjection> findAllFavoriteListsByAccountId(Integer accountId) {
-        String sql = """
+        String sql = String.format("""
                 SELECT
-                    l.Id AS listId,
-                    l.Color AS color,
-                    l.Icon AS icon,
-                    l.ListName AS listName,
-                    w.WorkspaceName AS workspaceName,
-                    TRUE AS isFavorite
+                    %s
                 FROM
                     List l
                 INNER JOIN
@@ -91,28 +80,23 @@ public class ListRepositoryImpl implements ListRepository {
                     Workspace w ON l.WorkspaceId = w.Id
                 WHERE
                     fl.AccountId = ?
-                    AND l.ListStatus = 'ACTIVE'
+                    AND l.ListStatus = ?
                 ORDER BY
                     l.UpdatedAt DESC
-                """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListSummaryProjection.class), accountId);
-    }
+                """, ListSqlFragment.SELECT_LIST_SUMMARY);
 
+        return jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(ListSummaryProjection.class),
+                accountId,
+                ListStatus.ACTIVE.name());
+    }
 
     @Override
     public List<RecentListSummaryProjection> findAllRecentListsByAccountId(Integer accountId) {
-        String sql = """
+        String sql = String.format("""
                 SELECT
-                    l.Id AS listId,
-                    l.Color AS color,
-                    l.Icon AS icon,
-                    l.ListName AS listName,
-                    w.WorkspaceName AS workspaceName,
-                    rl.AccessedAt AS accessedAt,
-                    CASE
-                        WHEN fl.Id IS NOT NULL THEN TRUE
-                        ELSE FALSE
-                    END AS isFavorite
+                    %s,
+                    rl.AccessedAt AS accessedAt
                 FROM
                     List l
                 INNER JOIN
@@ -123,10 +107,14 @@ public class ListRepositoryImpl implements ListRepository {
                     FavoriteList fl ON fl.ListId = l.Id AND fl.AccountId = rl.AccountId
                 WHERE
                     rl.AccountId = ?
-                    AND l.ListStatus = 'ACTIVE'
+                    AND l.ListStatus = ?
                 ORDER BY
                     rl.AccessedAt DESC
-                """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(RecentListSummaryProjection.class), accountId);
+                """, ListSqlFragment.SELECT_LIST_SUMMARY);
+
+        return jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(RecentListSummaryProjection.class),
+                accountId,
+                ListStatus.ACTIVE.name());
     }
 }

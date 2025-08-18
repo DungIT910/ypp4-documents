@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +17,6 @@ public class TemplateProviderServiceImpl implements TemplateProviderService {
     public List<TemplateProviderDto> getAllTemplateProviders() {
         return templateProviderRepository.findAllTemplateProviders().stream()
                 .map(TemplateProviderDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

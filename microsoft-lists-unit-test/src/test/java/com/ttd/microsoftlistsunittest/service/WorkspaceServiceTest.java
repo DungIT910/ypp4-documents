@@ -1,8 +1,6 @@
-package com.ttd.microsoftlistsunittest.service.impl;
+package com.ttd.microsoftlistsunittest.service;
 
-import com.ttd.microsoftlistsunittest.controller.WorkspaceController;
 import com.ttd.microsoftlistsunittest.dto.workspace.WorkspaceDto;
-import com.ttd.microsoftlistsunittest.service.WorkspaceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;

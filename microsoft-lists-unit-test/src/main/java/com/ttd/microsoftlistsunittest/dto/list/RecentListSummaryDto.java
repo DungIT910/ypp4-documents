@@ -14,14 +14,13 @@ public class RecentListSummaryDto extends ListSummaryDto {
     private String accessedAt;
 
     public static RecentListSummaryDto from(RecentListSummaryProjection projection) {
-        ListSummaryDto base = ListSummaryDto.from(projection);
         return RecentListSummaryDto.builder()
-                .listId(base.getListId())
-                .listName(base.getListName())
-                .icon(base.getIcon())
-                .color(base.getColor())
-                .workspaceName(base.getWorkspaceName())
-                .isFavorite(base.getIsFavorite())
+                .listId(projection.getListId())
+                .listName(projection.getListName())
+                .icon(projection.getIcon())
+                .color(projection.getColor())
+                .workspaceName(projection.getWorkspaceName())
+                .isFavorite(projection.getIsFavorite())
                 .accessedAt(projection.getAccessedAt())
                 .build();
     }

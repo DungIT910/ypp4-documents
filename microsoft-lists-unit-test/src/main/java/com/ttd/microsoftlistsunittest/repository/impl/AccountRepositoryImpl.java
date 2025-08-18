@@ -1,5 +1,6 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
+import com.ttd.microsoftlistsunittest.domain.model.AccountStatus;
 import com.ttd.microsoftlistsunittest.projection.account.AccountProfileProjection;
 import com.ttd.microsoftlistsunittest.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,14 @@ public class AccountRepositoryImpl implements AccountRepository {
                         Account acc
                     WHERE 
                         acc.Id = ?
-                        AND acc.AccountStatus = 'ACTIVE'
+                        AND acc.AccountStatus = ?
                 """;
 
         List<AccountProfileProjection> results = jdbcTemplate.query(
                 sql,
                 new BeanPropertyRowMapper<>(AccountProfileProjection.class),
-                id
+                id,
+                AccountStatus.ACTIVE.name()
         );
 
         return results.stream().findFirst();

@@ -9,6 +9,6 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class RecentListSummaryProjection extends ListSummaryProjection {
+public final class RecentListSummaryProjection extends ListSummaryProjection {
     private String accessedAt;
 }
