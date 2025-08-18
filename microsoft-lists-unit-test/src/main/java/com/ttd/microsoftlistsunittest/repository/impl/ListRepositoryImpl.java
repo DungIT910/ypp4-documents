@@ -66,7 +66,7 @@ public class ListRepositoryImpl implements ListRepository {
                 WHERE
                     wsp.IsPersonal = TRUE
                     AND wmb.AccountId = ?
-                    AND l.ListStatus = 'active'
+                    AND l.ListStatus = 'ACTIVE'
                 ORDER BY
                     l.UpdatedAt DESC
                 """;
@@ -91,7 +91,7 @@ public class ListRepositoryImpl implements ListRepository {
                     Workspace w ON l.WorkspaceId = w.Id
                 WHERE
                     fl.AccountId = ?
-                    AND l.ListStatus = 'active'
+                    AND l.ListStatus = 'ACTIVE'
                 ORDER BY
                     l.UpdatedAt DESC
                 """;
@@ -123,7 +123,7 @@ public class ListRepositoryImpl implements ListRepository {
                     FavoriteList fl ON fl.ListId = l.Id AND fl.AccountId = rl.AccountId
                 WHERE
                     rl.AccountId = ?
-                    AND l.ListStatus = 'active'
+                    AND l.ListStatus = 'ACTIVE'
                 ORDER BY
                     rl.AccessedAt DESC
                 """;

@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.api;
+package com.ttd.microsoftlistsunittest.controller;
 
 import com.ttd.microsoftlistsunittest.dto.account.AccountProfileDto;
 import com.ttd.microsoftlistsunittest.service.AccountService;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/accounts")
 @RequiredArgsConstructor
-public class AccountResource {
+public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/{accountId}")

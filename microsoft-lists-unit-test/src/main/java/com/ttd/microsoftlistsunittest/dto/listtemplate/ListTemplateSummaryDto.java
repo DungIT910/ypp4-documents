@@ -11,6 +11,7 @@ import lombok.*;
 public class ListTemplateSummaryDto {
     private Integer listTemplateId;
     private String title;
+    private String icon;
     private String headerImage;
     private String templateDescription;
 
@@ -18,6 +19,7 @@ public class ListTemplateSummaryDto {
         return ListTemplateSummaryDto.builder()
                 .listTemplateId(projection.getListTemplateId())
                 .title(projection.getTitle())
+                .icon(projection.getIcon())
                 .templateDescription(projection.getTemplateDescription())
                 .headerImage(projection.getHeaderImage())
                 .build();

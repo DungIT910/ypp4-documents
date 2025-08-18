@@ -29,7 +29,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                         Account acc
                     WHERE 
                         acc.Id = ?
-                        AND acc.AccountStatus = 'active'
+                        AND acc.AccountStatus = 'ACTIVE'
                 """;
 
         List<AccountProfileProjection> results = jdbcTemplate.query(

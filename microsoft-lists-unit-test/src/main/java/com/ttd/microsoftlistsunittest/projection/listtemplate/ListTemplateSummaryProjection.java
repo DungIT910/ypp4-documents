@@ -10,6 +10,7 @@ import lombok.*;
 public class ListTemplateSummaryProjection {
     private Integer listTemplateId;
     private String title;
+    private String icon;
     private String headerImage;
     private String templateDescription;
 }

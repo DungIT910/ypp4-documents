@@ -1,4 +1,4 @@
-package com.ttd.microsoftlistsunittest.api;
+package com.ttd.microsoftlistsunittest.controller;
 
 import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
 import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/lists")
 @RequiredArgsConstructor
-public class ListResource {
+public class ListController {
     private final ListService listService;
 
     @GetMapping("/{listId}")
