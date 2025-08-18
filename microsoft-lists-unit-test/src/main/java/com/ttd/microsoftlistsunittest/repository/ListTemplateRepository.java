@@ -1,9 +1,9 @@
 package com.ttd.microsoftlistsunittest.repository;
 
-import com.ttd.microsoftlistsunittest.projection.listtemplate.ListTemplateSummaryProjection;
+import com.ttd.microsoftlistsunittest.dto.listtemplate.ListTemplateSummaryDto;
 
 import java.util.List;
 
 public interface ListTemplateRepository {
-    List<ListTemplateSummaryProjection> findALlTemplatesByTemplateProviderId(Integer templateProviderId);
+    List<ListTemplateSummaryDto> findALlTemplatesByTemplateProviderId(Integer templateProviderId);
 }

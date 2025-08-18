@@ -1,6 +1,6 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.projection.templateprovider.TemplateProviderProjection;
+import com.ttd.microsoftlistsunittest.dto.templateprovider.TemplateProviderDto;
 import com.ttd.microsoftlistsunittest.repository.TemplateProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -15,7 +15,7 @@ public class TemplateProviderRepositoryImpl implements TemplateProviderRepositor
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<TemplateProviderProjection> findAllTemplateProviders() {
+    public List<TemplateProviderDto> findAllTemplateProviders() {
         String sql = """
                     SELECT
                         Id AS providerId,
@@ -23,6 +23,6 @@ public class TemplateProviderRepositoryImpl implements TemplateProviderRepositor
                     FROM
                         TemplateProvider
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(TemplateProviderProjection.class));
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(TemplateProviderDto.class));
     }
 }

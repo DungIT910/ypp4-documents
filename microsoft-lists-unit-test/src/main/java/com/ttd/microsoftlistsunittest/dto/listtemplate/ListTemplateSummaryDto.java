@@ -1,6 +1,5 @@
 package com.ttd.microsoftlistsunittest.dto.listtemplate;
 
-import com.ttd.microsoftlistsunittest.projection.listtemplate.ListTemplateSummaryProjection;
 import lombok.*;
 
 @Getter
@@ -15,13 +14,4 @@ public class ListTemplateSummaryDto {
     private String headerImage;
     private String templateDescription;
 
-    public static ListTemplateSummaryDto from(ListTemplateSummaryProjection projection) {
-        return ListTemplateSummaryDto.builder()
-                .listTemplateId(projection.getListTemplateId())
-                .title(projection.getTitle())
-                .icon(projection.getIcon())
-                .templateDescription(projection.getTemplateDescription())
-                .headerImage(projection.getHeaderImage())
-                .build();
-    }
 }

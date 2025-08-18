@@ -1,9 +1,9 @@
 package com.ttd.microsoftlistsunittest.repository;
 
-import com.ttd.microsoftlistsunittest.projection.workspace.WorkspaceProjection;
+import com.ttd.microsoftlistsunittest.dto.workspace.WorkspaceDto;
 
 import java.util.List;
 
 public interface WorkspaceRepository {
-    List<WorkspaceProjection> findAllWorkspacesByAccountId(Integer accountId);
+    List<WorkspaceDto> findAllWorkspacesByAccountId(Integer accountId);
 }

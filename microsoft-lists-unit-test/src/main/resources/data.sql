@@ -174,6 +174,46 @@ VALUES (1, 'Task Management', 'https://example.com/img/task.png', 'Manage tasks 
        (4, 'Content Calendar', 'https://example.com/img/content.png', 'Manage content publishing', 'content-icon.png',
         'purple', 'Content overview', 'Tags, Publish dates', 2);
 
+INSERT INTO TemplateColumn (SystemDataTypeId, ListTemplateId, ColumnName, ColumnDescription, DisplayOrder, IsVisible)
+VALUES
+    (1, 1, 'Task Name', 'Name of the task', 1, TRUE),
+    (3, 1, 'Due Date', 'Due date for the task', 2, TRUE),
+    (4, 1, 'Status', 'Status of the task', 3, TRUE);
+
+INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue)
+VALUES
+    -- Cột 1: Task Name (SystemDataTypeId = 1)
+    (1, 1, '100'), -- Max length
+    (1, 2, 'TRUE'), -- Is required
+    (1, 6, NULL), -- Default value
+    -- Cột 2: Due Date (SystemDataTypeId = 3)
+    (2, 5, 'TRUE'), -- Include time
+    (2, 2, 'TRUE'), -- Is required
+    -- Cột 3: Status (SystemDataTypeId = 4)
+    (3, 3, 'To Do,In Progress,Done'), -- Choice setting
+    (3, 4, 'FALSE'), -- Allow multiple choice
+    (3, 2, 'TRUE'); -- Is required
+
+INSERT INTO TemplateSampleRow (ListTemplateId, DisplayOrder)
+VALUES
+    (1, 1),
+    (1, 2),
+    (1, 3);
+
+INSERT INTO TemplateSampleCell (TemplateColumnId, TemplateSampleRowId, CellValue)
+VALUES
+    -- Dòng 1
+    (1, 1, 'Write report'), -- Task Name
+    (2, 1, '2025-08-20 17:00:00'), -- Due Date
+    (3, 1, 'To Do'), -- Status
+    -- Dòng 2
+    (1, 2, 'Review code'), -- Task Name
+    (2, 2, '2025-08-21 14:00:00'), -- Due Date
+    (3, 2, 'In Progress'), -- Status
+    -- Dòng 3
+    (1, 3, 'Deploy application'), -- Task Name
+    (2, 3, '2025-08-22 09:00:00'), -- Due Date
+    (3, 3, 'Done'); -- Status
 
 -- Insert vào List
 INSERT INTO List (Id, ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)

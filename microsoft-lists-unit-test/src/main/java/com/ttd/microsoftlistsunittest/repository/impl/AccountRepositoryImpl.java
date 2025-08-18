@@ -1,7 +1,7 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
 import com.ttd.microsoftlistsunittest.domain.model.AccountStatus;
-import com.ttd.microsoftlistsunittest.projection.account.AccountProfileProjection;
+import com.ttd.microsoftlistsunittest.dto.account.AccountProfileDto;
 import com.ttd.microsoftlistsunittest.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -17,7 +17,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Optional<AccountProfileProjection> findAccountById(Integer id) {
+    public Optional<AccountProfileDto> findAccountById(Integer id) {
         String sql = """
                     SELECT
                         acc.Id AS id,
@@ -33,9 +33,9 @@ public class AccountRepositoryImpl implements AccountRepository {
                         AND acc.AccountStatus = ?
                 """;
 
-        List<AccountProfileProjection> results = jdbcTemplate.query(
+        List<AccountProfileDto> results = jdbcTemplate.query(
                 sql,
-                new BeanPropertyRowMapper<>(AccountProfileProjection.class),
+                new BeanPropertyRowMapper<>(AccountProfileDto.class),
                 id,
                 AccountStatus.ACTIVE.name()
         );

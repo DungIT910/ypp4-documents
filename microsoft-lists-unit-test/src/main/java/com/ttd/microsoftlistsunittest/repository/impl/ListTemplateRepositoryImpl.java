@@ -1,6 +1,6 @@
 package com.ttd.microsoftlistsunittest.repository.impl;
 
-import com.ttd.microsoftlistsunittest.projection.listtemplate.ListTemplateSummaryProjection;
+import com.ttd.microsoftlistsunittest.dto.listtemplate.ListTemplateSummaryDto;
 import com.ttd.microsoftlistsunittest.repository.ListTemplateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -15,7 +15,7 @@ public class ListTemplateRepositoryImpl implements ListTemplateRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<ListTemplateSummaryProjection> findALlTemplatesByTemplateProviderId(Integer templateProviderId) {
+    public List<ListTemplateSummaryDto> findALlTemplatesByTemplateProviderId(Integer templateProviderId) {
         String sql = """
                 SELECT
                     lt.Id as listTemplateId,
@@ -27,6 +27,6 @@ public class ListTemplateRepositoryImpl implements ListTemplateRepository {
                 WHERE
                     lt.ProviderId = ?;
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListTemplateSummaryProjection.class), templateProviderId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListTemplateSummaryDto.class), templateProviderId);
     }
 }
