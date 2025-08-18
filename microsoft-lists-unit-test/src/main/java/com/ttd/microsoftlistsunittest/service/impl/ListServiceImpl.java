@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +26,20 @@ public class ListServiceImpl implements ListService {
     public List<ListSummaryDto> getPersonalListsByAccountId(Integer accountId) {
         return listRepository.findAllPersonalListsByAccountId(accountId).stream()
                 .map(ListSummaryDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<ListSummaryDto> getFavoriteListsByAccountId(Integer accountId) {
         return listRepository.findAllFavoriteListsByAccountId(accountId).stream()
                 .map(ListSummaryDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<RecentListSummaryDto> getRecentListsByAccountId(Integer accountId) {
         return listRepository.findAllRecentListsByAccountId(accountId).stream()
                 .map(RecentListSummaryDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

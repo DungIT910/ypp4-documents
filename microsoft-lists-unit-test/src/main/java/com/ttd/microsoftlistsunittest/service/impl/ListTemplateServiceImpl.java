@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +17,6 @@ public class ListTemplateServiceImpl implements ListTemplateService {
     public List<ListTemplateSummaryDto> getALlTemplatesByTemplateProviderId(Integer templateProviderId) {
         return listTemplateRepository.findALlTemplatesByTemplateProviderId(templateProviderId).stream()
                 .map(ListTemplateSummaryDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

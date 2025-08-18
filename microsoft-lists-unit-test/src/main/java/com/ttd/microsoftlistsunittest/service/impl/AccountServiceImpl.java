@@ -16,6 +16,6 @@ public class AccountServiceImpl implements AccountService {
     public AccountProfileDto findAccountById(Integer accountId) {
         return accountRepository.findAccountById(accountId)
                 .map(AccountProfileDto::from)
-                .orElseThrow(() -> new MsListRuntimeException("No account found with ID: " + accountId));
+                .orElseThrow(() -> new MsListRuntimeException("No account found with Id: " + accountId));
     }
 }
