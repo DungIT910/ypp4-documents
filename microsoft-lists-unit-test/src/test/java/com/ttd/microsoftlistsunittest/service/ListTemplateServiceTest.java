@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @AutoConfigureTestDatabase
 class ListTemplateServiceTest {
-
     @Autowired
     private ListTemplateService listTemplateService;
 

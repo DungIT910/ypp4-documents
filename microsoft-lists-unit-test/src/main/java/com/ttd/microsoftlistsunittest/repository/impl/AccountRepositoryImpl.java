@@ -28,7 +28,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                         acc.Company AS company
                     FROM
                         Account acc
-                    WHERE 
+                    WHERE
                         acc.Id = ?
                         AND acc.AccountStatus = ?
                 """;

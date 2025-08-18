@@ -1,7 +1,6 @@
 package com.ttd.microsoftlistsunittest.service;
 
 import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,7 +55,7 @@ class ListServiceTest {
     void testGetRecentListsByAccountId_ReturnsExpectedLists() {
         Integer accountId = 3;
 
-        List<RecentListSummaryDto> results = listService.getRecentListsByAccountId(accountId);
+        List<ListSummaryDto> results = listService.getRecentListsByAccountId(accountId);
 
         assertNotNull(results);
         assertEquals(2, results.size());

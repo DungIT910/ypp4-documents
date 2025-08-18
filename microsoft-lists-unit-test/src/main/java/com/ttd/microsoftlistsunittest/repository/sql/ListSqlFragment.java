@@ -1,6 +1,6 @@
 package com.ttd.microsoftlistsunittest.repository.sql;
 
-public class ListSqlFragment {
+public final class ListSqlFragment {
     public static final String SELECT_LIST_SUMMARY = """
             l.Id AS listId,
             l.Color AS color,

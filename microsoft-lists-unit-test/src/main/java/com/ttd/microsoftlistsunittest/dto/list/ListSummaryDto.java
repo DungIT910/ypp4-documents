@@ -5,10 +5,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
-@SuperBuilder
 public class ListSummaryDto {
     private Integer listId;
     private String listName;
@@ -16,4 +17,5 @@ public class ListSummaryDto {
     private String color;
     private String workspaceName;
     private Boolean isFavorite;
+    private LocalDateTime accessedAt;
 }

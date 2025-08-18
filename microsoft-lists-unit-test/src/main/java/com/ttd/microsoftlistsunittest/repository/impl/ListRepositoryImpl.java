@@ -2,7 +2,6 @@ package com.ttd.microsoftlistsunittest.repository.impl;
 
 import com.ttd.microsoftlistsunittest.domain.model.ListStatus;
 import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
 import com.ttd.microsoftlistsunittest.repository.ListRepository;
 import com.ttd.microsoftlistsunittest.repository.sql.ListSqlFragment;
 import lombok.RequiredArgsConstructor;
@@ -92,7 +91,7 @@ public class ListRepositoryImpl implements ListRepository {
     }
 
     @Override
-    public List<RecentListSummaryDto> findAllRecentListsByAccountId(Integer accountId) {
+    public List<ListSummaryDto> findAllRecentListsByAccountId(Integer accountId) {
         String sql = String.format("""
                 SELECT
                     %s,
@@ -113,7 +112,7 @@ public class ListRepositoryImpl implements ListRepository {
                 """, ListSqlFragment.SELECT_LIST_SUMMARY);
 
         return jdbcTemplate.query(sql,
-                new BeanPropertyRowMapper<>(RecentListSummaryDto.class),
+                new BeanPropertyRowMapper<>(ListSummaryDto.class),
                 accountId,
                 ListStatus.ACTIVE.name());
     }
