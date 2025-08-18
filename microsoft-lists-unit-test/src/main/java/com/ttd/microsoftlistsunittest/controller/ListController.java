@@ -1,7 +1,6 @@
 package com.ttd.microsoftlistsunittest.controller;
 
 import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
 import com.ttd.microsoftlistsunittest.service.ListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ public class ListController {
     }
 
     @GetMapping("/recent")
-    public List<RecentListSummaryDto> getRecentListsByAccountId(@RequestParam(value = "accountId", required = true) Integer accountId) {
+    public List<ListSummaryDto> getRecentListsByAccountId(@RequestParam(value = "accountId", required = true) Integer accountId) {
         return listService.getRecentListsByAccountId(accountId);
     }
 }

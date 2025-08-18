@@ -1,7 +1,6 @@
 package com.ttd.microsoftlistsunittest.service;
 
 import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
-import com.ttd.microsoftlistsunittest.dto.list.RecentListSummaryDto;
 
 import java.util.List;
 
@@ -13,5 +12,5 @@ public interface ListService {
 
     List<ListSummaryDto> getFavoriteListsByAccountId(Integer accountId);
 
-    List<RecentListSummaryDto> getRecentListsByAccountId(Integer accountId);
+    List<ListSummaryDto> getRecentListsByAccountId(Integer accountId);
 }

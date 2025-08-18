@@ -6,7 +6,6 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class AccountProfileDto {
     private Integer accountId;
     private String avatar;

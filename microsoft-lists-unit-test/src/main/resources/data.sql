@@ -1,4 +1,3 @@
--- Xóa dữ liệu cũ để tránh xung đột
 DELETE
 FROM ShareLinkUserAccess;
 DELETE
@@ -50,7 +49,6 @@ FROM ViewTypeSettingKey;
 DELETE
 FROM DataTypeSettingKey;
 
--- Insert vào Account với đầy đủ các trường theo schema
 INSERT INTO Account (Id, FirstName, LastName, Email, AccountPassword, Avatar, Company, AccountStatus, DateBirth,
                      CreatedAt, UpdatedAt)
 VALUES (1, 'John', 'Doe', 'user100@example.com', 'pass100', 'https://avatar.example.com/user100.png', 'TechCorp',
@@ -62,14 +60,12 @@ VALUES (1, 'John', 'Doe', 'user100@example.com', 'pass100', 'https://avatar.exam
        (4, 'Alice', 'Brown', 'user400@example.com', 'pass400', 'https://avatar.example.com/user400.png', 'BigCompany',
         'ACTIVE', '1988-04-04', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào Workspace
 INSERT INTO Workspace (Id, WorkspaceName, CreatedAt, UpdatedAt, CreatedBy, IsPersonal)
 VALUES (1, 'Workspace A', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, FALSE),
        (2, 'Workspace B', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, FALSE),
        (3, 'Workspace C', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, TRUE),
        (4, 'Workspace D', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 4, TRUE);
 
--- Insert vào WorkspaceMember
 INSERT INTO WorkspaceMember (Id, WorkspaceId, AccountId, JoinedAt, MemberStatus, UpdatedAt)
 VALUES (1, 1, 1, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP),
        (2, 2, 2, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP),
@@ -78,13 +74,11 @@ VALUES (1, 1, 1, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP),
        (5, 4, 4, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP),
        (6, 1, 4, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP);
 
--- Insert vào Permission
 INSERT INTO Permission (Id, PermissionName, PermissionCode, PermissionDescription, Icon)
 VALUES (1, 'Administrator', 'Admin', 'Full access to manage and edit all resources', 'admin-icon.png'),
        (2, 'Contributor', 'Contributor', 'Can edit and contribute to resources', 'contributor-icon.png'),
        (3, 'Reader', 'Reader', 'Read-only access to view resources', 'reader-icon.png');
 
--- Insert vào ViewType
 INSERT INTO ViewType (Id, Title, HeaderImage, Icon, ViewTypeDescription)
 VALUES (1, 'List', 'https://example.com/images/list.png', 'list-icon.png', 'Displays data in a tabular list format'),
        (2, 'Gallery', 'https://example.com/images/gallery.png', 'gallery-icon.png', 'Shows data as a visual gallery'),
@@ -92,7 +86,6 @@ VALUES (1, 'List', 'https://example.com/images/list.png', 'list-icon.png', 'Disp
         'Organizes data in a calendar view'),
        (4, 'Board', 'https://example.com/images/board.png', 'board-icon.png', 'Presents data in a kanban board style');
 
--- Insert vào SystemDataType
 INSERT INTO SystemDataType (Id, DisplayName, DataTypeValue, Icon, DataTypeDescription, CoverImg)
 VALUES (1, 'Single line of text', 'Text', 'text-icon.png', 'A single line of text for short entries',
         'https://example.com/images/text-cover.png'),
@@ -111,7 +104,6 @@ VALUES (1, 'Single line of text', 'Text', 'text-icon.png', 'A single line of tex
        (8, 'Picture', 'Text', 'picture-icon.png', 'Image or picture URL',
         'https://example.com/images/picture-cover.png');
 
--- Insert vào KeySetting
 INSERT INTO KeySetting (Id, KeyName, ValueType, IsShareLinkSetting, IsDefaultValue, ValueOfDefault)
 VALUES (1, 'Max length', 'number', FALSE, TRUE, '255'),
        (2, 'Is required', 'boolean', FALSE, TRUE, 'FALSE'),
@@ -120,14 +112,12 @@ VALUES (1, 'Max length', 'number', FALSE, TRUE, '255'),
        (5, 'Include time', 'boolean', FALSE, TRUE, 'FALSE'),
        (6, 'Default value', 'text', FALSE, FALSE, NULL);
 
--- Insert vào ViewSettingKey
 INSERT INTO ViewSettingKey (Id, SettingKey, ValueType)
 VALUES (1, 'Set this as public view', 'BOOLEAN'),
        (2, 'Start date on calendar', 'COLUMN'),
        (3, 'End date on calendar', 'COLUMN'),
        (4, 'Sort table by', 'COLUMN');
 
--- Insert vào ViewTypeSettingKey
 INSERT INTO ViewTypeSettingKey (ViewTypeId, ViewSettingKeyId)
 VALUES (1, 1),
        (2, 1),
@@ -137,7 +127,6 @@ VALUES (1, 1),
        (4, 1),
        (2, 4);
 
--- Insert vào DataTypeSettingKey
 INSERT INTO DataTypeSettingKey (SystemDataTypeId, KeySettingId)
 VALUES (1, 1),
        (1, 2),
@@ -182,14 +171,11 @@ VALUES
 
 INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue)
 VALUES
-    -- Cột 1: Task Name (SystemDataTypeId = 1)
     (1, 1, '100'), -- Max length
     (1, 2, 'TRUE'), -- Is required
     (1, 6, NULL), -- Default value
-    -- Cột 2: Due Date (SystemDataTypeId = 3)
     (2, 5, 'TRUE'), -- Include time
     (2, 2, 'TRUE'), -- Is required
-    -- Cột 3: Status (SystemDataTypeId = 4)
     (3, 3, 'To Do,In Progress,Done'), -- Choice setting
     (3, 4, 'FALSE'), -- Allow multiple choice
     (3, 2, 'TRUE'); -- Is required
@@ -202,26 +188,21 @@ VALUES
 
 INSERT INTO TemplateSampleCell (TemplateColumnId, TemplateSampleRowId, CellValue)
 VALUES
-    -- Dòng 1
     (1, 1, 'Write report'), -- Task Name
     (2, 1, '2025-08-20 17:00:00'), -- Due Date
     (3, 1, 'To Do'), -- Status
-    -- Dòng 2
     (1, 2, 'Review code'), -- Task Name
     (2, 2, '2025-08-21 14:00:00'), -- Due Date
     (3, 2, 'In Progress'), -- Status
-    -- Dòng 3
     (1, 3, 'Deploy application'), -- Task Name
     (2, 3, '2025-08-22 09:00:00'), -- Due Date
     (3, 3, 'Done'); -- Status
 
--- Insert vào List
 INSERT INTO List (Id, ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
 VALUES (1, 'Project Tasks', 'task-icon.png', 'blue', 3, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
        (2, 'Marketing Campaigns', 'campaign-icon.png', 'green', 3, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
        (3, 'Asset Inventory', 'asset-icon.png', 'orange', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE');
 
--- Insert vào SystemColumn
 INSERT INTO SystemColumn (Id, SystemDataTypeId, ColumnName, DisplayOrder, CreatedBy, CreatedAt, CanRename)
 VALUES (1, 1, 'Title', 1, NULL, CURRENT_TIMESTAMP, TRUE),
        (2, 2, 'ID', 2, NULL, CURRENT_TIMESTAMP, FALSE),
@@ -230,14 +211,12 @@ VALUES (1, 1, 'Title', 1, NULL, CURRENT_TIMESTAMP, TRUE),
        (5, 6, 'CreatedBy', 5, NULL, CURRENT_TIMESTAMP, FALSE),
        (6, 5, 'IsRecord', 6, NULL, CURRENT_TIMESTAMP, FALSE);
 
--- Insert vào ListView
 INSERT INTO ListView (Id, ListId, CreatedBy, ViewTypeId, ViewName, DisplayOrder, CreatedAt, UpdatedAt)
 VALUES (1, 1, 1, 1, 'Task List View', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, 1, 1, 4, 'Task Board View', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (3, 2, 2, 1, 'Campaign List View', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (4, 3, 1, 1, 'Asset List View', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào ListDynamicColumn
 INSERT INTO ListDynamicColumn (Id, ListId, SystemDataTypeId, SystemColumnId, ColumnName, ColumnDescription,
                                DisplayOrder, IsSystemColumn, IsVisible, CreatedBy, CreatedAt, UpdatedAt)
 VALUES
@@ -262,7 +241,6 @@ VALUES
     (16, 3, 4, NULL, 'Category', 'Asset category', 3, FALSE, TRUE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (17, 3, 4, NULL, 'Status', 'Asset status', 4, FALSE, TRUE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào ColumnChoice
 INSERT INTO ColumnChoice (ColumnId, DisplayName, DisplayColor, DisplayOrder, Context, CreatedAt, UpdatedAt)
 VALUES
     -- Status choices for Task list (column 5)
@@ -282,7 +260,6 @@ VALUES
     (17, 'In Use', 'blue', 2, 'LIST', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (17, 'Maintenance', 'orange', 3, 'LIST', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào ListRow
 INSERT INTO ListRow (Id, ListId, DisplayOrder, CreatedBy, ListRowStatus, CreatedAt, UpdatedAt)
 VALUES
     -- List 1: Project Tasks (3 rows)
@@ -296,7 +273,6 @@ VALUES
     (6, 3, 1, 1, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (7, 3, 2, 1, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào ListCellValue
 INSERT INTO ListCellValue (ListRowId, ListColumnId, CellValue, CreatedBy, CreatedAt, UpdatedAt)
 VALUES
     -- List 1 Row 1: Project Tasks
@@ -325,25 +301,21 @@ VALUES
     (6, 17, '2', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Status: In Use
 
--- Insert vào FavoriteList
 INSERT INTO FavoriteList (ListId, AccountId, CreatedAt, UpdatedAt)
 VALUES (1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (3, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào RecentList
 INSERT INTO RecentList (ListId, AccountId, AccessedAt)
 VALUES (1, 3, CURRENT_TIMESTAMP),
        (2, 3, CURRENT_TIMESTAMP),
        (3, 1, CURRENT_TIMESTAMP);
 
--- Insert vào ListRowComment
 INSERT INTO ListRowComment (ListRowId, Content, CreatedBy, CreatedAt, UpdatedAt)
 VALUES (1, 'Database schema looks good', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (4, 'Campaign on track', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (6, 'MacBook assigned', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào FileAttachment
 INSERT INTO FileAttachment (ListRowId, FileAttachmentName, FileUrl, CreatedAt, UpdatedAt)
 VALUES (1, 'database_schema.sql', 'https://example.com/files/database_schema.sql', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP),
@@ -351,31 +323,26 @@ VALUES (1, 'database_schema.sql', 'https://example.com/files/database_schema.sql
        (6, 'macbook_receipt.pdf', 'https://example.com/files/macbook_receipt.pdf', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP);
 
--- Insert vào ObjectType
 INSERT INTO ObjectType (Id, Code, DisplayName, Icon)
 VALUES (1, 'LIST', 'List', 'list-icon.png'),
        (2, 'LISTROW', 'List Row', 'row-icon.png'),
        (3, 'FILE', 'File', 'file-icon.png');
 
--- Insert vào Scope
 INSERT INTO Scope (Id, Code, DisplayName, ScopeDescription, Icon)
 VALUES (1, 'PUBLIC', 'Public', 'Accessible to everyone', 'public-icon.png'),
        (2, 'AUTHORIZED', 'Authorized', 'Accessible to authorized users', 'auth-icon.png'),
        (3, 'SPECIFIC', 'Specific', 'Accessible to specific users', 'specific-icon.png');
 
--- Insert vào ShareLink
 INSERT INTO ShareLink (ListId, TargetUrl, ScopeId, PermissionId, LinkStatus, CreatedBy, CreatedAt, UpdatedAt)
 VALUES (1, '/share/list/1/public', 1, 2, 'ACTIVE', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, '/share/list/2/authorized', 2, 3, 'ACTIVE', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (3, '/share/list/3/specific', 3, 2, 'ACTIVE', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào ShareLinkUserAccess
 INSERT INTO ShareLinkUserAccess (ShareLinkId, AccountId, Email, CreatedAt, UpdatedAt)
 VALUES (1, 2, 'user200@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, 3, 'user300@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (3, 4, 'user400@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert vào ListMemberPermission
 INSERT INTO ListMemberPermission (ListId, AccountId, HighestPermissionId, GrantedBy, Note, CreatedAt, UpdatedAt)
 VALUES (1, 2, 2, 1, 'Contributor access', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, 3, 3, 2, 'Read access', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
