@@ -235,31 +235,31 @@ USE MsList
         lc.DisplayOrder ASC,
         lr.DisplayOrder ASC
 
-    -- Get all column setting object of needed columns (choice)
+    -- Get all column choices of needed columns (choice)
     DECLARE @ListId INT;
     SET @ListId = 1;
     SELECT 
-        lcso.Id,
-        lcso.ColumnId,
-        lcso.DisplayName,
-        lcso.DisplayColor,
-        lcso.DisplayOrder,
-        lcso.Context
+        clc.Id,
+        clc.ColumnId,
+        clc.DisplayName,
+        clc.DisplayColor,
+        clc.DisplayOrder,
+        clc.Context
     FROM 
-        ColumnSettingObject lcso
+        ColumnChoice clc
     INNER JOIN 
-        ListDynamicColumn ldc ON lcso.ColumnId = ldc.Id 
+        ListDynamicColumn ldc ON clc.ColumnId = ldc.Id 
     WHERE 
-        lcso.Context = 'LIST'
+        clc.Context = 'LIST'
         AND LDC.ListId = @ListId
     ORDER BY
-        lcso.DisplayOrder
+        clc.DisplayOrder
 
     -- Get all views of a list
     DECLARE @ListId INT;
     SET @ListId = 1;
     SELECT 
-        lv.Id, lv.ViewName, vt.Icon
+        lv.Id, lv.ViewName, vt.Icon, lv.DisplayOrder
     FROM 
         ListView lv
     INNER JOIN
@@ -275,7 +275,7 @@ USE MsList
     DECLARE @ViewTypeId INT;
     SET @ViewTypeId = 3;
     SELECT 
-        vs.Id, 
+        vs.Id as ViewSettingKeyId, 
         vs.SettingKey,
         vs.ValueType,
         lvs.ListViewId,

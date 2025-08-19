@@ -9,8 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -32,6 +31,6 @@ class ListViewServiceTest {
         Integer listViewId = 1;
         List<ListViewSettingValueDto> result = listViewService.getListViewSettingValues(listViewId);
         assertNotNull(result);
-        assertTrue(!result.isEmpty());
+        assertFalse(result.isEmpty());
     }
 }
