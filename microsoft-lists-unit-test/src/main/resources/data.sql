@@ -43,6 +43,8 @@ FROM SystemDataType;
 DELETE
 FROM KeySetting;
 DELETE
+FROM ListViewSettingValue;
+DELETE
 FROM ViewSettingKey;
 DELETE
 FROM ViewTypeSettingKey;
@@ -118,14 +120,14 @@ VALUES (1, 'Set this as public view', 'BOOLEAN'),
        (3, 'End date on calendar', 'COLUMN'),
        (4, 'Sort table by', 'COLUMN');
 
-INSERT INTO ViewTypeSettingKey (ViewTypeId, ViewSettingKeyId)
-VALUES (1, 1),
-       (2, 1),
-       (3, 1),
-       (3, 2),
-       (3, 3),
-       (4, 1),
-       (2, 4);
+INSERT INTO ViewTypeSettingKey (Id, ViewTypeId, ViewSettingKeyId)
+VALUES (1, 1, 1),
+       (2, 2, 1),
+       (3, 3, 1),
+       (4, 3, 2),
+       (5, 3, 3),
+       (6, 4, 1),
+       (7, 2, 4);
 
 INSERT INTO DataTypeSettingKey (SystemDataTypeId, KeySettingId)
 VALUES (1, 1),
@@ -212,6 +214,9 @@ VALUES (1, 1, 1, 1, 'Task List View', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, 1, 1, 4, 'Task Board View', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (3, 2, 2, 1, 'Campaign List View', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (4, 3, 1, 1, 'Asset List View', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO ListViewSettingValue (ListViewId, ViewTypeSettingKeyId, GroupByColumnId, RawValue)
+VALUES (1, 1, NULL, 'TRUE'); -- List view for assets
 
 INSERT INTO ListDynamicColumn (Id, ListId, SystemDataTypeId, SystemColumnId, ColumnName, ColumnDescription,
                                DisplayOrder, IsSystemColumn, IsVisible, CreatedBy, CreatedAt, UpdatedAt)
