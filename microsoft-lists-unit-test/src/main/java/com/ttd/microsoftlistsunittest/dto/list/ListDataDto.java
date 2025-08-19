@@ -1,11 +1,11 @@
-package com.ttd.microsoftlistsunittest.dto.listtemplate;
+package com.ttd.microsoftlistsunittest.dto.list;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ListTemplateSampleDataDto {
+public class ListDataDto {
     private Integer rowId;
     private Integer columnId;
     private String columnName;

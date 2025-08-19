@@ -1,6 +1,6 @@
 package com.ttd.microsoftlistsunittest.service;
 
-import com.ttd.microsoftlistsunittest.dto.templateprovider.TemplateProviderDto;
+import com.ttd.microsoftlistsunittest.dto.list.ListDataDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -8,20 +8,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-class TemplateProviderServiceTest {
+class ListDataServiceTest {
     @Autowired
-    private TemplateProviderService templateProviderService;
+    private ListDataService listDataService;
 
     @Test
-    void testGetAllProviders_ReturnsExpectedData() {
-        List<TemplateProviderDto> result = templateProviderService.getAllTemplateProviders();
+    void testGetListData_ReturnsExpectedData() {
+        Integer listId = 1;
 
+        List<ListDataDto> result = listDataService.getListDataByListId(listId);
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertTrue(result.size() > 1);
     }
 }
+

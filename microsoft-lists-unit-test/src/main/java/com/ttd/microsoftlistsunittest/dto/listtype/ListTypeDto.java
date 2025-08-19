@@ -1,11 +1,10 @@
 package com.ttd.microsoftlistsunittest.dto.listtype;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class ListTypeDto {
     private Integer listTypeId;
     private String title;

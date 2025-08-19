@@ -164,39 +164,35 @@ VALUES (1, 'Task Management', 'https://example.com/img/task.png', 'Manage tasks 
         'purple', 'Content overview', 'Tags, Publish dates', 2);
 
 INSERT INTO TemplateColumn (SystemDataTypeId, ListTemplateId, ColumnName, ColumnDescription, DisplayOrder, IsVisible)
-VALUES
-    (1, 1, 'Task Name', 'Name of the task', 1, TRUE),
-    (3, 1, 'Due Date', 'Due date for the task', 2, TRUE),
-    (4, 1, 'Status', 'Status of the task', 3, TRUE);
+VALUES (1, 1, 'Task Name', 'Name of the task', 1, TRUE),
+       (3, 1, 'Due Date', 'Due date for the task', 2, TRUE),
+       (4, 1, 'Status', 'Status of the task', 3, TRUE);
 
 INSERT INTO TemplateColumnSettingValue (TemplateColumnId, DataTypeSettingKeyId, KeyValue)
-VALUES
-    (1, 1, '100'), -- Max length
-    (1, 2, 'TRUE'), -- Is required
-    (1, 6, NULL), -- Default value
-    (2, 5, 'TRUE'), -- Include time
-    (2, 2, 'TRUE'), -- Is required
-    (3, 3, 'To Do,In Progress,Done'), -- Choice setting
-    (3, 4, 'FALSE'), -- Allow multiple choice
-    (3, 2, 'TRUE'); -- Is required
+VALUES (1, 1, '100'),                    -- Max length
+       (1, 2, 'TRUE'),                   -- Is required
+       (1, 6, NULL),                     -- Default value
+       (2, 5, 'TRUE'),                   -- Include time
+       (2, 2, 'TRUE'),                   -- Is required
+       (3, 3, 'To Do,In Progress,Done'), -- Choice setting
+       (3, 4, 'FALSE'),                  -- Allow multiple choice
+       (3, 2, 'TRUE'); -- Is required
 
 INSERT INTO TemplateSampleRow (ListTemplateId, DisplayOrder)
-VALUES
-    (1, 1),
-    (1, 2),
-    (1, 3);
+VALUES (1, 1),
+       (1, 2),
+       (1, 3);
 
 INSERT INTO TemplateSampleCell (TemplateColumnId, TemplateSampleRowId, CellValue)
-VALUES
-    (1, 1, 'Write report'), -- Task Name
-    (2, 1, '2025-08-20 17:00:00'), -- Due Date
-    (3, 1, 'To Do'), -- Status
-    (1, 2, 'Review code'), -- Task Name
-    (2, 2, '2025-08-21 14:00:00'), -- Due Date
-    (3, 2, 'In Progress'), -- Status
-    (1, 3, 'Deploy application'), -- Task Name
-    (2, 3, '2025-08-22 09:00:00'), -- Due Date
-    (3, 3, 'Done'); -- Status
+VALUES (1, 1, 'Write report'),        -- Task Name
+       (2, 1, '2025-08-20 17:00:00'), -- Due Date
+       (3, 1, 'To Do'),               -- Status
+       (1, 2, 'Review code'),         -- Task Name
+       (2, 2, '2025-08-21 14:00:00'), -- Due Date
+       (3, 2, 'In Progress'),         -- Status
+       (1, 3, 'Deploy application'),  -- Task Name
+       (2, 3, '2025-08-22 09:00:00'), -- Due Date
+       (3, 3, 'Done'); -- Status
 
 INSERT INTO List (Id, ListName, Icon, Color, WorkspaceId, CreatedBy, CreatedAt, UpdatedAt, ListStatus)
 VALUES (1, 'Project Tasks', 'task-icon.png', 'blue', 3, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
