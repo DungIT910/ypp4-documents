@@ -1,11 +1,10 @@
 package com.ttd.microsoftlistsunittest.dto.templateprovider;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class TemplateProviderDto {
     private Integer providerId;
     private String providerName;

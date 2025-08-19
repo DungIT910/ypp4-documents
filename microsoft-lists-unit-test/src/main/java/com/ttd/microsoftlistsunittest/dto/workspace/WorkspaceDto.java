@@ -1,6 +1,7 @@
 package com.ttd.microsoftlistsunittest.dto.workspace;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

@@ -15,13 +15,13 @@ public class ListTemplateDataRepositoryImpl implements ListTemplateDataRepositor
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<ListTemplateSampleDataDto> getListTemplateSampleData(Integer templateProviderId) {
+    public List<ListTemplateSampleDataDto> getListTemplateSampleData(Integer listTemplateId) {
         String sql = """
                 SELECT
-                    trow.Id AS rowid,
+                    trow.Id AS rowId,
                     tcol.ColumnName,
-                    tcol.Id AS colId,
-                    sdt.Icon AS DataTypeIcon,
+                    tcol.Id AS columnId,
+                    sdt.Icon AS columnIcon,
                     tcell.CellValue
                 FROM
                     TemplateSampleRow trow
@@ -39,6 +39,6 @@ public class ListTemplateDataRepositoryImpl implements ListTemplateDataRepositor
                     trow.DisplayOrder ASC,
                     tcol.DisplayOrder ASC;
                 """;
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListTemplateSampleDataDto.class), templateProviderId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ListTemplateSampleDataDto.class), listTemplateId);
     }
 }

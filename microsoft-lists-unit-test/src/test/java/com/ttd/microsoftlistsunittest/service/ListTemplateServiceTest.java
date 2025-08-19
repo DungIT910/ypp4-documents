@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
@@ -17,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ListTemplateServiceTest {
     @Autowired
     private ListTemplateService listTemplateService;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     void testGetALlTemplatesByTemplateProviderId_ReturnsExpectedData() {
