@@ -2,8 +2,10 @@ package com.ttd.microsoftlistsunittest.controller;
 
 import com.ttd.microsoftlistsunittest.dto.list.ListDataDto;
 import com.ttd.microsoftlistsunittest.dto.list.ListSummaryDto;
+import com.ttd.microsoftlistsunittest.dto.listview.ListViewDto;
 import com.ttd.microsoftlistsunittest.service.ListDataService;
 import com.ttd.microsoftlistsunittest.service.ListService;
+import com.ttd.microsoftlistsunittest.service.ListViewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListController {
     private final ListService listService;
+    private final ListViewService listViewService;
     private final ListDataService listDataService;
 
     @GetMapping("/{listId}")
@@ -41,5 +44,10 @@ public class ListController {
     @GetMapping("/recent")
     public List<ListSummaryDto> getRecentListsByAccountId(@RequestParam(value = "accountId", required = true) Integer accountId) {
         return listService.getRecentListsByAccountId(accountId);
+    }
+
+    @GetMapping("/{listId}/list-views")
+    public List<ListViewDto> getListViewsByListId(@PathVariable Integer listId) {
+        return listViewService.getListViewsByListId(listId);
     }
 }
