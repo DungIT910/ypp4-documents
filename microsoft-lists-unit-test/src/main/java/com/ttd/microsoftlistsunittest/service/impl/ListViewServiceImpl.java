@@ -1,6 +1,7 @@
 package com.ttd.microsoftlistsunittest.service.impl;
 
 import com.ttd.microsoftlistsunittest.dto.listview.ListViewDto;
+import com.ttd.microsoftlistsunittest.dto.listview.ListViewSettingValueDto;
 import com.ttd.microsoftlistsunittest.repository.ListViewRepository;
 import com.ttd.microsoftlistsunittest.service.ListViewService;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,10 @@ public class ListViewServiceImpl implements ListViewService {
     @Override
     public List<ListViewDto> getListViewsByListId(Integer listId) {
         return listViewRepository.getListViewsByListId(listId);
+    }
+
+    @Override
+    public List<ListViewSettingValueDto> getListViewSettingValues(Integer listViewId) {
+        return listViewRepository.getListViewSettingValues(listViewId);
     }
 }

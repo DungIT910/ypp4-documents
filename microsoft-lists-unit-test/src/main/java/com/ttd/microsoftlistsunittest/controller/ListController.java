@@ -30,7 +30,6 @@ public class ListController {
         return listDataService.getListDataByListId(listId);
     }
 
-
     @GetMapping("/personal")
     public List<ListSummaryDto> getPersonalListsByAccountId(@RequestParam(value = "accountId", required = true) Integer accountId) {
         return listService.getPersonalListsByAccountId(accountId);

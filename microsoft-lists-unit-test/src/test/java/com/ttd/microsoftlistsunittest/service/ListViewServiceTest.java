@@ -1,6 +1,7 @@
 package com.ttd.microsoftlistsunittest.service;
 
 import com.ttd.microsoftlistsunittest.dto.listview.ListViewDto;
+import com.ttd.microsoftlistsunittest.dto.listview.ListViewSettingValueDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,5 +25,13 @@ class ListViewServiceTest {
 
         assertNotNull(result);
         assertTrue(result.size() > 1);
+    }
+
+    @Test
+    void testGetListViewSettingValues_ReturnsExpectedData() {
+        Integer listViewId = 1;
+        List<ListViewSettingValueDto> result = listViewService.getListViewSettingValues(listViewId);
+        assertNotNull(result);
+        assertTrue(!result.isEmpty());
     }
 }
