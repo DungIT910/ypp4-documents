@@ -16,7 +16,7 @@ public class DependencyInjector {
         for (Object bean : container.getAllBeans()) {
             Class<?> clazz = bean.getClass();
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(Autowired.class)) {
+                if (field.isAnnotationPresent(Autowired.    class)) {
                     Object dependency = container.getBean(field.getType());
                     field.setAccessible(true);
                     field.set(bean, dependency);
@@ -24,5 +24,4 @@ public class DependencyInjector {
             }
         }
     }
-
 }
