@@ -1,6 +1,6 @@
 package com.ttd.dependencyinjector;
 
-import com.ttd.annotation.Autowired;
+import com.ttd.annotation.MyAutowired;
 import com.ttd.beancontainer.BeanContainer;
 
 import java.lang.reflect.Field;
@@ -16,7 +16,7 @@ public class DependencyInjector {
         for (Object bean : container.getAllBeans()) {
             Class<?> clazz = bean.getClass();
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(Autowired.class)) {
+                if (field.isAnnotationPresent(MyAutowired.class)) {
                     Object dependency = container.getBean(field.getType());
                     field.setAccessible(true);
                     field.set(bean, dependency);
