@@ -1,11 +1,12 @@
 package com.ttd.demo;
 
-import com.ttd.annotation.Autowired;
-import com.ttd.annotation.Component;
+import com.ttd.annotation.MyAutowired;
+import com.ttd.annotation.MyRepository;
+import com.ttd.annotation.MyService;
 
-@Component
+@MyRepository
 public class UserService {
-    @Autowired
+    @MyAutowired
     private UserRepository userRepository;
 
     public void printUser() {

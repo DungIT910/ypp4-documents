@@ -31,9 +31,9 @@ public class DITest {
         Assertions.assertNotNull(data);
         Collection<Object> beans = beanContainer.getAllBeans();
         assertEquals(2, beans.size(), "Should return exactly 2 beans");
-        assertTrue(beans.stream().anyMatch(bean -> bean instanceof UserRepository),
+        assertTrue(beans.stream().anyMatch(UserRepository.class::isInstance),
                 "Should contain UserRepository");
-        assertTrue(beans.stream().anyMatch(bean -> bean instanceof UserService),
+        assertTrue(beans.stream().anyMatch(UserService.class::isInstance),
                 "Should contain UserService");
     }
 
