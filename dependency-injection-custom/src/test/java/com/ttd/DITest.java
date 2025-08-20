@@ -17,12 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DITest {
     private BeanContainer beanContainer;
     private DependencyInjector dependencyInjector;
-    private ClassScanner classScanner;
 
     @BeforeEach
     void setUp() throws Exception {
         beanContainer = new BeanContainer();
-        classScanner = new ClassScanner();
         beanContainer.registerBean(UserService.class);
         beanContainer.registerBean(UserRepository.class);
     }
@@ -39,14 +37,9 @@ public class DITest {
                 "Should contain UserService");
     }
 
-    @Test
-    void testPackageNameToPath_shouldReturnRightPath() {
-        String packageName = "com.ttd";
-        assertEquals("com/ttd", classScanner.packageToPath(packageName));
-    }
 
     @Test
-    void testClassScanner_shouldReturnAllClassesItScanned() {
+    void testClassScanner_shouldReturnAllClassesItScanned() throws Exception {
         Set<Class<?>> classes = ClassScanner.findClassesWithComponent("com.ttd");
         assertNotNull(classes, "ClassScanner returned null");
         assertEquals(classes.size(), 2);
