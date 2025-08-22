@@ -1,8 +1,11 @@
 package com.ttd;
 
+import com.ttd.applicationcontext.MyApplicationContext;
 import com.ttd.beancontainer.BeanContainer;
 import com.ttd.demo.UserRepository;
 import com.ttd.demo.UserService;
+import com.ttd.demo.impl.UserRepositoryImpl;
+import com.ttd.demo.impl.UserRepositoryImpl2;
 import com.ttd.dependencyinjector.DependencyInjector;
 import com.ttd.scanner.ClassScanner;
 import org.junit.jupiter.api.Assertions;
@@ -14,15 +17,16 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DITest {
+class DITest {
     private BeanContainer beanContainer;
+    private MyApplicationContext context;
     private DependencyInjector dependencyInjector;
 
     @BeforeEach
     void setUp() throws Exception {
         beanContainer = new BeanContainer();
-        beanContainer.registerBean(UserService.class);
-        beanContainer.registerBean(UserRepository.class);
+        context = new MyApplicationContext(beanContainer);
+        context.initialize("com.ttd");
     }
 
     @Test
@@ -30,19 +34,30 @@ public class DITest {
         var data = beanContainer.getAllBeans();
         Assertions.assertNotNull(data);
         Collection<Object> beans = beanContainer.getAllBeans();
-        assertEquals(2, beans.size(), "Should return exactly 2 beans");
+        assertEquals(3, beans.size(), "Should return exactly 2 beans");
         assertTrue(beans.stream().anyMatch(UserRepository.class::isInstance),
-                "Should contain UserRepository");
+                "Should contain UserRepositoryImpl");
         assertTrue(beans.stream().anyMatch(UserService.class::isInstance),
-                "Should contain UserService");
+                "Should contain UserServiceImpl");
+        assertNotNull(beanContainer.getBeanByName("unknownBean"));
     }
-
 
     @Test
     void testClassScanner_shouldReturnAllClassesItScanned() throws Exception {
         Set<Class<?>> classes = ClassScanner.findClassesWithComponent("com.ttd");
         assertNotNull(classes, "ClassScanner returned null");
-        assertEquals(classes.size(), 2);
+        assertEquals(classes.size(), 3);
     }
 
+
+    @Test
+    void testInjectDependencies_shouldInjectSuitableDependencies() {
+        UserService userService = (UserService) context.getBeanByName("userServiceImpl"); // Giả định bean name
+
+        UserRepository userRepository = userService.getUserRepository();
+        assertNotNull(userRepository, "UserRepository should be injected");
+
+        assertEquals(UserRepositoryImpl2.class, userRepository.getClass(),
+                "UserRepository should be of type UserRepositoryImpl");
+    }
 }
