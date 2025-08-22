@@ -1,6 +1,5 @@
 package com.ttd.dependencyinjector;
 
-import com.ttd.annotation.MyAutowired;
 import com.ttd.beancontainer.BeanContainer;
 
 import java.lang.reflect.Field;
@@ -12,16 +11,8 @@ public class DependencyInjector {
         this.container = container;
     }
 
-    public void injectDependencies() throws IllegalAccessException {
-        for (Object bean : container.getAllBeans()) {
-            Class<?> clazz = bean.getClass();
-            for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(MyAutowired.class)) {
-                    Object dependency = container.getBean(field.getType());
-                    field.setAccessible(true);
-                    field.set(bean, dependency);
-                }
-            }
+    public void injectDependencies(Object target) throws IllegalAccessException {
+        for (Field field : target.getClass().getDeclaredFields()) {
         }
     }
 }
