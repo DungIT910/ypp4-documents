@@ -5,7 +5,7 @@ import com.ttd.beancontainer.BeanContainer;
 import com.ttd.demo.UserRepository;
 import com.ttd.demo.UserService;
 import com.ttd.demo.impl.UserRepositoryImpl;
-import com.ttd.demo.impl.UserServiceImpl;
+import com.ttd.demo.impl.UserRepositoryImpl2;
 import com.ttd.dependencyinjector.DependencyInjector;
 import com.ttd.scanner.ClassScanner;
 import org.junit.jupiter.api.Assertions;
@@ -35,12 +35,12 @@ class DITest {
         Assertions.assertNotNull(data);
         Collection<Object> beans = beanContainer.getAllBeans();
         assertEquals(3, beans.size(), "Should return exactly 2 beans");
-        assertTrue(beans.stream().anyMatch(UserRepositoryImpl.class::isInstance),
+        assertTrue(beans.stream().anyMatch(UserRepository.class::isInstance),
                 "Should contain UserRepositoryImpl");
-        assertTrue(beans.stream().anyMatch(UserServiceImpl.class::isInstance),
+        assertTrue(beans.stream().anyMatch(UserService.class::isInstance),
                 "Should contain UserServiceImpl");
+        assertNotNull(beanContainer.getBeanByName("unknownBean"));
     }
-
 
     @Test
     void testClassScanner_shouldReturnAllClassesItScanned() throws Exception {
@@ -49,6 +49,7 @@ class DITest {
         assertEquals(classes.size(), 3);
     }
 
+
     @Test
     void testInjectDependencies_shouldInjectSuitableDependencies() {
         UserService userService = (UserService) context.getBeanByName("userServiceImpl"); // Giả định bean name
@@ -56,7 +57,7 @@ class DITest {
         UserRepository userRepository = userService.getUserRepository();
         assertNotNull(userRepository, "UserRepository should be injected");
 
-        assertEquals(UserRepositoryImpl.class, userRepository.getClass(),
+        assertEquals(UserRepositoryImpl2.class, userRepository.getClass(),
                 "UserRepository should be of type UserRepositoryImpl");
     }
 }

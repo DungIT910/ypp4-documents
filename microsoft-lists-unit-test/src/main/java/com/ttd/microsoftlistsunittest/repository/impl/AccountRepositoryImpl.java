@@ -4,6 +4,7 @@ import com.ttd.microsoftlistsunittest.domain.model.AccountStatus;
 import com.ttd.microsoftlistsunittest.dto.account.AccountProfileDto;
 import com.ttd.microsoftlistsunittest.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Scope()
 @RequiredArgsConstructor
 public class AccountRepositoryImpl implements AccountRepository {
     private final JdbcTemplate jdbcTemplate;

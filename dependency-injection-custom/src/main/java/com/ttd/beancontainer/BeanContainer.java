@@ -17,33 +17,61 @@ public class BeanContainer {
         return Character.toLowerCase(simpleName.charAt(0)) + simpleName.substring(1);
     }
 
-    public void registerBean(String beanName, Class<?> clazz) throws Exception {
-        Object instance = clazz.getDeclaredConstructor().newInstance();
-        String key = Optional.ofNullable(beanName)
-                .orElseGet(() -> classToBeanName(clazz));
+    public boolean registerBean(String beanName, Class<?> clazz) {
+        return Optional.ofNullable(clazz)
+                .map(c -> {
+                    String key = Optional.ofNullable(beanName).orElseGet(() -> classToBeanName(c));
+                    BeanScope scope = Optional.ofNullable(c.getAnnotation(Scope.class))
+                            .map(Scope::value)
+                            .orElse(BeanScope.SINGLETON);
 
-        BeanDefinition beanDefinition = new BeanDefinition();
-        beanDefinition.setBeanName(key);
-        beanDefinition.setType(clazz);
-        beanDefinition.setInstance(instance);
-        beanDefinition.setScope(BeanScope.SINGLETON);
+                    BeanDefinition beanDefinition = new BeanDefinition();
+                    beanDefinition.setBeanName(key);
+                    beanDefinition.setType(c);
+                    beanDefinition.setScope(scope);
+                    beanDefinition.setInstance(null);
 
-        beans.put(key, beanDefinition);
+                    beans.put(key, beanDefinition);
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    private Object resolveBeanInstance(BeanDefinition definition) {
+        if (definition.getScope() == BeanScope.PROTOTYPE) {
+            return createInstance(definition.getType());
+        }
+
+        return Optional.ofNullable(definition.getInstance())
+                .orElseGet(() -> {
+                    Object newInstance = createInstance(definition.getType());
+                    definition.setInstance(newInstance);
+                    return newInstance;
+                });
     }
 
     public Object getBeanByName(String beanName) {
-        BeanDefinition definition = beans.get(beanName);
-        return (definition != null) ? definition.getInstance() : null;
+        return Optional.ofNullable(beans.get(beanName))
+                .map(this::resolveBeanInstance)
+                .orElse(null);
     }
 
     public Object getBeanByType(Class<?> type) {
-        String beanName = classToBeanName(type);
-        return getBeanByName(beanName);
+        return getBeanByName(classToBeanName(type));
     }
 
     public Collection<Object> getAllBeans() {
         return beans.values().stream()
-                .map(BeanDefinition::getInstance)
-                .collect(Collectors.toList());
+                .map(this::resolveBeanInstance)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    private Object createInstance(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
