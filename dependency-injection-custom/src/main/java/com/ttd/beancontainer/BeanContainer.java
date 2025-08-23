@@ -1,10 +1,13 @@
 package com.ttd.beancontainer;
 
-import com.ttd.annotation.Scope;
 import com.ttd.beandefinition.BeanDefinition;
 import com.ttd.beandefinition.model.BeanScope;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BeanContainer {
     private final Map<String, BeanDefinition> beans = new HashMap<>();
