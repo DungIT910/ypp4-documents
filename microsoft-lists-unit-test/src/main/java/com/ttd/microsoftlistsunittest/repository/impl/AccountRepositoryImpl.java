@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Scope()
 @RequiredArgsConstructor
 public class AccountRepositoryImpl implements AccountRepository {
     private final JdbcTemplate jdbcTemplate;
