@@ -1,13 +1,10 @@
 package com.ttd.beancontainer;
 
+import com.ttd.annotation.Scope;
 import com.ttd.beandefinition.BeanDefinition;
 import com.ttd.beandefinition.model.BeanScope;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class BeanContainer {
     private final Map<String, BeanDefinition> beans = new HashMap<>();
@@ -54,10 +51,6 @@ public class BeanContainer {
         return Optional.ofNullable(beans.get(beanName))
                 .map(this::resolveBeanInstance)
                 .orElse(null);
-    }
-
-    public Object getBeanByType(Class<?> type) {
-        return getBeanByName(classToBeanName(type));
     }
 
     public Collection<Object> getAllBeans() {
