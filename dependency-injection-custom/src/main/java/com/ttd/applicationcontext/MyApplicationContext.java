@@ -2,6 +2,7 @@ package com.ttd.applicationcontext;
 
 import com.ttd.annotation.MyComponent;
 import com.ttd.beancontainer.BeanContainer;
+import com.ttd.dependencyinjector.DependencyInjector;
 import com.ttd.scanner.ClassScanner;
 
 import java.lang.annotation.Annotation;
@@ -13,9 +14,11 @@ import java.util.Set;
 
 public class MyApplicationContext {
     private final BeanContainer beanContainer;
+    private final DependencyInjector dependencyInjector;
 
-    public MyApplicationContext(BeanContainer beanContainer) {
+    public MyApplicationContext(BeanContainer beanContainer, DependencyInjector dependencyInjector) {
         this.beanContainer = beanContainer;
+        this.dependencyInjector = dependencyInjector;
     }
 
     public void initialize(String basePackage) throws Exception {
@@ -24,6 +27,11 @@ public class MyApplicationContext {
             String beanName = getBeanNameFromAnnotation(clazz);
             beanContainer.registerBean(beanName, clazz);
         }
+        injectDependencies();
+    }
+
+    public void injectDependencies() {
+        beanContainer.getAllBeans().forEach(dependencyInjector::injectDependencies);
     }
 
     private String getBeanNameFromAnnotation(Class<?> clazz) {
@@ -46,7 +54,6 @@ public class MyApplicationContext {
 
         return annotationValue.orElseGet(() -> BeanContainer.classToBeanName(clazz));
     }
-
 
     public Object getBeanByName(String beanName) {
         return beanContainer.getBeanByName(beanName);

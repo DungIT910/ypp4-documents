@@ -4,7 +4,6 @@ import com.ttd.applicationcontext.MyApplicationContext;
 import com.ttd.beancontainer.BeanContainer;
 import com.ttd.demo.UserRepository;
 import com.ttd.demo.UserService;
-import com.ttd.demo.impl.UserRepositoryImpl;
 import com.ttd.demo.impl.UserRepositoryImpl2;
 import com.ttd.dependencyinjector.DependencyInjector;
 import com.ttd.scanner.ClassScanner;
@@ -25,7 +24,8 @@ class DITest {
     @BeforeEach
     void setUp() throws Exception {
         beanContainer = new BeanContainer();
-        context = new MyApplicationContext(beanContainer);
+        dependencyInjector = new DependencyInjector(beanContainer);
+        context = new MyApplicationContext(beanContainer, dependencyInjector);
         context.initialize("com.ttd");
     }
 

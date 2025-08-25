@@ -24,7 +24,7 @@ public class DependencyInjector {
                     field.setAccessible(true);
                     return injectField(field, target);
                 })
-                .reduce(true, (result, injected) -> result && injected, Boolean::logicalAnd);
+                .reduce(true, (result, injected) -> result && injected);
     }
 
     private boolean injectField(Field field, Object target) {
