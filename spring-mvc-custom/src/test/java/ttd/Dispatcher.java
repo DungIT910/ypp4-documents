@@ -1,7 +1,11 @@
 package ttd;
 
 import com.sun.net.httpserver.HttpExchange;
+import com.ttd.ModelAndView;
+import com.ttd.ViewResolver;
+import com.ttd.annotation.MyController;
 import com.ttd.annotation.MyRequestMapping;
+import com.ttd.core.beancontainer.BeanContainer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,19 +17,30 @@ import java.util.Objects;
 public class Dispatcher {
 
     private final Map<RouteKey, HandlerMethod> handlerMap = new HashMap<>();
+    private final BeanContainer beanContainer;
+    private final ViewResolver viewResolver;
 
-    public Dispatcher() {
-        scanControllers(); // gán vào handlerMap
+    public Dispatcher(BeanContainer beanContainer) {
+        this.beanContainer = beanContainer;
+        this.viewResolver = new ViewResolver();
+    }
+
+    public void init() {
+        scanControllers();
     }
 
     private void scanControllers() {
-        // Hardcoded tạm thời để test pass, sau này dùng classpath scan
-        HelloController controller = new HelloController();
-        for (Method method : HelloController.class.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(MyRequestMapping.class)) {
-                MyRequestMapping mapping = method.getAnnotation(MyRequestMapping.class);
-                RouteKey key = new RouteKey(mapping.path(), mapping.method());
-                handlerMap.put(key, new HandlerMethod(controller, method));
+        for (Object bean : beanContainer.getAllBeans()) {
+            Class<?> clazz = bean.getClass();
+
+            if (!clazz.isAnnotationPresent(MyController.class)) continue;
+
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(MyRequestMapping.class)) {
+                    MyRequestMapping mapping = method.getAnnotation(MyRequestMapping.class);
+                    RouteKey key = new RouteKey(mapping.path(), mapping.method());
+                    handlerMap.put(key, new HandlerMethod(bean, method));
+                }
             }
         }
     }
@@ -46,7 +61,7 @@ public class Dispatcher {
         try {
             Object result = handler.method.invoke(handler.controller);
             if (result instanceof ModelAndView mv) {
-                String html = ViewResolver.render(mv);
+                String html = viewResolver.render(mv);
                 byte[] bytes = html.getBytes();
                 exchange.sendResponseHeaders(200, bytes.length);
                 OutputStream os = exchange.getResponseBody();
