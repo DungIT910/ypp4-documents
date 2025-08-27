@@ -1,8 +1,8 @@
 package ttd;
 
 
-import com.ttd.framework.context.MyApplicationContext;
 import com.ttd.framework.container.BeanContainer;
+import com.ttd.framework.context.MyApplicationContext;
 import com.ttd.framework.di.DependencyInjector;
 import com.ttd.framework.scanner.ClassScanner;
 import org.junit.jupiter.api.BeforeEach;

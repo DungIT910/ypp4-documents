@@ -1,11 +1,11 @@
 package ttd;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.ttd.framework.web.http.MyHttpServer;
-import com.ttd.framework.web.dispatcher.MyDispatcher;
-import com.ttd.framework.context.MyApplicationContext;
 import com.ttd.framework.container.BeanContainer;
+import com.ttd.framework.context.MyApplicationContext;
 import com.ttd.framework.di.DependencyInjector;
+import com.ttd.framework.web.dispatcher.MyDispatcher;
+import com.ttd.framework.web.http.MyHttpServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ class MvcTest {
     void shouldDispatchToCorrectControllerMethodBasedOnPath() throws Exception {
         HttpExchange exchange = mock(HttpExchange.class);
         when(exchange.getRequestMethod()).thenReturn("GET");
-        when(exchange.getRequestURI()).thenReturn(new URI("/users/1?name=Dung"));
+        when(exchange.getRequestURI()).thenReturn(new URI("/users?name=Dung"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         when(exchange.getResponseBody()).thenReturn(output);
