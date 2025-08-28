@@ -55,7 +55,7 @@ class MvcTest {
     void shouldDispatchToCorrectControllerMethodBasedOnPath() throws Exception {
         HttpExchange exchange = mock(HttpExchange.class);
         when(exchange.getRequestMethod()).thenReturn("GET");
-        when(exchange.getRequestURI()).thenReturn(new URI("/users?name=Dung"));
+        when(exchange.getRequestURI()).thenReturn(new URI("/users/1"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         when(exchange.getResponseBody()).thenReturn(output);
