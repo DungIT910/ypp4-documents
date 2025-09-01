@@ -1,0 +1,44 @@
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Log Files
+*.log
+
+# Temp Files
+*.tmp
+
+# IDE-specific files
+.idea/
+.gradle/
+.project
+.classpath
+.settings/
+.vscode/
+
+# Build directories
+target/
+build/
+
+# Maven-specific
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle-specific
+.gradle
+gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.jar # Keep the wrapper script but ignore the jar
+
+# OS specific files
+.DS_Store
+Thumbs.db
