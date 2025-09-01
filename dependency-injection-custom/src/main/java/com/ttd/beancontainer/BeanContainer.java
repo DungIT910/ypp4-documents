@@ -4,53 +4,60 @@ import com.ttd.annotation.Scope;
 import com.ttd.beandefinition.BeanDefinition;
 import com.ttd.beandefinition.model.BeanScope;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class BeanContainer {
     private final Map<String, BeanDefinition> beans = new HashMap<>();
 
-    public static String classToBeanName(Class<?> clazz) {
+    public static String convertClassToBeanName(Class<?> clazz) {
         String simpleName = clazz.getSimpleName();
         return Character.toLowerCase(simpleName.charAt(0)) + simpleName.substring(1);
     }
 
-    public boolean registerBean(String beanName, Class<?> clazz) {
-        return Optional.ofNullable(clazz)
-                .map(c -> {
-                    String key = Optional.ofNullable(beanName).orElseGet(() -> classToBeanName(c));
-                    BeanScope scope = Optional.ofNullable(c.getAnnotation(Scope.class))
-                            .map(Scope::value)
-                            .orElse(BeanScope.SINGLETON);
+    public void registerBean(String beanName, Class<?> clazz) {
+        String key = Optional.ofNullable(beanName).orElseGet(() -> convertClassToBeanName(clazz));
+        BeanScope scope = Optional.ofNullable(clazz.getAnnotation(Scope.class))
+                .map(Scope::value)
+                .orElse(BeanScope.SINGLETON);
 
-                    BeanDefinition beanDefinition = new BeanDefinition();
-                    beanDefinition.setBeanName(key);
-                    beanDefinition.setType(c);
-                    beanDefinition.setScope(scope);
-                    beanDefinition.setInstance(null);
+        BeanDefinition beanDefinition = new BeanDefinition();
+        beanDefinition.setBeanName(key);
+        beanDefinition.setType(clazz);
+        beanDefinition.setScope(scope);
+        beanDefinition.setInstance(null);
 
-                    beans.put(key, beanDefinition);
-                    return true;
-                })
-                .orElse(false);
+        beans.put(key, beanDefinition);
     }
 
     private Object resolveBeanInstance(BeanDefinition definition) {
-        if (definition.getScope() == BeanScope.PROTOTYPE) {
-            return createInstance(definition.getType());
+        Class<?> definitionType = definition.getType();
+        if (BeanScope.PROTOTYPE.equals(definition.getScope())) {
+            return createInstance(definitionType);
         }
 
-        return Optional.ofNullable(definition.getInstance())
-                .orElseGet(() -> {
-                    Object newInstance = createInstance(definition.getType());
-                    definition.setInstance(newInstance);
-                    return newInstance;
-                });
+        Object instance = definition.getInstance();
+        if (instance != null) {
+            return instance;
+        }
+
+        Object newInstance = createInstance(definitionType);
+        definition.setInstance(newInstance);
+
+        return newInstance;
     }
 
     public Object getBeanByName(String beanName) {
-        return Optional.ofNullable(beans.get(beanName))
-                .map(this::resolveBeanInstance)
-                .orElse(null);
+        BeanDefinition beanDefinition = beans.get(beanName);
+
+        if (beanDefinition == null) {
+            return null;
+        }
+
+        return resolveBeanInstance(beanDefinition);
     }
 
     public Collection<Object> getAllBeans() {

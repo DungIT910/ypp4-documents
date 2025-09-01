@@ -1,61 +1,84 @@
 package com.ttd.scanner;
 
 import com.ttd.annotation.MyComponent;
+import com.ttd.scanner.exception.MyClassScannerException;
+import com.ttd.scanner.exception.MyIOException;
+import com.ttd.scanner.exception.MyURISyntaxException;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class ClassScanner {
+public final class ClassScanner {
     private ClassScanner() {
+        throw new UnsupportedOperationException("Utility class");
     }
 
-    public static Set<Class<?>> findClassesWithComponent(String basePackage) throws Exception {
+    public static Set<Class<?>> findClassesWithComponent(String basePackage) throws MyClassScannerException {
         String path = basePackage.replace('.', '/');
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<Class<?>> classes = new HashSet<>();
 
-        Collections.list(classLoader.getResources(path))
-                .stream()
-                .filter(url -> !url.getPath().contains("/test-classes/"))
-                .map(url -> {
-                    try {
-                        return new File(url.toURI());
-                    } catch (URISyntaxException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .filter(File::exists)
-                .forEach(dir -> scanDirectory(dir, basePackage, classes));
+        try {
+            Collection<URL> resources = Collections.list(classLoader.getResources(path));
+
+            for (URL url : resources) {
+                if (url.getPath().contains("/test-classes/")) {
+                    continue;
+                }
+
+                File directory = new File(url.toURI());
+                if (directory.exists()) {
+                    scanDirectory(directory, basePackage, classes);
+                }
+            }
+        } catch (IOException e) {
+            throw new MyIOException(e);
+        } catch (URISyntaxException e) {
+            throw new MyURISyntaxException(e);
+        }
 
         return classes;
     }
 
     private static void scanDirectory(File dir, String packageName, Set<Class<?>> classes) {
-        Stream.of(Objects.requireNonNull(dir.listFiles()))
-                .filter(Objects::nonNull)
-                .forEach(file -> processFile(file, packageName, classes));
+        File[] files = dir.listFiles();
+
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            processFile(file, packageName, classes);
+        }
     }
 
     private static void processFile(File file, String packageName, Set<Class<?>> classes) {
-        Stream.of(file)
-                .filter(File::exists)
-                .forEach(f -> {
-                    String newPackage = packageName + "." + f.getName();
-                    if (f.isDirectory()) {
-                        scanDirectory(f, newPackage, classes);
-                    } else if (f.getName().endsWith(".class")) {
-                        Stream.of(newPackage.replace(".class", ""))
-                                .map(ClassScanner::loadClass)
-                                .filter(Optional::isPresent)
-                                .map(Optional::get)
-                                .filter(clazz -> !clazz.isAnnotation())
-                                .filter(ClassScanner::hasMyComponentAnnotation)
-                                .forEach(classes::add);
-                    }
-                });
+        String newPackage = packageName + "." + file.getName();
+
+        if (file.isDirectory()) {
+            scanDirectory(file, newPackage, classes);
+        }
+
+        if (!file.getName().endsWith(".class")) {
+            return;
+        }
+
+        String packageWithoutClassExtension = newPackage.replace(".class", "");
+        Optional<Class<?>> loadedClass = loadClass(packageWithoutClassExtension);
+
+        loadedClass.filter(Predicate.not((Class<?> c) -> c.isAnnotation())
+                        .and(ClassScanner::hasMyComponentAnnotation))
+                .ifPresent(classes::add);
     }
 
     private static Optional<Class<?>> loadClass(String className) {
@@ -68,8 +91,8 @@ public class ClassScanner {
 
     private static boolean hasMyComponentAnnotation(Class<?> clazz) {
         return clazz.isAnnotationPresent(MyComponent.class) ||
-               Stream.of(clazz.getAnnotations())
-                       .map(Annotation::annotationType)
-                       .anyMatch(a -> a.isAnnotationPresent(MyComponent.class));
+                Stream.of(clazz.getAnnotations())
+                        .map(Annotation::annotationType)
+                        .anyMatch(a -> a.isAnnotationPresent(MyComponent.class));
     }
 }

@@ -5,10 +5,8 @@ import com.ttd.annotation.MyQualifier;
 import com.ttd.beancontainer.BeanContainer;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public class DependencyInjector {
     private final BeanContainer container;
@@ -17,43 +15,58 @@ public class DependencyInjector {
         this.container = container;
     }
 
-    public boolean injectDependencies(Object target) {
-        return Arrays.stream(target.getClass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(MyAutowired.class))
-                .map(field -> {
-                    field.setAccessible(true);
-                    return injectField(field, target);
-                })
-                .reduce(true, (result, injected) -> result && injected);
-    }
+    public void injectDependencies(Object target) {
+        Field[] fields = target.getClass().getDeclaredFields();
 
-    private boolean injectField(Field field, Object target) {
-        try {
-            return Optional.ofNullable(field.getAnnotation(MyQualifier.class))
-                    .map(qualifier -> {
-                        String beanName = qualifier.value();
-                        Object dependency = container.getBeanByName(beanName);
-                        return dependency != null && field.getType().isAssignableFrom(dependency.getClass())
-                               && setField(field, target, dependency);
-                    })
-                    .orElseGet(() -> {
-                        Collection<Object> allBeans = container.getAllBeans();
-                        List<Object> matchingBeans = allBeans.stream()
-                                .filter(bean -> field.getType().isAssignableFrom(bean.getClass()))
-                                .toList();
-                        return matchingBeans.size() == 1 && setField(field, target, matchingBeans.get(0));
-                    });
-        } catch (Exception e) {
-            return false;
+        for (Field field : fields) {
+            if (!field.isAnnotationPresent(MyAutowired.class)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            injectField(field, target);
         }
     }
 
-    private boolean setField(Field field, Object target, Object dependency) {
+    private void injectField(Field field, Object target) {
+        MyQualifier qualifier = field.getAnnotation(MyQualifier.class);
+
+        if (qualifier == null) {
+            injectFieldWithoutQualifier(field, target);
+            return;
+        }
+
+        injectFieldWithQualifier(field, target, qualifier);
+    }
+
+    private void injectFieldWithoutQualifier(Field field, Object target) {
+        Collection<Object> allBeans = container.getAllBeans();
+        List<Object> matchingBeans = allBeans.stream()
+                .filter(bean -> field.getType().isAssignableFrom(bean.getClass()))
+                .toList();
+
+        if (matchingBeans.size() != 1) {
+            return;
+        }
+
+        setField(field, target, matchingBeans.get(0));
+    }
+
+    private void injectFieldWithQualifier(Field field, Object target, MyQualifier qualifier) {
+        String beanName = qualifier.value();
+        Object dependency = container.getBeanByName(beanName);
+
+        if (!field.getType().isAssignableFrom(dependency.getClass())) {
+            return;
+        }
+
+        setField(field, target, dependency);
+    }
+
+    private void setField(Field field, Object target, Object dependency) {
         try {
             field.set(target, dependency);
-            return true;
-        } catch (IllegalAccessException e) {
-            return false;
+        } catch (IllegalAccessException ignored) {
         }
     }
 }
