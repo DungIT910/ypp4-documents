@@ -14,26 +14,26 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DITest {
     private BeanContainer beanContainer;
     private MyApplicationContext context;
-    private DependencyInjector dependencyInjector;
 
     @BeforeEach
     void setUp() throws Exception {
         beanContainer = new BeanContainer();
-        dependencyInjector = new DependencyInjector(beanContainer);
+        DependencyInjector dependencyInjector = new DependencyInjector(beanContainer);
         context = new MyApplicationContext(beanContainer, dependencyInjector);
         context.initialize("com.ttd");
     }
 
     @Test
     void testGetBeans_shouldNotNull() {
-        var data = beanContainer.getAllBeans();
-        Assertions.assertNotNull(data);
         Collection<Object> beans = beanContainer.getAllBeans();
+        Assertions.assertNotNull(beans);
         assertEquals(3, beans.size(), "Should return exactly 2 beans");
         assertTrue(beans.stream().anyMatch(UserRepository.class::isInstance),
                 "Should contain UserRepositoryImpl");
@@ -46,7 +46,7 @@ class DITest {
     void testClassScanner_shouldReturnAllClassesItScanned() throws Exception {
         Set<Class<?>> classes = ClassScanner.findClassesWithComponent("com.ttd");
         assertNotNull(classes, "ClassScanner returned null");
-        assertEquals(classes.size(), 3);
+        assertEquals(3, classes.size());
     }
 
 

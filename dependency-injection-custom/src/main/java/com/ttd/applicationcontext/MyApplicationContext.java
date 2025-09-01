@@ -7,10 +7,9 @@ import com.ttd.scanner.ClassScanner;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class MyApplicationContext {
     private final BeanContainer beanContainer;
@@ -35,24 +34,26 @@ public class MyApplicationContext {
     }
 
     private String getBeanNameFromAnnotation(Class<?> clazz) {
-        Optional<String> annotationValue = Arrays.stream(clazz.getAnnotations())
-                .map(Annotation::annotationType)
-                .filter(annoType -> annoType == MyComponent.class || annoType.isAnnotationPresent(MyComponent.class))
-                .map(annoType -> {
-                    try {
-                        Method valueMethod = annoType.getMethod("value");
-                        Annotation annotation = clazz.getAnnotation(annoType);
-                        return (String) valueMethod.invoke(annotation);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(value -> !value.isBlank())
-                .findFirst();
+        final Annotation[] annotations = clazz.getAnnotations();
+        String beanName = null;
 
-        return annotationValue.orElseGet(() -> BeanContainer.classToBeanName(clazz));
+        for (Annotation annotation : annotations) {
+            Class<? extends Annotation> annotationType = annotation.annotationType();
+            if (annotationType.equals(MyComponent.class) || annotationType.isAnnotationPresent(MyComponent.class)) {
+                try {
+                    Method valueMethod = annotationType.getMethod("value");
+                    String annotationValue = (String) valueMethod.invoke(annotation);
+
+                    beanName = Optional.ofNullable(annotationValue)
+                            .map(String::trim)
+                            .filter(Predicate.not(String::isBlank))
+                            .orElseGet(() -> BeanContainer.convertClassToBeanName(clazz));
+                } catch (Exception e) {
+                    beanName = null;
+                }
+            }
+        }
+        return beanName;
     }
 
     public Object getBeanByName(String beanName) {
